@@ -731,9 +731,9 @@ function getNextMyPick() {
 
 function isMyTurn() { return getTeamForPick(currentPick, config.leagueSize) === config.myPosition; }
 
-// VORP - scaled replacement threshold by position demand
+// VORP - scaled replacement threshold by position demand (cap at 2 slots to prevent deep-pool inflation)
 function getReplacementLevel(pos) {
-  const slotsPerTeam = ROSTER_SLOTS[pos] || 1;
+  const slotsPerTeam = Math.min(ROSTER_SLOTS[pos] || 1, 2);
   const baseDemand = slotsPerTeam * config.leagueSize;
   const benchBuffer = Math.ceil(config.leagueSize * 0.3);
   const threshold = Math.min(baseDemand + benchBuffer,
