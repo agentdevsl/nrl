@@ -181,6 +181,54 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .risk-LOW { background:#484f58; }
 .risk-INJ { background:#da3633; color:#fff; }
 .inj-badge { font-size:9px; padding:1px 4px; border-radius:3px; margin-left:3px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; background:#da3633; }
+
+/* CASUALTY WARD BADGES */
+.cw-badge { font-size:9px; padding:1px 5px; border-radius:3px; margin-left:3px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; white-space:nowrap; }
+.cw-badge.cw-long { background:#f85149; }
+.cw-badge.cw-suspended { background:#d29922; }
+.cw-badge.cw-short { background:#da6d30; }
+.cw-badge.cw-monitor { background:#7d6b2e; color:#e3b341; }
+
+/* INJURY PANEL (right rail) */
+.injury-panel-item { display:flex; align-items:center; padding:4px 12px; gap:6px; font-size:11px; border-bottom:1px solid rgba(33,38,45,.3); }
+.injury-panel-item .ip-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.injury-panel-item .ip-detail { color:var(--muted); font-size:10px; flex-shrink:0; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.injury-panel-item .ip-return { font-size:10px; font-weight:600; flex-shrink:0; width:32px; text-align:right; }
+
+/* MODEL TAB */
+.model-container { display:grid; grid-template-columns:340px 1fr; gap:16px; }
+@media (max-width:900px) { .model-container { grid-template-columns:1fr; } }
+.model-controls { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px; }
+.model-controls h3 { font-size:14px; margin-bottom:12px; }
+.slider-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.slider-row label { width:120px; font-size:11px; color:var(--muted); flex-shrink:0; }
+.slider-row input[type="range"] { flex:1; accent-color:var(--accent); height:6px; }
+.slider-row .slider-val { width:36px; text-align:right; font-size:12px; font-weight:600; flex-shrink:0; }
+.weight-total { font-size:11px; margin:8px 0 12px; padding:6px 8px; border-radius:4px; text-align:center; }
+.weight-total.ok { background:rgba(63,185,80,.1); color:var(--CTW); }
+.weight-total.warn { background:rgba(248,81,73,.1); color:var(--FRF); }
+.preset-btns { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+.preset-btn { padding:4px 10px; font-size:11px; border-radius:6px; border:1px solid var(--border); background:var(--bg); color:var(--text); cursor:pointer; }
+.preset-btn:hover { border-color:var(--accent); color:var(--accent); }
+.preset-btn.active { border-color:var(--accent); background:rgba(88,166,255,.1); color:var(--accent); }
+.model-comparison { background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:16px; overflow:auto; }
+.model-comparison h3 { font-size:14px; margin-bottom:12px; }
+.comp-columns { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.comp-col h4 { font-size:12px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:.5px; }
+.comp-row { display:flex; align-items:center; gap:6px; padding:3px 0; font-size:11px; }
+.comp-row .comp-rank { width:20px; text-align:right; color:var(--muted); flex-shrink:0; }
+.comp-row .comp-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.comp-row .comp-score { width:36px; text-align:right; font-weight:600; flex-shrink:0; }
+.comp-row .comp-delta { width:40px; text-align:right; font-size:10px; flex-shrink:0; }
+.comp-delta.up { color:var(--CTW); }
+.comp-delta.down { color:var(--FRF); }
+.comp-delta.same { color:var(--muted); }
+
+/* DRAFT CHART OVERLAY */
+.chart-toggle { position:absolute; top:8px; right:12px; z-index:10; }
+.chart-toggle label { font-size:11px; color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:4px; }
+.chart-toggle input { accent-color:var(--accent); }
+.board-chart-tag { font-size:9px; padding:0 4px; border-radius:2px; background:rgba(88,166,255,.15); color:var(--accent); margin-left:auto; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -219,6 +267,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
       <button class="tab-btn" data-tab="tracker">Tracker <span class="key-hint">2</span></button>
       <button class="tab-btn" data-tab="sos">SOS <span class="key-hint">3</span></button>
       <button class="tab-btn" data-tab="scarcity">Scarcity <span class="key-hint">4</span></button>
+      <button class="tab-btn" data-tab="model">Model <span class="key-hint">5</span></button>
     </div>
     <div id="tab-content"></div>
     <div id="prompt-panel">
@@ -236,6 +285,8 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
     <div id="best-available"></div>
     <div class="rail-header" style="margin-top:8px">Scarcity Alerts</div>
     <div id="scarcity-alerts"></div>
+    <div class="rail-header" style="margin-top:8px;cursor:pointer" id="injury-panel-toggle">Casualty Ward <span style="float:right;font-size:10px" id="injury-panel-arrow">&#9660;</span></div>
+    <div id="injury-panel"></div>
   </div>
 </div>
 
@@ -245,7 +296,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
   <div class="stat" id="sb-league">-</div>
   <div class="stat" id="sb-gf">-</div>
   <div class="stat" id="sb-remaining">-</div>
-  <div class="stat" style="margin-left:auto">Keys: / search | 1-4 tabs | d taken | m draft | u undo | [ ] rails</div>
+  <div class="stat" style="margin-left:auto">Keys: / search | 1-5 tabs | d taken | m draft | u undo | [ ] rails</div>
 </div>
 
 <!-- SETUP WIZARD MODAL -->
@@ -296,7 +347,7 @@ const PLAYERS = [
   // ============================================================
   // HOOKER (HOK) - 20 players
   // ============================================================
-  { rank: 1, pos: "HOK", posRank: 1, team: "STORM", name: "Harry Grant", price: 606300, scPos: "HOK", statPos: "HOOKER", games2025: 16, avg2025: 62.0, nonInjuryAvg: 63.6, avgMin: 76, basePower: 44.2, gkPPG: null, ppm: 0.82, cv: 0.37, pctGames80: 25, tries: 5, triesPerGame: 0.4, tryInvolvements: 1.1, finalsBye: "R24", posSOS: 9, teamSOS: 14, predictedAvg: 65 },
+  { rank: 1, pos: "HOK", posRank: 1, team: "STORM", name: "Harry Grant", price: 606300, scPos: "HOK", statPos: "HOOKER", games2025: 16, avg2025: 62.0, nonInjuryAvg: 63.6, avgMin: 76, basePower: 44.2, gkPPG: null, ppm: 0.82, cv: 0.37, pctGames80: 25, tries: 5, triesPerGame: 0.4, tryInvolvements: 1.1, finalsBye: "R24", posSOS: 9, teamSOS: 14, predictedAvg: 70 },
   { rank: 2, pos: "HOK", posRank: 2, team: "SHARKS", name: "Blayke Brailey", price: 654400, scPos: "HOK", statPos: "HOOKER", games2025: 24, avg2025: 66.9, nonInjuryAvg: null, avgMin: 81, basePower: 49.9, gkPPG: null, ppm: 0.83, cv: 0.32, pctGames80: 29, tries: 3, triesPerGame: 0.2, tryInvolvements: 1.0, finalsBye: null, posSOS: 13, teamSOS: 5, predictedAvg: 67 },
   { rank: 3, pos: "HOK", posRank: 3, team: "ROOSTERS", name: "Connor Watson", price: 574000, scPos: "2RF | HOK", statPos: "LOCK", games2025: 20, avg2025: 58.7, nonInjuryAvg: null, avgMin: 69, basePower: 47.8, gkPPG: null, ppm: 0.85, cv: 0.33, pctGames80: 15, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.9, finalsBye: null, posSOS: 8, teamSOS: 8, predictedAvg: 58 },
   { rank: 4, pos: "HOK", posRank: 4, team: "ROOSTERS", name: "Reece Robson", price: 497400, scPos: "HOK", statPos: "HOOKER", games2025: 21, avg2025: 50.9, nonInjuryAvg: null, avgMin: 75, basePower: 46.3, gkPPG: null, ppm: 0.68, cv: 0.33, pctGames80: 5, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.4, finalsBye: null, posSOS: 8, teamSOS: 8, predictedAvg: 53 },
@@ -364,7 +415,7 @@ const PLAYERS = [
   // ============================================================
   // SECOND ROW FORWARD (2RF) - 60 players
   // ============================================================
-  { rank: 1, pos: "2RF", posRank: 1, team: "TITANS", name: "Tino Faasuamaleaui", price: 687600, scPos: "2RF", statPos: "LOCK", games2025: 19, avg2025: 70.3, nonInjuryAvg: 75.5, basePower: 62.1, avgMin: 58, ppm: 1.21, cv: 0.33, pctGames80: 32, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.6, lbPerGame: 0.5, finalsBye: null, posFastStart: 4, posSOS: 1, teamSOS: 1, predictedAvg: 75 },
+  { rank: 1, pos: "2RF", posRank: 1, team: "TITANS", name: "Tino Faasuamaleaui", price: 687600, scPos: "2RF", statPos: "LOCK", games2025: 19, avg2025: 70.3, nonInjuryAvg: 75.5, basePower: 62.1, avgMin: 58, ppm: 1.21, cv: 0.33, pctGames80: 32, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.6, lbPerGame: 0.5, finalsBye: null, posFastStart: 4, posSOS: 1, teamSOS: 1, predictedAvg: 79 },
   { rank: 2, pos: "2RF", posRank: 2, team: "KNIGHTS", name: "Dylan Lucas", price: 744700, scPos: "2RF", statPos: "LEFT 2RF", games2025: 13, avg2025: 76.2, nonInjuryAvg: 78.2, basePower: 62.5, avgMin: 78, ppm: 0.98, cv: 0.40, pctGames80: 38, tries: 5, triesPerGame: 0.4, tryInvolvements: 0.6, lbPerGame: 0.7, finalsBye: "R27", posFastStart: 7, posSOS: 1, teamSOS: 7, predictedAvg: 76 },
   { rank: 3, pos: "2RF", posRank: 3, team: "ROOSTERS", name: "Angus Crichton", price: 610200, scPos: "2RF", statPos: "LEFT 2RF", games2025: 20, avg2025: 62.4, nonInjuryAvg: null, basePower: 58.0, avgMin: 80, ppm: 0.78, cv: 0.21, pctGames80: 5, tries: 4, triesPerGame: 0.2, tryInvolvements: 0.4, lbPerGame: 0.3, finalsBye: null, posFastStart: 14, posSOS: 5, teamSOS: 8, predictedAvg: 69 },
   { rank: 4, pos: "2RF", posRank: 4, team: "BULLDOGS", name: "Jacob Preston", price: 684600, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 20, avg2025: 70.0, nonInjuryAvg: null, basePower: 56.4, avgMin: 79, ppm: 0.89, cv: 0.36, pctGames80: 20, tries: 11, triesPerGame: 0.6, tryInvolvements: 0.7, lbPerGame: 0.6, finalsBye: null, posFastStart: 5, posSOS: 2, teamSOS: 4, predictedAvg: 73 },
@@ -479,10 +530,10 @@ const PLAYERS = [
   // ============================================================
   { rank: 1, pos: "CTW", posRank: 1, team: "DOLPHINS", name: "Herbie Farnworth", price: 825600, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 19, avg2025: 84.4, nonInjuryAvg: 85.3, basePower: 59.3, gkPPG: null, cv: 0.26, pctGames80: 47, tries: 12, triesPerGame: 0.6, tryInvolvements: 1.3, lbPerGame: 1.3, finalsBye: null, posFastStart: 6, posSOS: 5, teamSOS: 16, predictedAvg: 81 },
   { rank: 2, pos: "CTW", posRank: 2, team: "BULLDOGS", name: "Jacob Kiraz", price: 746700, scPos: "CTW", statPos: "RIGHT WING", games2025: 17, avg2025: 76.4, nonInjuryAvg: null, basePower: 56.9, gkPPG: null, cv: 0.39, pctGames80: 35, tries: 9, triesPerGame: 0.5, tryInvolvements: 1.0, lbPerGame: 0.9, finalsBye: null, posFastStart: 2, posSOS: 8, teamSOS: 4, predictedAvg: 75 },
-  { rank: 3, pos: "CTW", posRank: 3, team: "BUNNIES", name: "Latrell Mitchell", price: 626800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 11, avg2025: 64.1, nonInjuryAvg: null, basePower: 28.4, gkPPG: 8.7, cv: 0.45, pctGames80: 36, tries: 2, triesPerGame: 0.2, tryInvolvements: 1.3, lbPerGame: 1.7, finalsBye: null, posFastStart: 17, posSOS: 7, teamSOS: 10, predictedAvg: 67 },
+  { rank: 3, pos: "CTW", posRank: 3, team: "BUNNIES", name: "Latrell Mitchell", price: 626800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 11, avg2025: 64.1, nonInjuryAvg: null, basePower: 28.4, gkPPG: 8.7, cv: 0.45, pctGames80: 36, tries: 2, triesPerGame: 0.2, tryInvolvements: 1.3, lbPerGame: 1.7, finalsBye: null, posFastStart: 17, posSOS: 7, teamSOS: 10, predictedAvg: 72 },
   { rank: 4, pos: "CTW", posRank: 4, team: "DRAGONS", name: "Valentine Holmes", price: 734200, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 14, avg2025: 75.1, nonInjuryAvg: null, basePower: 44.1, gkPPG: 10.7, cv: 0.24, pctGames80: 29, tries: 6, triesPerGame: 0.4, tryInvolvements: 1.4, lbPerGame: 1.1, finalsBye: null, posFastStart: 12, posSOS: 3, teamSOS: 13, predictedAvg: 76 },
   { rank: 5, pos: "CTW", posRank: 5, team: "ROOSTERS", name: "Mark Nawaqanitawase", price: 735200, scPos: "CTW", statPos: "RIGHT WING", games2025: 22, avg2025: 75.2, nonInjuryAvg: null, basePower: 43.0, gkPPG: null, cv: 0.46, pctGames80: 41, tries: 23, triesPerGame: 1.0, tryInvolvements: 1.6, lbPerGame: 1.4, finalsBye: null, posFastStart: 11, posSOS: 16, teamSOS: 8, predictedAvg: 76 },
-  { rank: 6, pos: "CTW", posRank: 6, team: "SHARKS", name: "Kayal Iro", price: 705900, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 11, avg2025: 72.2, nonInjuryAvg: 76.9, basePower: 46.4, gkPPG: null, cv: 0.30, pctGames80: 36, tries: 10, triesPerGame: 0.9, tryInvolvements: 1.3, lbPerGame: 1.6, finalsBye: null, posFastStart: 15, posSOS: 8, teamSOS: 5, predictedAvg: 71 },
+  { rank: 6, pos: "CTW", posRank: 6, team: "SHARKS", name: "Kayal Iro", price: 705900, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 11, avg2025: 72.2, nonInjuryAvg: 76.9, basePower: 46.4, gkPPG: null, cv: 0.30, pctGames80: 36, tries: 10, triesPerGame: 0.9, tryInvolvements: 1.3, lbPerGame: 1.6, finalsBye: null, posFastStart: 15, posSOS: 8, teamSOS: 5, predictedAvg: 67 },
   { rank: 7, pos: "CTW", posRank: 7, team: "PANTHERS", name: "Casey Mclean", price: 653800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 20, avg2025: 66.9, nonInjuryAvg: 73.0, basePower: 36.8, gkPPG: null, cv: 0.36, pctGames80: 30, tries: 15, triesPerGame: 0.8, tryInvolvements: 1.5, lbPerGame: 1.4, finalsBye: null, posFastStart: 8, posSOS: 15, teamSOS: 17, predictedAvg: 69 },
   { rank: 8, pos: "CTW", posRank: 8, team: "MANLY", name: "Lehi Hopoate", price: 611700, scPos: "CTW", statPos: "LEFT WING", games2025: 22, avg2025: 62.5, nonInjuryAvg: 67.7, basePower: 40.3, gkPPG: null, cv: 0.55, pctGames80: 32, tries: 8, triesPerGame: 0.4, tryInvolvements: 1.0, lbPerGame: 1.3, finalsBye: "R22", posFastStart: 14, posSOS: 10, teamSOS: 6, predictedAvg: 66 },
   { rank: 9, pos: "CTW", posRank: 9, team: "PANTHERS", name: "Brian Too", price: 598800, scPos: "CTW", statPos: "LEFT WING", games2025: 13, avg2025: 61.2, nonInjuryAvg: 63.2, basePower: 48.2, gkPPG: null, cv: 0.36, pctGames80: 23, tries: 5, triesPerGame: 0.4, tryInvolvements: 0.5, lbPerGame: 0.7, finalsBye: null, posFastStart: 7, posSOS: 13, teamSOS: 17, predictedAvg: 68 },
@@ -545,11 +596,11 @@ const PLAYERS = [
   // ============================================================
   { rank: 1, pos: "FLB", posRank: 1, team: "ROOSTERS", name: "James Tedesco", price: 869100, scPos: "FLB", statPos: "FULLBACK", games2025: 24, avg2025: 88.9, nonInjuryAvg: null, basePower: 46.4, gkPPG: null, cv: 0.40, pctGames80: 58, tries: 11, triesPerGame: 0.5, tryInvolvements: 2.2, totalLBs: 19, lbsPerGame: 0.8, lbPerGame: 2.2, finalsBye: null, posFastStart: 8, posSOS: 5, teamSOS: 8, predictedAvg: 85 },
   { rank: 2, pos: "FLB", posRank: 2, team: "BRONCOS", name: "Reece Walsh", price: 835600, scPos: "FLB", statPos: "FULLBACK", games2025: 18, avg2025: 85.4, nonInjuryAvg: null, basePower: 34.3, gkPPG: 5.4, cv: 0.51, pctGames80: 44, tries: 12, triesPerGame: 0.7, tryInvolvements: 2.1, totalLBs: 8, lbsPerGame: 0.4, lbPerGame: 2.3, finalsBye: null, posFastStart: 1, posSOS: 7, teamSOS: 12, predictedAvg: 80 },
-  { rank: 3, pos: "FLB", posRank: 3, team: "MANLY", name: "Tom Trbojevic", price: 692200, scPos: "FLB", statPos: "FULLBACK", games2025: 18, avg2025: 70.8, nonInjuryAvg: 73.5, basePower: 41.4, gkPPG: null, cv: 0.53, pctGames80: 22, tries: 6, triesPerGame: 0.3, tryInvolvements: 1.6, totalLBs: 8, lbsPerGame: 0.4, lbPerGame: 1.8, finalsBye: "R22", posFastStart: 7, posSOS: 1, teamSOS: 6, predictedAvg: 73 },
-  { rank: 4, pos: "FLB", posRank: 4, team: "TITANS", name: "Keano Kini", price: 495000, scPos: "FLB", statPos: "FULLBACK", games2025: 6, avg2025: 45.0, nonInjuryAvg: 71.7, basePower: 30.8, gkPPG: null, cv: 0.64, pctGames80: 17, tries: 0, triesPerGame: 0, tryInvolvements: 0.8, totalLBs: 3, lbsPerGame: 0.5, lbPerGame: 0.8, finalsBye: null, posFastStart: 9, posSOS: 6, teamSOS: 1, predictedAvg: 64 },
+  { rank: 3, pos: "FLB", posRank: 3, team: "MANLY", name: "Tom Trbojevic", price: 692200, scPos: "FLB", statPos: "FULLBACK", games2025: 18, avg2025: 70.8, nonInjuryAvg: 73.5, basePower: 41.4, gkPPG: null, cv: 0.53, pctGames80: 22, tries: 6, triesPerGame: 0.3, tryInvolvements: 1.6, totalLBs: 8, lbsPerGame: 0.4, lbPerGame: 1.8, finalsBye: "R22", posFastStart: 7, posSOS: 1, teamSOS: 6, predictedAvg: 77 },
+  { rank: 4, pos: "FLB", posRank: 4, team: "TITANS", name: "Keano Kini", price: 495000, scPos: "FLB", statPos: "FULLBACK", games2025: 6, avg2025: 45.0, nonInjuryAvg: 71.7, basePower: 30.8, gkPPG: null, cv: 0.64, pctGames80: 17, tries: 0, triesPerGame: 0, tryInvolvements: 0.8, totalLBs: 3, lbsPerGame: 0.5, lbPerGame: 0.8, finalsBye: null, posFastStart: 9, posSOS: 6, teamSOS: 1, predictedAvg: 76 },
   { rank: 5, pos: "FLB", posRank: 5, team: "COWBOYS", name: "Scott Drinkwater", price: 793400, scPos: "FLB", statPos: "FULLBACK", games2025: 24, avg2025: 81.1, nonInjuryAvg: null, basePower: 32.3, gkPPG: 10.0, cv: 0.43, pctGames80: 42, tries: 11, triesPerGame: 0.5, tryInvolvements: 2.0, totalLBs: 13, lbsPerGame: 0.5, lbPerGame: 1.9, finalsBye: "R25", posFastStart: 12, posSOS: 12, teamSOS: 9, predictedAvg: 76 },
   { rank: 6, pos: "FLB", posRank: 6, team: "PANTHERS", name: "Dylan Edwards", price: 777700, scPos: "FLB", statPos: "FULLBACK", games2025: 17, avg2025: 79.5, nonInjuryAvg: 85.0, basePower: 51.2, gkPPG: 1.5, cv: 0.44, pctGames80: 41, tries: 6, triesPerGame: 0.4, tryInvolvements: 1.1, totalLBs: 12, lbsPerGame: 0.7, lbPerGame: 1.4, finalsBye: null, posFastStart: 15, posSOS: 11, teamSOS: 17, predictedAvg: 75 },
-  { rank: 7, pos: "FLB", posRank: 7, team: "KNIGHTS", name: "Kalyn Ponga", price: 607800, scPos: "FLB", statPos: "FULLBACK", games2025: 13, avg2025: 62.2, nonInjuryAvg: 62.3, basePower: 33.4, gkPPG: 4.9, cv: 0.44, pctGames80: 23, tries: 1, triesPerGame: 0.1, tryInvolvements: 1.3, totalLBs: 5, lbsPerGame: 0.4, lbPerGame: 1.5, finalsBye: "R27", posFastStart: 17, posSOS: 13, teamSOS: 7, predictedAvg: 64 },
+  { rank: 7, pos: "FLB", posRank: 7, team: "KNIGHTS", name: "Kalyn Ponga", price: 607800, scPos: "FLB", statPos: "FULLBACK", games2025: 13, avg2025: 62.2, nonInjuryAvg: 62.3, basePower: 33.4, gkPPG: 4.9, cv: 0.44, pctGames80: 23, tries: 1, triesPerGame: 0.1, tryInvolvements: 1.3, totalLBs: 5, lbsPerGame: 0.4, lbPerGame: 1.5, finalsBye: "R27", posFastStart: 17, posSOS: 13, teamSOS: 7, predictedAvg: 68 },
   { rank: 8, pos: "FLB", posRank: 8, team: "EELS", name: "Isaiah Iongi", price: 640800, scPos: "FLB", statPos: "FULLBACK", games2025: 21, avg2025: 65.5, nonInjuryAvg: null, basePower: 43.4, gkPPG: null, cv: 0.36, pctGames80: 33, tries: 8, triesPerGame: 0.4, tryInvolvements: 1.2, totalLBs: 10, lbsPerGame: 0.5, lbPerGame: 1.1, finalsBye: null, posFastStart: 3, posSOS: 3, teamSOS: 2, predictedAvg: 66 },
   { rank: 9, pos: "FLB", posRank: 9, team: "DOLPHINS", name: "Hamiso Tabuai-Fidow", price: 702300, scPos: "FLB", statPos: "FULLBACK", games2025: 21, avg2025: 71.8, nonInjuryAvg: null, basePower: 38.7, gkPPG: null, cv: 0.41, pctGames80: 38, tries: 22, triesPerGame: 1.0, tryInvolvements: 1.5, totalLBs: 11, lbsPerGame: 0.5, lbPerGame: 1.3, finalsBye: null, posFastStart: 16, posSOS: 15, teamSOS: 16, predictedAvg: 71 },
   { rank: 10, pos: "FLB", posRank: 10, team: "DRAGONS", name: "Clint Gutherson", price: 648700, scPos: "FLB", statPos: "FULLBACK", games2025: 24, avg2025: 66.3, nonInjuryAvg: null, basePower: 36.3, gkPPG: null, cv: 0.49, pctGames80: 25, tries: 7, triesPerGame: 0.3, tryInvolvements: 1.4, totalLBs: 17, lbsPerGame: 0.7, lbPerGame: 2.0, finalsBye: null, posFastStart: 5, posSOS: 17, teamSOS: 13, predictedAvg: 65 },
@@ -679,9 +730,49 @@ const INJURY_FLAGS = {
   "Taniela Paseka": { note: "3 games in 2025. ACL recovery." },
   "Keano Kini": { note: "6 games in 2025 (knee). Unproven durability." }
 };
+// Source: NRL Casualty Ward + club reports, Feb 2026 (pre-R1)
+const CASUALTY_WARD = {
+  // Long-term (out 6+ weeks)
+  "Jai Arrow": { type: "injury", detail: "Shoulder — no return timeline", returnRound: null, severity: "long" },
+  "Cameron McInnes": { type: "injury", detail: "ACL", returnRound: 10, severity: "long" },
+  "Ronaldo Mulitalo": { type: "injury", detail: "ACL", returnRound: null, severity: "long" },
+  "Xavier Coates": { type: "injury", detail: "Achilles surgery", returnRound: 10, severity: "long" },
+  "Leo Thompson": { type: "injury", detail: "Grade 3 calf tear", returnRound: 10, severity: "long" },
+  "Luke Metcalf": { type: "injury", detail: "ACL", returnRound: 9, severity: "long" },
+  "Dylan Egan": { type: "injury", detail: "ACL", returnRound: 9, severity: "long" },
+  "Jack Bostock": { type: "injury", detail: "Knee", returnRound: 10, severity: "long" },
+  "Jeremy Marshall-King": { type: "injury", detail: "Knee", returnRound: 7, severity: "long" },
+  "Reece Robson": { type: "injury", detail: "Broken thumb", returnRound: 7, severity: "long" },
+  "Jeremiah Nanai": { type: "injury", detail: "Shoulder", returnRound: 6, severity: "long" },
+  "Aaron Schoupp": { type: "injury", detail: "ACL", returnRound: 8, severity: "long" },
+  "Latu Fainu": { type: "injury", detail: "Shoulder", returnRound: null, severity: "long" },
+  "Rocco Berry": { type: "injury", detail: "Shoulder", returnRound: 13, severity: "long" },
+  "Te Maire Martin": { type: "injury", detail: "Broken fibula", returnRound: 12, severity: "long" },
+  // Suspended
+  "Victor Radley": { type: "suspended", detail: "Club ban (cocaine)", returnRound: 7, severity: "suspended" },
+  "Trent Loiero": { type: "suspended", detail: "Suspension", returnRound: 3, severity: "suspended" },
+  "Jamie Humphreys": { type: "suspended", detail: "Suspension", returnRound: 3, severity: "suspended" },
+  "Zac Laybutt": { type: "suspended", detail: "Lifting tackle", returnRound: 3, severity: "suspended" },
+  // Short-term (R2-R5)
+  "Kai Pearce-Paul": { type: "injury", detail: "Calf", returnRound: 2, severity: "short" },
+  "Jacob Liddle": { type: "injury", detail: "Hamstring", returnRound: 2, severity: "short" },
+  "Brandon Smith": { type: "injury", detail: "Calf strain", returnRound: 3, severity: "short" },
+  "Brendan Piakura": { type: "injury", detail: "Knee", returnRound: 4, severity: "short" },
+  "Josh Addo-Carr": { type: "injury", detail: "Broken thumb", returnRound: 4, severity: "short" },
+  "Jack Howarth": { type: "injury", detail: "Groin", returnRound: 3, severity: "short" },
+  "Max Plath": { type: "injury", detail: "Knee", returnRound: 4, severity: "short" },
+  "Liam Henry": { type: "injury", detail: "Knee", returnRound: 4, severity: "short" },
+  // Monitoring / R1 cleared
+  "Kalyn Ponga": { type: "injury", detail: "Foot (cleared)", returnRound: 1, severity: "monitor" },
+  "Fletcher Sharpe": { type: "injury", detail: "Hamstring (cleared)", returnRound: 1, severity: "monitor" },
+  "Dane Gagai": { type: "injury", detail: "Hamstring (cleared)", returnRound: 1, severity: "monitor" },
+  "Valentine Holmes": { type: "injury", detail: "Shoulder (cleared)", returnRound: 1, severity: "monitor" },
+  "Matt Burton": { type: "injury", detail: "Hamstring (cleared)", returnRound: 1, severity: "monitor" },
+  "Haumole Olakauatu": { type: "injury", detail: "Shoulder", returnRound: 1, severity: "monitor" }
+};
 const STORAGE_KEY = 'nrl-sc-draft-2026';
 
-let config = { leagueSize:10, myPosition:10, gfSystem:'R27', totalRounds:27 };
+let config = { leagueSize:10, myPosition:10, gfSystem:'R27', totalRounds:27, modelWeights:{avg:0.20,vorp:0.25,need:0.20,tier:0.20,sos:0.10,consistency:0.05}, showChartTiers:false };
 let draftLog = []; // {pickNum, playerName, team (draft team#), type:'mine'|'taken', pos}
 let undoStack = [];
 let currentPick = 1;
@@ -781,8 +872,9 @@ function getPositionalNeed(pos) {
   return Math.max(remaining / needed, 0.3);
 }
 
-// Recommendation score: avg 20%, VORP 25%, need 20%, tier 20%, SOS 10%, consistency 5%
-function getCompositeScore(player) {
+// Composite score — reads weights from config.modelWeights (dynamic via Model tab)
+function getCompositeScore(player, weights) {
+  const w = weights || config.modelWeights;
   const maxAvg = Math.max(...primaryPlayers.map(p => p.predictedAvg || 0));
   const avgScore = ((player.predictedAvg || 0) / maxAvg) * 100;
 
@@ -808,14 +900,22 @@ function getCompositeScore(player) {
   const clampedCV = Math.max(minCV, Math.min(maxCV, player.cv || 0.40));
   const consistencyScore = ((maxCV - clampedCV) / (maxCV - minCV)) * 100;
 
-  return (avgScore * 0.20) + (vorpScore * 0.25) + (needScore * 0.20) +
-         (tierScore * 0.20) + (sosScore * 0.10) + (consistencyScore * 0.05);
+  return (avgScore * w.avg) + (vorpScore * w.vorp) + (needScore * w.need) +
+         (tierScore * w.tier) + (sosScore * w.sos) + (consistencyScore * w.consistency);
 }
+
+const MODEL_PRESETS = {
+  'rubdown': { label: 'Rub Down R27', weights: {avg:0.20,vorp:0.25,need:0.20,tier:0.20,sos:0.10,consistency:0.05} },
+  'balanced': { label: 'Balanced', weights: {avg:0.167,vorp:0.167,need:0.167,tier:0.167,sos:0.167,consistency:0.167} },
+  'value': { label: 'Value Hunter', weights: {avg:0.30,vorp:0.40,need:0.05,tier:0.10,sos:0.10,consistency:0.05} },
+  'upside': { label: 'Upside', weights: {avg:0.35,vorp:0.10,need:0.05,tier:0.30,sos:0.05,consistency:0.15} },
+  'positional': { label: 'Positional', weights: {avg:0.10,vorp:0.30,need:0.40,tier:0.10,sos:0.05,consistency:0.05} }
+};
 
 // Save / Load
 function saveState() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ config, draftLog, currentPick }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ config, draftLog, currentPick, modelWeights: config.modelWeights, showChartTiers: config.showChartTiers }));
   } catch(e) {}
 }
 function debounceSave() {
@@ -944,8 +1044,14 @@ function renderMyTeam() {
         const injBadge = document.createElement('span');
         injBadge.textContent = '\u2795';
         injBadge.style.cssText = 'font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff;cursor:help;';
-        injBadge.title = teamInj.note;
+        injBadge.title = 'INJURY PRONE: ' + teamInj.note;
         nameEl.appendChild(injBadge);
+      }
+      const teamCW = CASUALTY_WARD[d.playerName];
+      if (teamCW) {
+        const cwSpan = document.createElement('span');
+        cwSpan.innerHTML = getCWBadge(d.playerName);
+        if (cwSpan.firstChild) nameEl.appendChild(cwSpan.firstChild);
       }
       avgEl.textContent = pl ? pl.predictedAvg : '';
       slot.classList.add('filled');
@@ -1011,10 +1117,11 @@ function renderBestAvailable() {
       return '<span title="' + flag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + colors[flag.risk] + ';color:#fff">' + flag.risk + '</span>';
     })() : '';
     const injFlag = INJURY_FLAGS[p.name];
-    const injBadge = injFlag ? '<span title="' + injFlag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff">\u2795</span>' : '';
+    const injBadge = injFlag ? '<span title="INJURY PRONE: ' + injFlag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff">\u2795</span>' : '';
+    const baCWBadge = getCWBadge(p.name);
     row.innerHTML = '<span class="ba-rank">' + (i+1) + '</span>' +
       '<span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '">' + p.pos + '</span>' +
-      '<span class="ba-name">' + p.name + riskBadge + injBadge + '</span>' +
+      '<span class="ba-name">' + p.name + riskBadge + injBadge + baCWBadge + '</span>' +
       '<span class="ba-avg">' + (p.predictedAvg||'-') + '</span>';
     row.onclick = (e) => showContextMenu(e, p.name);
     container.appendChild(row);
@@ -1078,8 +1185,9 @@ function renderBoard() {
         return '<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + colors[boardFlag.risk] + ';color:#fff" title="' + boardFlag.note.replace(/"/g,'&quot;') + '">' + boardFlag.risk + '</span>';
       })() : '';
       const boardInjuryFlag = INJURY_FLAGS[p.name];
-      const boardInjuryBadge = boardInjuryFlag ? '<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff" title="' + boardInjuryFlag.note.replace(/"/g,'&quot;') + '">\u2795</span>' : '';
-      html += '<span>' + (p.posRank||'') + '. ' + p.name + boardRiskBadge + boardInjuryBadge + '</span>';
+      const boardInjuryBadge = boardInjuryFlag ? '<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff" title="INJURY PRONE: ' + boardInjuryFlag.note.replace(/"/g,'&quot;') + '">\u2795</span>' : '';
+      const boardCWBadge = getCWBadge(p.name);
+      html += '<span>' + (p.posRank||'') + '. ' + p.name + boardRiskBadge + boardInjuryBadge + boardCWBadge + '</span>';
       html += '<span>' + (p.predictedAvg||'-') + '</span>';
       html += '</div>';
     });
@@ -1206,6 +1314,7 @@ function renderTab() {
     case 'tracker': renderTracker(); break;
     case 'sos': renderSOS(); break;
     case 'scarcity': renderScarcity(); break;
+    case 'model': renderModel(); break;
   }
 }
 
@@ -1257,7 +1366,211 @@ function renderPrompt() {
     .filter(Boolean);
   if (injuryAlerts.length) text += '\nInjury alerts: ' + injuryAlerts.join(', ') + '.';
 
+  const casualtyAlerts = myTeam
+    .map(d => { const cw = CASUALTY_WARD[d.playerName]; return cw ? d.playerName + ' (' + (cw.type === 'suspended' ? 'SUS' : 'OUT') + ' — ' + cw.detail + (cw.returnRound ? ', return R' + cw.returnRound : ', TBC') + ')' : null; })
+    .filter(Boolean);
+  if (casualtyAlerts.length) text += '\nCasualty ward: ' + casualtyAlerts.join(', ') + '.';
+
   document.getElementById('prompt-text').textContent = text;
+}
+
+// Casualty Ward badge HTML helper
+function getCWBadge(name) {
+  const cw = CASUALTY_WARD[name];
+  if (!cw) return '';
+  let label, cls;
+  if (cw.type === 'suspended') {
+    label = 'SUS' + (cw.returnRound ? ' R' + cw.returnRound : '');
+    cls = 'cw-suspended';
+  } else if (cw.severity === 'long') {
+    label = 'OUT' + (cw.returnRound ? ' R' + cw.returnRound : ' TBC');
+    cls = 'cw-long';
+  } else if (cw.severity === 'short') {
+    label = 'OUT R' + cw.returnRound;
+    cls = 'cw-short';
+  } else if (cw.severity === 'monitor') {
+    label = 'MON';
+    cls = 'cw-monitor';
+  } else {
+    label = 'OUT';
+    cls = 'cw-long';
+  }
+  const prefix = cw.type === 'suspended' ? 'SUSPENDED' : (cw.severity === 'monitor' ? 'MONITOR' : 'INJURED');
+  const tooltip = prefix + ': ' + cw.detail + (cw.returnRound ? ' (return R' + cw.returnRound + ')' : ' (TBC)');
+  return '<span class="cw-badge ' + cls + '" title="' + tooltip.replace(/"/g,'&quot;') + '">' + label + '</span>';
+}
+
+function renderInjuryPanel() {
+  const container = document.getElementById('injury-panel');
+  if (!container) return;
+  container.innerHTML = '';
+  const severityOrder = { long: 0, suspended: 1, short: 2, monitor: 3 };
+  const entries = Object.entries(CASUALTY_WARD)
+    .filter(([name]) => !isDrafted(name) && primaryPlayers.some(p => p.name === name))
+    .map(([name, data]) => {
+      const pl = primaryPlayers.find(p => p.name === name);
+      return { name, ...data, pos: pl ? pl.pos : '?' };
+    })
+    .sort((a, b) => (severityOrder[a.severity] || 9) - (severityOrder[b.severity] || 9) || (a.returnRound || 99) - (b.returnRound || 99));
+
+  entries.forEach(e => {
+    const item = document.createElement('div');
+    item.className = 'injury-panel-item';
+    const retText = e.returnRound ? 'R' + e.returnRound : 'TBC';
+    const retColor = e.severity === 'long' ? 'var(--FRF)' : e.severity === 'suspended' ? 'var(--FLB)' : e.severity === 'short' ? '#da6d30' : 'var(--muted)';
+    item.innerHTML = '<span class="pos-badge ' + posClass(e.pos) + '" data-pos="' + e.pos + '" style="font-size:9px;padding:0 4px">' + e.pos + '</span>' +
+      '<span class="ip-name">' + e.name + '</span>' +
+      '<span class="ip-detail" title="' + e.detail + '">' + e.detail + '</span>' +
+      '<span class="ip-return" style="color:' + retColor + '">' + retText + '</span>';
+    container.appendChild(item);
+  });
+}
+
+function renderModel() {
+  const content = document.getElementById('tab-content');
+  const w = config.modelWeights;
+  const sliders = [
+    { key: 'avg', label: 'Predicted Avg' },
+    { key: 'vorp', label: 'VORP' },
+    { key: 'need', label: 'Positional Need' },
+    { key: 'tier', label: 'Tier Urgency' },
+    { key: 'sos', label: 'Schedule (SOS)' },
+    { key: 'consistency', label: 'Consistency' }
+  ];
+
+  const total = Object.values(w).reduce((s, v) => s + v, 0);
+  const totalPct = Math.round(total * 100);
+  const totalOk = totalPct >= 98 && totalPct <= 102;
+
+  let html = '<div class="model-container">';
+  // Left: Controls
+  html += '<div class="model-controls">';
+  html += '<h3>Weight Sliders</h3>';
+  sliders.forEach(s => {
+    const val = Math.round((w[s.key] || 0) * 100);
+    html += '<div class="slider-row">' +
+      '<label>' + s.label + '</label>' +
+      '<input type="range" min="0" max="50" value="' + val + '" data-weight="' + s.key + '" class="model-slider">' +
+      '<span class="slider-val" id="sv-' + s.key + '">' + val + '%</span>' +
+      '</div>';
+  });
+  html += '<div class="weight-total ' + (totalOk ? 'ok' : 'warn') + '">Total: ' + totalPct + '% ' + (totalOk ? '&#10003;' : '(auto-normalizes)') + '</div>';
+  html += '<button class="preset-btn" id="model-reset" style="margin-bottom:12px">Reset to Default</button>';
+
+  // Presets
+  html += '<h3 style="margin-bottom:8px">Presets</h3>';
+  html += '<div class="preset-btns">';
+  Object.entries(MODEL_PRESETS).forEach(([key, p]) => {
+    const isActive = JSON.stringify(w) === JSON.stringify(p.weights);
+    html += '<button class="preset-btn' + (isActive ? ' active' : '') + '" data-preset="' + key + '">' + p.label + '</button>';
+  });
+  html += '</div>';
+  html += '</div>';
+
+  // Right: Comparison
+  html += '<div class="model-comparison">';
+  html += '<h3>Rankings Comparison (Top 30)</h3>';
+
+  // Get R27 baseline rankings (using default weights)
+  const defaultWeights = MODEL_PRESETS.rubdown.weights;
+  const baselineRanked = primaryPlayers
+    .filter(p => !isDrafted(p.name))
+    .map(p => ({ name: p.name, pos: p.pos, score: getCompositeScore(p, defaultWeights) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 30);
+
+  // Get current model rankings
+  const modelRanked = primaryPlayers
+    .filter(p => !isDrafted(p.name))
+    .map(p => ({ name: p.name, pos: p.pos, score: getCompositeScore(p) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 30);
+
+  // Build lookup for baseline rank
+  const baseRankMap = {};
+  baselineRanked.forEach((p, i) => baseRankMap[p.name] = i + 1);
+  const modelRankMap = {};
+  modelRanked.forEach((p, i) => modelRankMap[p.name] = i + 1);
+
+  html += '<div class="comp-columns">';
+  // Your Model column
+  html += '<div class="comp-col"><h4>Your Model</h4>';
+  modelRanked.forEach((p, i) => {
+    const baseR = baseRankMap[p.name] || 31;
+    const delta = baseR - (i + 1);
+    const deltaStr = delta > 0 ? '+' + delta : delta < 0 ? '' + delta : '-';
+    const deltaCls = delta > 0 ? 'up' : delta < 0 ? 'down' : 'same';
+    html += '<div class="comp-row">' +
+      '<span class="comp-rank">' + (i + 1) + '</span>' +
+      '<span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '" style="font-size:9px;padding:0 4px">' + p.pos + '</span>' +
+      '<span class="comp-name">' + p.name + '</span>' +
+      '<span class="comp-score">' + p.score.toFixed(0) + '</span>' +
+      '<span class="comp-delta ' + deltaCls + '">' + (delta !== 0 ? (delta > 0 ? '&#9650;' : '&#9660;') + Math.abs(delta) : '=') + '</span>' +
+      '</div>';
+  });
+  html += '</div>';
+
+  // Rub Down R27 column
+  html += '<div class="comp-col"><h4>Rub Down R27</h4>';
+  baselineRanked.forEach((p, i) => {
+    html += '<div class="comp-row">' +
+      '<span class="comp-rank">' + (i + 1) + '</span>' +
+      '<span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '" style="font-size:9px;padding:0 4px">' + p.pos + '</span>' +
+      '<span class="comp-name">' + p.name + '</span>' +
+      '<span class="comp-score">' + p.score.toFixed(0) + '</span>' +
+      '<span class="comp-delta same">=</span>' +
+      '</div>';
+  });
+  html += '</div></div></div></div>';
+
+  content.innerHTML = html;
+
+  // Wire up sliders
+  content.querySelectorAll('.model-slider').forEach(slider => {
+    slider.addEventListener('input', () => {
+      const key = slider.dataset.weight;
+      config.modelWeights[key] = parseInt(slider.value) / 100;
+      document.getElementById('sv-' + key).textContent = slider.value + '%';
+      // Normalize
+      const total = Object.values(config.modelWeights).reduce((s, v) => s + v, 0);
+      if (total > 0) {
+        // Don't auto-normalize during drag, just show total
+        const totalPct = Math.round(total * 100);
+        const totalEl = content.querySelector('.weight-total');
+        if (totalEl) {
+          totalEl.className = 'weight-total ' + (totalPct >= 98 && totalPct <= 102 ? 'ok' : 'warn');
+          totalEl.innerHTML = 'Total: ' + totalPct + '% ' + (totalPct >= 98 && totalPct <= 102 ? '&#10003;' : '(adjust to 100%)');
+        }
+      }
+      debounceSave();
+      renderBestAvailable();
+      renderScarcityAlerts();
+      // Re-render comparison live
+      renderModel();
+    });
+  });
+
+  // Wire up presets
+  content.querySelectorAll('.preset-btn[data-preset]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const preset = MODEL_PRESETS[btn.dataset.preset];
+      if (preset) {
+        config.modelWeights = { ...preset.weights };
+        debounceSave();
+        renderAll();
+      }
+    });
+  });
+
+  // Wire up reset
+  const resetBtn = content.querySelector('#model-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      config.modelWeights = { ...MODEL_PRESETS.rubdown.weights };
+      debounceSave();
+      renderAll();
+    });
+  }
 }
 
 function renderAll() {
@@ -1266,6 +1579,7 @@ function renderAll() {
   renderMyTeam();
   renderBestAvailable();
   renderScarcityAlerts();
+  renderInjuryPanel();
   renderTab();
   renderPrompt();
 }
@@ -1350,6 +1664,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === '2') { switchTab('tracker'); return; }
   if (e.key === '3') { switchTab('sos'); return; }
   if (e.key === '4') { switchTab('scarcity'); return; }
+  if (e.key === '5') { switchTab('model'); return; }
   if (e.key === 'u' || (e.ctrlKey && e.key === 'z')) { e.preventDefault(); undoLast(); return; }
   if (e.key === 'Escape') { hideContextMenu(); searchInput.value=''; searchResults.style.display='none'; return; }
   if (e.key === '[') { leftCollapsed = !leftCollapsed; document.getElementById('left-rail').classList.toggle('collapsed', leftCollapsed); return; }
@@ -1402,6 +1717,9 @@ function initSetupWizard() {
     resumeBtn.classList.remove('hidden');
     resumeBtn.onclick = () => {
       config = saved.config;
+      if (saved.modelWeights) config.modelWeights = saved.modelWeights;
+      if (!config.modelWeights) config.modelWeights = {avg:0.20,vorp:0.25,need:0.20,tier:0.20,sos:0.10,consistency:0.05};
+      if (saved.showChartTiers !== undefined) config.showChartTiers = saved.showChartTiers;
       draftLog = saved.draftLog;
       currentPick = saved.currentPick;
       document.getElementById('setup-modal').classList.add('hidden');
@@ -1435,6 +1753,19 @@ function initSetupWizard() {
     renderAll();
   };
 }
+
+// Injury panel toggle
+document.getElementById('injury-panel-toggle').onclick = () => {
+  const panel = document.getElementById('injury-panel');
+  const arrow = document.getElementById('injury-panel-arrow');
+  if (panel.style.display === 'none') {
+    panel.style.display = '';
+    arrow.innerHTML = '&#9660;';
+  } else {
+    panel.style.display = 'none';
+    arrow.innerHTML = '&#9654;';
+  }
+};
 
 // Settings button re-opens wizard
 document.getElementById('settings-btn').onclick = () => {
