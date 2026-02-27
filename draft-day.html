@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NRL SC 2026 Draft Day</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0d1117;--panel:#161b22;--border:#21262d;--hover:#30363d;--text:#e6edf3;--muted:#8b949e;
+--FLB:#e3b341;--CTW:#3fb950;--five-eight:#8b949e;--HFB:#a371f7;--two-rf:#f778ba;--FRF:#f85149;--HOK:#d29922;
+--accent:#58a6ff;
+}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:13px;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:var(--text)}
+input,select{font-family:inherit;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:13px}
+input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(88,166,255,.2)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--hover)}
+
+/* COMMAND BAR */
+#command-bar{position:fixed;top:0;left:0;right:0;height:44px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:12px;z-index:100}
+#command-bar .search-wrap{position:relative;flex:0 0 220px}
+#command-bar .search-wrap input{width:100%;padding-left:28px;height:28px}
+#command-bar .search-wrap .slash-hint{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:var(--border);border-radius:3px;padding:0 5px;font-size:11px;color:var(--muted)}
+#command-bar .search-wrap svg{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.cmd-pill{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:2px 10px;font-size:12px;white-space:nowrap}
+.cmd-pill.active{border-color:var(--accent);color:var(--accent)}
+.cmd-pill .label{color:var(--muted);margin-right:4px}
+#settings-btn{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;margin-left:auto}
+#settings-btn:hover{background:var(--hover)}
+
+/* STATUS BAR */
+#status-bar{position:fixed;bottom:0;left:0;right:0;height:32px;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 12px;gap:16px;font-size:11px;color:var(--muted);z-index:100}
+#status-bar .stat{display:flex;align-items:center;gap:4px}
+
+/* LAYOUT */
+#app{display:flex;position:fixed;top:44px;bottom:32px;left:0;right:0}
+#left-rail{width:260px;min-width:0;background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;transition:width .2s;flex-shrink:0}
+#left-rail.collapsed{width:0;overflow:hidden;border:none}
+#main-stage{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#right-rail{width:300px;min-width:0;background:var(--panel);border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;flex-shrink:0}
+#right-rail.collapsed{width:0;overflow:hidden;border:none}
+
+/* TAB BAR */
+#tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0}
+.tab-btn{padding:8px 16px;font-size:12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;text-transform:uppercase;letter-spacing:.5px}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn .key-hint{font-size:10px;background:var(--border);border-radius:3px;padding:0 4px;margin-left:4px}
+#tab-content{flex:1;overflow:auto;padding:12px}
+
+/* POSITION BADGE */
+.pos-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;line-height:1.4}
+.pos-badge.FLB{background:rgba(227,179,65,.15);color:var(--FLB)}
+.pos-badge.CTW{background:rgba(63,185,80,.15);color:var(--CTW)}
+.pos-badge.five-eight,.pos-badge[data-pos="5-8"]{background:rgba(139,148,158,.15);color:var(--five-eight)}
+.pos-badge.HFB{background:rgba(163,113,247,.15);color:var(--HFB)}
+.pos-badge.two-rf,.pos-badge[data-pos="2RF"]{background:rgba(247,120,186,.15);color:var(--two-rf)}
+.pos-badge.FRF{background:rgba(248,81,73,.15);color:var(--FRF)}
+.pos-badge.HOK{background:rgba(210,153,34,.15);color:var(--HOK)}
+
+/* LEFT RAIL - MY TEAM */
+.rail-header{padding:10px 12px;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.team-slot{display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);gap:8px;min-height:32px}
+.team-slot:hover{background:var(--hover)}
+.team-slot .slot-pos{width:36px;font-size:11px;font-weight:600;flex-shrink:0}
+.team-slot .slot-name{flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team-slot .slot-avg{font-size:11px;color:var(--muted);flex-shrink:0}
+.team-slot.empty .slot-name{color:var(--border);font-style:italic}
+.team-slot.filled{cursor:pointer}
+.comp-bar{display:flex;height:6px;margin:8px 12px;border-radius:3px;overflow:hidden;background:var(--bg)}
+.comp-bar .seg{height:100%;transition:width .3s}
+
+/* RIGHT RAIL */
+.ba-row{display:flex;align-items:center;padding:5px 12px;gap:6px;cursor:pointer;border-bottom:1px solid rgba(33,38,45,.5)}
+.ba-row:hover{background:var(--hover)}
+.ba-row .ba-rank{width:22px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0}
+.ba-row .ba-name{flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ba-row .ba-avg{font-size:12px;font-weight:600;flex-shrink:0}
+.ba-row.selected{background:var(--hover);outline:1px solid var(--accent)}
+.scarcity-alert{padding:6px 12px;font-size:11px;border-left:3px solid var(--FRF);margin:4px 8px;background:rgba(248,81,73,.08);border-radius:0 4px 4px 0}
+.scarcity-alert.warning{border-color:var(--FLB);background:rgba(227,179,65,.08)}
+
+/* BOARD TAB */
+.board-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.board-col{background:var(--panel);border-radius:8px;border:1px solid var(--border);overflow:hidden}
+.board-col-header{padding:8px;text-align:center;font-weight:700;font-size:12px;border-bottom:1px solid var(--border)}
+.board-player{padding:4px 8px;font-size:11px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(33,38,45,.3)}
+.board-player:hover{background:var(--hover)}
+.board-player.drafted{opacity:.35;text-decoration:line-through}
+.board-player.mine{opacity:.6;background:rgba(88,166,255,.1)}
+.tier-break{border-top:2px dashed var(--border);margin-top:2px}
+
+/* TRACKER TAB */
+.tracker-table{width:100%;border-collapse:collapse;font-size:12px}
+.tracker-table th{position:sticky;top:0;background:var(--panel);padding:6px 8px;text-align:left;border-bottom:1px solid var(--border);font-weight:600;color:var(--muted)}
+.tracker-table td{padding:5px 8px;border-bottom:1px solid var(--border)}
+.tracker-table tr:hover td{background:var(--hover)}
+.tracker-table tr.my-pick td{background:rgba(88,166,255,.08)}
+.grid-view{display:grid;gap:1px;background:var(--border);border-radius:6px;overflow:hidden;margin-top:12px}
+.grid-cell{background:var(--panel);padding:3px 4px;font-size:10px;text-align:center;min-height:24px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grid-cell.header{font-weight:700;background:var(--bg);color:var(--muted)}
+.grid-cell.my-pick{background:rgba(88,166,255,.15)}
+.grid-cell.filled{background:rgba(63,185,80,.08)}
+
+/* SOS TAB */
+.sos-grid{display:grid;gap:1px;background:var(--border);border-radius:6px;overflow:hidden;font-size:11px}
+.sos-cell{padding:4px;text-align:center;font-weight:600;min-width:28px}
+.sos-cell.header{background:var(--bg);color:var(--muted);font-size:10px}
+.sos-cell.diff-0{background:#000;color:#444}
+.sos-cell.diff-1{background:#0d4429;color:#3fb950}
+.sos-cell.diff-2{background:#1a4d2e;color:#56d364}
+.sos-cell.diff-3{background:#4d3800;color:#e3b341}
+.sos-cell.diff-4{background:#6e3200;color:#f0883e}
+.sos-cell.diff-5{background:#6e1b1b;color:#f85149}
+
+/* SCARCITY TAB */
+.depth-bar-wrap{margin:8px 0}
+.depth-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.depth-bar{height:16px;background:var(--bg);border-radius:4px;overflow:hidden;position:relative}
+.depth-bar-fill{height:100%;border-radius:4px;transition:width .3s}
+.vorp-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.vorp-table th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--muted)}
+.vorp-table td{padding:5px 8px;border-bottom:1px solid var(--border)}
+.rec-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin:8px 0}
+.rec-card .rec-name{font-size:16px;font-weight:700}
+.rec-card .rec-details{font-size:12px;color:var(--muted);margin-top:4px}
+.rec-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;font-size:11px}
+.rec-scores .sc-item{background:var(--panel);padding:6px;border-radius:4px;text-align:center}
+.rec-scores .sc-item .sc-val{font-size:16px;font-weight:700;color:var(--accent)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:420px;max-width:90vw}
+.modal h2{margin-bottom:16px;font-size:18px}
+.modal .field{margin-bottom:12px}
+.modal .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.modal .field .radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.modal .field .radio-group label{display:flex;align-items:center;gap:4px;cursor:pointer;padding:4px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;color:var(--text)}
+.modal .field .radio-group label:has(input:checked){border-color:var(--accent);background:rgba(88,166,255,.1)}
+.modal .field .radio-group input{display:none}
+.modal .btn-row{display:flex;gap:8px;margin-top:16px}
+.modal .btn{padding:8px 16px;border-radius:6px;font-weight:600;font-size:13px}
+.modal .btn-primary{background:var(--accent);color:#000}
+.modal .btn-primary:hover{opacity:.9}
+.modal .btn-secondary{background:var(--hover);color:var(--text);border:1px solid var(--border)}
+.modal .btn-secondary:hover{background:var(--border)}
+
+/* CONTEXT MENU */
+.ctx-menu{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:4px;z-index:150;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.ctx-menu.hidden{display:none}
+.ctx-item{padding:6px 12px;border-radius:4px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.ctx-item:hover{background:var(--hover)}
+.ctx-item .key{margin-left:auto;color:var(--muted);font-size:11px}
+
+/* PROMPT OUTPUT */
+#prompt-panel{border-top:1px solid var(--border);background:var(--panel)}
+#prompt-toggle{padding:6px 12px;font-size:11px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:6px}
+#prompt-toggle:hover{color:var(--text)}
+#prompt-content{padding:0 12px 12px;font-size:12px;line-height:1.6;display:none;position:relative}
+#prompt-content.open{display:block}
+#prompt-text{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:12px;white-space:pre-wrap;max-height:120px;overflow-y:auto}
+#copy-prompt{position:absolute;top:4px;right:16px;background:var(--hover);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:11px}
+#copy-prompt:hover{background:var(--border)}
+
+/* SEARCH RESULTS */
+#search-results{position:absolute;top:100%;left:0;right:0;background:var(--panel);border:1px solid var(--border);border-radius:0 0 8px 8px;max-height:300px;overflow-y:auto;z-index:110;display:none}
+#search-results .sr-item{padding:6px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px}
+#search-results .sr-item:hover,#search-results .sr-item.highlighted{background:var(--hover)}
+
+/* Animations */
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.fade-in{animation:fadeIn .15s ease}
+.risk-badge { font-size:9px; padding:1px 4px; border-radius:3px; margin-left:4px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; }
+.risk-HIGH { background:#f85149; }
+.risk-MED { background:#d29922; }
+.risk-LOW { background:#484f58; }
+.risk-INJ { background:#da3633; color:#fff; }
+.inj-badge { font-size:9px; padding:1px 4px; border-radius:3px; margin-left:3px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; background:#da3633; }
+</style>
+</head>
+<body>
+
+<!-- COMMAND BAR -->
+<div id="command-bar">
+  <div class="search-wrap">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M11.5 7a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm-.82 4.74a6 6 0 111.06-1.06l3.04 3.04a.75.75 0 11-1.06 1.06l-3.04-3.04z"/></svg>
+    <input type="text" id="search-input" placeholder="Search players..." autocomplete="off">
+    <span class="slash-hint">/</span>
+    <div id="search-results"></div>
+  </div>
+  <span class="cmd-pill" id="pick-pill"><span class="label">Pick</span><span id="pick-num">-</span></span>
+  <span class="cmd-pill" id="round-pill"><span class="label">Round</span><span id="round-num">-</span></span>
+  <span class="cmd-pill active" id="next-pill"><span class="label">Your next</span><span id="next-pick">-</span></span>
+  <span class="cmd-pill" id="undo-pill" style="cursor:pointer" title="Undo (Ctrl+Z)">Undo</span>
+  <button id="settings-btn" title="Settings">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M7.429 1.525a6.593 6.593 0 011.142 0c.036.003.108.036.137.146l.289 1.105c.147.56.55.967.997 1.189.174.086.341.183.501.29.417.278.97.423 1.53.27l1.102-.303c.11-.03.175.016.195.046.219.31.41.641.573.989.014.031.022.11-.059.19l-.815.806c-.411.406-.562.957-.53 1.456a4.588 4.588 0 010 .582c-.032.499.119 1.05.53 1.456l.815.806c.08.08.073.159.059.19a6.494 6.494 0 01-.573.99c-.02.029-.086.074-.195.045l-1.103-.303c-.559-.153-1.112-.008-1.529.27-.16.107-.327.204-.5.29-.449.222-.851.628-.998 1.189l-.289 1.105c-.029.11-.1.143-.137.146a6.613 6.613 0 01-1.142 0c-.036-.003-.108-.037-.137-.146l-.289-1.105c-.147-.56-.55-.967-.997-1.189a4.502 4.502 0 01-.501-.29c-.417-.278-.97-.423-1.53-.27l-1.102.303c-.11.03-.175-.016-.195-.046a6.492 6.492 0 01-.573-.989c-.014-.031-.022-.11.059-.19l.815-.806c.411-.406.562-.957.53-1.456a4.587 4.587 0 010-.582c.032-.499-.119-1.05-.53-1.456l-.815-.806c-.08-.08-.073-.159-.059-.19a6.44 6.44 0 01.573-.99c.02-.029.086-.074.195-.045l1.103.303c.559.153 1.112.008 1.529-.27.16-.107.327-.204.5-.29.449-.222.851-.628.998-1.189l.289-1.105c.029-.11.1-.143.137-.146zM8 0c-.236 0-.47.01-.701.03-.743.065-1.29.615-1.458 1.261l-.29 1.106c-.017.066-.078.158-.211.224a5.994 5.994 0 00-.668.386c-.123.082-.233.117-.3.1L3.27 2.801c-.646-.177-1.392.02-1.82.63a7.977 7.977 0 00-.704 1.217c-.315.675-.111 1.422.363 1.891l.815.806c.05.048.098.147.088.294a6.084 6.084 0 000 .772c.01.147-.038.246-.088.294l-.815.806c-.474.469-.678 1.216-.363 1.891.2.428.436.835.704 1.218.428.609 1.174.806 1.82.63l1.103-.303c.066-.018.177.018.3.1.216.144.44.272.668.386.133.066.194.158.212.224l.289 1.106c.169.646.715 1.196 1.458 1.26a8.094 8.094 0 001.402 0c.743-.064 1.29-.614 1.458-1.26l.29-1.106c.017-.066.078-.158.211-.224a5.98 5.98 0 00.668-.386c.123-.082.233-.117.3-.1l1.103.303c.646.177 1.392-.02 1.82-.63.268-.383.504-.79.704-1.218.315-.675.111-1.422-.363-1.891l-.815-.806c-.05-.048-.098-.147-.088-.294a6.1 6.1 0 000-.772c-.01-.147.039-.246.088-.294l.815-.806c.474-.469.679-1.216.363-1.891a7.992 7.992 0 00-.704-1.218c-.428-.609-1.174-.806-1.82-.63l-1.103.303c-.066.018-.177-.018-.3-.1a5.99 5.99 0 00-.668-.386c-.133-.066-.194-.158-.212-.224L10.16 1.29C9.99.645 9.444.095 8.701.031A8.094 8.094 0 008 0zm0 11a3 3 0 100-6 3 3 0 000 6z"/></svg>
+  </button>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- LEFT RAIL -->
+  <div id="left-rail">
+    <div class="rail-header">My Team <span id="team-count">0/16</span></div>
+    <div id="team-slots"></div>
+    <div class="comp-bar" id="comp-bar"></div>
+    <div style="padding:8px 12px;font-size:11px;color:var(--muted)" id="team-avg">Avg: -</div>
+  </div>
+
+  <!-- MAIN STAGE -->
+  <div id="main-stage">
+    <div id="tab-bar">
+      <button class="tab-btn active" data-tab="board">Board <span class="key-hint">1</span></button>
+      <button class="tab-btn" data-tab="tracker">Tracker <span class="key-hint">2</span></button>
+      <button class="tab-btn" data-tab="sos">SOS <span class="key-hint">3</span></button>
+      <button class="tab-btn" data-tab="scarcity">Scarcity <span class="key-hint">4</span></button>
+    </div>
+    <div id="tab-content"></div>
+    <div id="prompt-panel">
+      <div id="prompt-toggle">&#9660; Draft Summary</div>
+      <div id="prompt-content">
+        <button id="copy-prompt">Copy</button>
+        <div id="prompt-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT RAIL -->
+  <div id="right-rail">
+    <div class="rail-header">Best Available</div>
+    <div id="best-available"></div>
+    <div class="rail-header" style="margin-top:8px">Scarcity Alerts</div>
+    <div id="scarcity-alerts"></div>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div id="status-bar">
+  <div class="stat" id="sb-format">Linear Draft</div>
+  <div class="stat" id="sb-league">-</div>
+  <div class="stat" id="sb-gf">-</div>
+  <div class="stat" id="sb-remaining">-</div>
+  <div class="stat" style="margin-left:auto">Keys: / search | 1-4 tabs | d taken | m draft | u undo | [ ] rails</div>
+</div>
+
+<!-- SETUP WIZARD MODAL -->
+<div class="modal-overlay" id="setup-modal">
+  <div class="modal">
+    <h2>NRL SC 2026 Draft Setup</h2>
+    <div class="field">
+      <label>League Size</label>
+      <div class="radio-group" id="league-size-group">
+        <label><input type="radio" name="league-size" value="8">8</label>
+        <label><input type="radio" name="league-size" value="10" checked>10</label>
+        <label><input type="radio" name="league-size" value="12">12</label>
+        <label><input type="radio" name="league-size" value="14">14</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Your Draft Position</label>
+      <select id="draft-pos"></select>
+    </div>
+    <div class="field">
+      <label>GF System</label>
+      <div class="radio-group">
+        <label><input type="radio" name="gf-system" value="R25" checked>R25</label>
+        <label><input type="radio" name="gf-system" value="R26">R26</label>
+        <label><input type="radio" name="gf-system" value="R27">R27</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>Total Rounds</label>
+      <input type="number" id="total-rounds" value="13" min="1" max="20" style="width:60px">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="start-fresh-btn">Start Fresh</button>
+      <button class="btn btn-secondary hidden" id="resume-btn">Resume Draft</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="ctx-menu hidden" id="ctx-menu">
+  <div class="ctx-item" id="ctx-draft">Draft to My Team <span class="key">m</span></div>
+  <div class="ctx-item" id="ctx-taken">Mark as Taken <span class="key">d</span></div>
+</div>
+
+<script>
+// === PLAYER DATA ===
+const PLAYERS = [
+  // ============================================================
+  // HOOKER (HOK) - 20 players
+  // ============================================================
+  { rank: 1, pos: "HOK", posRank: 1, team: "STORM", name: "Harry Grant", price: 606300, scPos: "HOK", statPos: "HOOKER", games2025: 16, avg2025: 62.0, nonInjuryAvg: 63.6, avgMin: 76, basePower: 44.2, gkPPG: null, ppm: 0.82, cv: 0.37, pctGames80: 25, tries: 5, triesPerGame: 0.4, tryInvolvements: 1.1, finalsBye: "R24", posSOS: 9, teamSOS: 14, predictedAvg: 70 },
+  { rank: 2, pos: "HOK", posRank: 2, team: "SHARKS", name: "Blayke Brailey", price: 654400, scPos: "HOK", statPos: "HOOKER", games2025: 24, avg2025: 66.9, nonInjuryAvg: null, avgMin: 81, basePower: 49.9, gkPPG: null, ppm: 0.83, cv: 0.32, pctGames80: 29, tries: 3, triesPerGame: 0.2, tryInvolvements: 1.0, finalsBye: null, posSOS: 13, teamSOS: 5, predictedAvg: 67 },
+  { rank: 3, pos: "HOK", posRank: 3, team: "ROOSTERS", name: "Connor Watson", price: 574000, scPos: "2RF | HOK", statPos: "LOCK", games2025: 20, avg2025: 58.7, nonInjuryAvg: null, avgMin: 69, basePower: 47.8, gkPPG: null, ppm: 0.85, cv: 0.33, pctGames80: 15, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.9, finalsBye: null, posSOS: 8, teamSOS: 8, predictedAvg: 58 },
+  { rank: 4, pos: "HOK", posRank: 4, team: "ROOSTERS", name: "Reece Robson", price: 497400, scPos: "HOK", statPos: "HOOKER", games2025: 21, avg2025: 50.9, nonInjuryAvg: null, avgMin: 75, basePower: 46.3, gkPPG: null, ppm: 0.68, cv: 0.33, pctGames80: 5, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.4, finalsBye: null, posSOS: 8, teamSOS: 8, predictedAvg: 53 },
+  { rank: 5, pos: "HOK", posRank: 5, team: "DOLPHINS", name: "Jeremy Marshall-King", price: 603700, scPos: "HOK", statPos: "HOOKER", games2025: 19, avg2025: 61.7, nonInjuryAvg: null, avgMin: 70, basePower: 46.6, gkPPG: null, ppm: 0.88, cv: 0.39, pctGames80: 21, tries: 4, triesPerGame: 0.3, tryInvolvements: 1.1, finalsBye: null, posSOS: 10, teamSOS: 16, predictedAvg: 59 },
+  { rank: 6, pos: "HOK", posRank: 6, team: "MANLY", name: "Jake Simpkin", price: 422700, scPos: "HOK", statPos: "HOOKER", games2025: 22, avg2025: 43.2, nonInjuryAvg: 50.9, avgMin: 56, basePower: 38.8, gkPPG: null, ppm: 0.77, cv: 0.45, pctGames80: 0, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.2, finalsBye: "R22", posSOS: 15, teamSOS: 6, predictedAvg: 61 },
+  { rank: 7, pos: "HOK", posRank: 7, team: "COWBOYS", name: "Reed Mahoney", price: 418100, scPos: "HOK", statPos: "HOOKER", games2025: 24, avg2025: 42.8, nonInjuryAvg: 52.2, avgMin: 61, basePower: 37.0, gkPPG: null, ppm: 0.70, cv: 0.51, pctGames80: 4, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.4, finalsBye: "R25", posSOS: 14, teamSOS: 9, predictedAvg: 58 },
+  { rank: 8, pos: "HOK", posRank: 8, team: "TIGERS", name: "Apisai Koroisau", price: 541900, scPos: "HOK", statPos: "HOOKER", games2025: 22, avg2025: 55.4, nonInjuryAvg: null, avgMin: 69, basePower: 44.5, gkPPG: 2.5, ppm: 0.80, cv: 0.50, pctGames80: 14, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.5, finalsBye: "R23", posSOS: 17, teamSOS: 11, predictedAvg: 58 },
+  { rank: 9, pos: "HOK", posRank: 9, team: "WARRIORS", name: "Wayde Egan", price: 527600, scPos: "HOK", statPos: "HOOKER", games2025: 20, avg2025: 54.0, nonInjuryAvg: 58.1, avgMin: 70, basePower: 45.3, gkPPG: null, ppm: 0.77, cv: 0.38, pctGames80: 15, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.7, finalsBye: null, posSOS: 3, teamSOS: 3, predictedAvg: 58 },
+  { rank: 10, pos: "HOK", posRank: 10, team: "TITANS", name: "Sam Verrills", price: 538800, scPos: "HOK", statPos: "HOOKER", games2025: 21, avg2025: 55.1, nonInjuryAvg: null, avgMin: 77, basePower: 45.6, gkPPG: null, ppm: 0.72, cv: 0.29, pctGames80: 5, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.6, finalsBye: null, posSOS: 1, teamSOS: 1, predictedAvg: 57 },
+  { rank: 11, pos: "HOK", posRank: 11, team: "DRAGONS", name: "Jacob Liddle", price: 447000, scPos: "HOK", statPos: "HOOKER", games2025: 24, avg2025: 45.7, nonInjuryAvg: null, avgMin: 43, basePower: 37.2, gkPPG: null, ppm: 1.06, cv: 0.49, pctGames80: 8, tries: 9, triesPerGame: 0.4, tryInvolvements: 0.5, finalsBye: null, posSOS: 6, teamSOS: 13, predictedAvg: 52 },
+  { rank: 12, pos: "HOK", posRank: 12, team: "BRONCOS", name: "Ben Hunt", price: 482400, scPos: "HOK", statPos: "HOOKER", games2025: 18, avg2025: 49.3, nonInjuryAvg: 52.9, avgMin: 76, basePower: 27.4, gkPPG: 0.1, ppm: 0.65, cv: 0.44, pctGames80: 6, tries: 2, triesPerGame: 0.2, tryInvolvements: 1.2, finalsBye: null, posSOS: 16, teamSOS: 12, predictedAvg: 53 },
+  { rank: 13, pos: "HOK", posRank: 13, team: "KNIGHTS", name: "Sandon Smith", price: 506200, scPos: "5-8 | HOK", statPos: "HOOKER", games2025: 17, avg2025: 51.8, nonInjuryAvg: 57.5, avgMin: 71, basePower: 22.2, gkPPG: 11.9, ppm: 0.73, cv: 0.55, pctGames80: 6, tries: 5, triesPerGame: 0.3, tryInvolvements: 1.1, finalsBye: "R27", posSOS: 4, teamSOS: 7, predictedAvg: 51 },
+  { rank: 14, pos: "HOK", posRank: 14, team: "RAIDERS", name: "Tom Starling", price: 547200, scPos: "HOK", statPos: "HOOKER", games2025: 22, avg2025: 56.0, nonInjuryAvg: null, avgMin: 64, basePower: 44.3, gkPPG: null, ppm: 0.87, cv: 0.31, pctGames80: 9, tries: 4, triesPerGame: 0.2, tryInvolvements: 0.9, finalsBye: "R26", posSOS: 11, teamSOS: 15, predictedAvg: 52 },
+  { rank: 15, pos: "HOK", posRank: 15, team: "DRAGONS", name: "Damien Cook", price: 526500, scPos: "HOK", statPos: "HOOKER", games2025: 24, avg2025: 53.8, nonInjuryAvg: null, avgMin: 66, basePower: 48.9, gkPPG: null, ppm: 0.82, cv: 0.30, pctGames80: 8, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.4, finalsBye: null, posSOS: 6, teamSOS: 13, predictedAvg: 52 },
+  { rank: 16, pos: "HOK", posRank: 16, team: "PANTHERS", name: "Mitchell Kenny", price: 427800, scPos: "HOK", statPos: "HOOKER", games2025: 20, avg2025: 43.8, nonInjuryAvg: 45.9, avgMin: 76, basePower: 42.4, gkPPG: null, ppm: 0.58, cv: 0.27, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.3, finalsBye: null, posSOS: 12, teamSOS: 17, predictedAvg: 45 },
+  { rank: 17, pos: "HOK", posRank: 17, team: "BUNNIES", name: "Brandon Smith", price: 235600, scPos: "HOK", statPos: "HOOKER", games2025: 5, avg2025: 27.8, nonInjuryAvg: null, avgMin: 48, basePower: 26.2, gkPPG: null, ppm: 0.58, cv: 0.31, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.6, finalsBye: null, posSOS: 5, teamSOS: 10, predictedAvg: 44 },
+  { rank: 18, pos: "HOK", posRank: 18, team: "BUNNIES", name: "Peter Mamouzelos", price: 481300, scPos: "HOK", statPos: "HOOKER", games2025: 14, avg2025: 49.2, nonInjuryAvg: null, avgMin: 67, basePower: 39.2, gkPPG: null, ppm: 0.73, cv: 0.33, pctGames80: 7, tries: 3, triesPerGame: 0.3, tryInvolvements: 0.6, finalsBye: null, posSOS: 5, teamSOS: 10, predictedAvg: 51 },
+  { rank: 19, pos: "HOK", posRank: 19, team: "BULLDOGS", name: "Bailey Hayward", price: 343900, scPos: "HOK", statPos: "HOOKER", games2025: 24, avg2025: 35.2, nonInjuryAvg: null, avgMin: 55, basePower: 27.2, gkPPG: null, ppm: 0.64, cv: 0.50, pctGames80: 0, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.5, finalsBye: null, posSOS: 7, teamSOS: 4, predictedAvg: 52 },
+  { rank: 20, pos: "HOK", posRank: 20, team: "EELS", name: "Ryley Smith", price: 380500, scPos: "HOK", statPos: "HOOKER", games2025: 22, avg2025: 38.9, nonInjuryAvg: null, avgMin: 57, basePower: 36.3, gkPPG: 0.2, ppm: 0.68, cv: 0.33, pctGames80: 0, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.2, finalsBye: null, posSOS: 2, teamSOS: 2, predictedAvg: 40 },
+
+  // ============================================================
+  // FRONT ROW FORWARD (FRF) - 40 players
+  // ============================================================
+  { rank: 1, pos: "FRF", posRank: 1, team: "BRONCOS", name: "Payne Haas", price: 852700, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 21, avg2025: 87.2, nonInjuryAvg: 90.8, avgMin: 61, basePower: 79.9, ppm: 1.43, cv: 0.25, pctGames80: 76, tries: 3, triesPerGame: 0.2, finalsBye: null, posSOS: 13, teamSOS: 12, predictedAvg: 85 },
+  { rank: 2, pos: "FRF", posRank: 2, team: "TIGERS", name: "Terrell May", price: 811300, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 83.0, nonInjuryAvg: null, avgMin: 73, basePower: 80.8, ppm: 1.14, cv: 0.19, pctGames80: 50, tries: 1, triesPerGame: 0.1, finalsBye: "R23", posSOS: 10, teamSOS: 11, predictedAvg: 80 },
+  { rank: 3, pos: "FRF", posRank: 3, team: "BUNNIES", name: "Keaon Koloamatangi", price: 666500, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 20, avg2025: 68.2, nonInjuryAvg: 69.2, avgMin: 76, basePower: 62.2, ppm: 0.90, cv: 0.34, pctGames80: 25, tries: 4, triesPerGame: 0.2, finalsBye: null, posSOS: 12, teamSOS: 10, predictedAvg: 70 },
+  { rank: 4, pos: "FRF", posRank: 4, team: "RAIDERS", name: "Joseph Tapine", price: 702300, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 21, avg2025: 71.8, nonInjuryAvg: null, avgMin: 52, basePower: 62.3, ppm: 1.38, cv: 0.26, pctGames80: 38, tries: 5, triesPerGame: 0.3, finalsBye: "R26", posSOS: 14, teamSOS: 15, predictedAvg: 74 },
+  { rank: 5, pos: "FRF", posRank: 5, team: "SHARKS", name: "Addin Fonua-Blake", price: 638900, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 65.3, nonInjuryAvg: null, avgMin: 54, basePower: 59.5, ppm: 1.21, cv: 0.27, pctGames80: 21, tries: 6, triesPerGame: 0.3, finalsBye: null, posSOS: 9, teamSOS: 5, predictedAvg: 67 },
+  { rank: 6, pos: "FRF", posRank: 6, team: "DRAGONS", name: "Toby Couchman", price: 588300, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 13, avg2025: 60.2, nonInjuryAvg: 66.2, avgMin: 60, basePower: 60.2, ppm: 1.00, cv: 0.31, pctGames80: 15, tries: 0, triesPerGame: 0, finalsBye: null, posSOS: 3, teamSOS: 13, predictedAvg: 68 },
+  { rank: 7, pos: "FRF", posRank: 7, team: "BRONCOS", name: "Patrick Carrigan", price: 636900, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 65.1, nonInjuryAvg: null, avgMin: 65, basePower: 62.0, ppm: 1.00, cv: 0.21, pctGames80: 9, tries: 0, triesPerGame: 0, finalsBye: null, posSOS: 15, teamSOS: 12, predictedAvg: 68 },
+  { rank: 8, pos: "FRF", posRank: 8, team: "PANTHERS", name: "Lindsay Smith", price: 618200, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 23, avg2025: 63.2, nonInjuryAvg: null, avgMin: 54, basePower: 57.0, ppm: 1.17, cv: 0.27, pctGames80: 9, tries: 4, triesPerGame: 0.2, finalsBye: null, posSOS: 16, teamSOS: 17, predictedAvg: 64 },
+  { rank: 9, pos: "FRF", posRank: 9, team: "ROOSTERS", name: "Naufahu Whyte", price: 584100, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 22, avg2025: 59.7, nonInjuryAvg: null, avgMin: 55, basePower: 57.1, ppm: 1.09, cv: 0.29, pctGames80: 14, tries: 3, triesPerGame: 0.2, finalsBye: null, posSOS: 4, teamSOS: 8, predictedAvg: 60 },
+  { rank: 10, pos: "FRF", posRank: 10, team: "EELS", name: "Jack Williams", price: 610000, scPos: "2RF | FRF", statPos: "LEFT 2RF", games2025: 21, avg2025: 62.4, nonInjuryAvg: null, avgMin: 70, basePower: 57.1, ppm: 0.89, cv: 0.26, pctGames80: 19, tries: 2, triesPerGame: 0.1, finalsBye: null, posSOS: 7, teamSOS: 2, predictedAvg: 62 },
+  { rank: 11, pos: "FRF", posRank: 11, team: "RAIDERS", name: "Corey Horsburgh", price: 595700, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 60.9, nonInjuryAvg: null, avgMin: 52, basePower: 60.2, ppm: 1.17, cv: 0.25, pctGames80: 17, tries: 1, triesPerGame: 0.1, finalsBye: "R26", posSOS: 10, teamSOS: 15, predictedAvg: 63 },
+  { rank: 12, pos: "FRF", posRank: 12, team: "TITANS", name: "Moeaki Fotuaika", price: 507600, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 22, avg2025: 51.9, nonInjuryAvg: null, avgMin: 53, basePower: 51.8, ppm: 0.98, cv: 0.28, pctGames80: 9, tries: 1, triesPerGame: 0.1, finalsBye: null, posSOS: 1, teamSOS: 1, predictedAvg: 58 },
+  { rank: 13, pos: "FRF", posRank: 13, team: "BULLDOGS", name: "Max King", price: 583500, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 21, avg2025: 59.7, nonInjuryAvg: null, avgMin: 50, basePower: 58.3, ppm: 1.19, cv: 0.28, pctGames80: 10, tries: 2, triesPerGame: 0.1, finalsBye: null, posSOS: 2, teamSOS: 4, predictedAvg: 63 },
+  { rank: 14, pos: "FRF", posRank: 14, team: "EELS", name: "Jmaine Hopgood", price: 517900, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 53.0, nonInjuryAvg: null, avgMin: 53, basePower: 51.5, ppm: 1.00, cv: 0.28, pctGames80: 0, tries: 2, triesPerGame: 0.1, finalsBye: null, posSOS: 2, teamSOS: 2, predictedAvg: 63 },
+  { rank: 15, pos: "FRF", posRank: 15, team: "PANTHERS", name: "Isaiah Papalii", price: 579900, scPos: "2RF | FRF", statPos: "LEFT 2RF", games2025: 20, avg2025: 59.3, nonInjuryAvg: 62.7, avgMin: 49, basePower: 52.1, ppm: 1.21, cv: 0.34, pctGames80: 20, tries: 5, triesPerGame: 0.3, finalsBye: null, posSOS: 9, teamSOS: 17, predictedAvg: 63 },
+  { rank: 16, pos: "FRF", posRank: 16, team: "BULLDOGS", name: "Leo Thompson", price: 542100, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 16, avg2025: 55.4, nonInjuryAvg: 58.1, avgMin: 54, basePower: 53.8, ppm: 1.03, cv: 0.22, pctGames80: 0, tries: 1, triesPerGame: 0.1, finalsBye: null, posSOS: 2, teamSOS: 4, predictedAvg: 62 },
+  { rank: 17, pos: "FRF", posRank: 17, team: "STORM", name: "Stefano Utoikamanu", price: 515600, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 22, avg2025: 52.7, nonInjuryAvg: null, avgMin: 43, basePower: 51.8, ppm: 1.23, cv: 0.34, pctGames80: 14, tries: 2, triesPerGame: 0.1, finalsBye: "R24", posSOS: 15, teamSOS: 14, predictedAvg: 58 },
+  { rank: 18, pos: "FRF", posRank: 18, team: "WARRIORS", name: "James Fisher-Harris", price: 535100, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 18, avg2025: 54.7, nonInjuryAvg: 57.4, avgMin: 51, basePower: 53.3, ppm: 1.07, cv: 0.32, pctGames80: 11, tries: 2, triesPerGame: 0.2, finalsBye: null, posSOS: 3, teamSOS: 3, predictedAvg: 56 },
+  { rank: 19, pos: "FRF", posRank: 19, team: "MANLY", name: "Taniela Paseka", price: 328600, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 3, avg2025: 48.0, nonInjuryAvg: 62.0, avgMin: 44, basePower: 42.0, ppm: 1.09, cv: 0.43, pctGames80: 0, tries: 0, triesPerGame: 0, finalsBye: "R22", posSOS: 5, teamSOS: 6, predictedAvg: 58 },
+  { rank: 20, pos: "FRF", posRank: 20, team: "BUNNIES", name: "Jai Arrow", price: 538700, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 55.1, nonInjuryAvg: null, avgMin: 63, basePower: 53.8, ppm: 0.87, cv: 0.25, pctGames80: 8, tries: 2, triesPerGame: 0.1, finalsBye: null, posSOS: 12, teamSOS: 10, predictedAvg: 60 },
+  { rank: 21, pos: "FRF", posRank: 21, team: "EELS", name: "Jack DeBelin", price: 514100, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 52.6, nonInjuryAvg: null, avgMin: 50, basePower: 49.0, ppm: 1.05, cv: 0.28, pctGames80: 4, tries: 1, triesPerGame: 0.1, finalsBye: null, posSOS: 2, teamSOS: 2, predictedAvg: 58 },
+  { rank: 22, pos: "FRF", posRank: 22, team: "EELS", name: "Junior Paulo", price: 549700, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 56.2, nonInjuryAvg: null, avgMin: 58, basePower: 52.0, ppm: 0.97, cv: 0.28, pctGames80: 8, tries: 1, triesPerGame: 0.1, finalsBye: null, posSOS: 6, teamSOS: 2, predictedAvg: 58 },
+  { rank: 23, pos: "FRF", posRank: 23, team: "DOLPHINS", name: "Daniel Saifiti", price: 601400, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 8, avg2025: 61.5, nonInjuryAvg: null, avgMin: 50, basePower: 54.0, ppm: 1.23, cv: 0.29, pctGames80: 13, tries: 2, triesPerGame: 0.3, finalsBye: null, posSOS: 17, teamSOS: 16, predictedAvg: 53 },
+  { rank: 24, pos: "FRF", posRank: 24, team: "WARRIORS", name: "Mitchell Barnett", price: 529000, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 11, avg2025: 54.1, nonInjuryAvg: 57.9, avgMin: 53, basePower: 55.2, ppm: 1.02, cv: 0.28, pctGames80: 9, tries: 0, triesPerGame: 0, finalsBye: null, posSOS: 3, teamSOS: 3, predictedAvg: 57 },
+  { rank: 25, pos: "FRF", posRank: 25, team: "KNIGHTS", name: "Trey Mooney", price: 442000, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 4, avg2025: 56.5, nonInjuryAvg: null, avgMin: 39, basePower: 47.3, ppm: 1.45, cv: 0.48, pctGames80: 25, tries: 0, triesPerGame: 0, finalsBye: "R27", posSOS: 8, teamSOS: 7, predictedAvg: 60 },
+  { rank: 26, pos: "FRF", posRank: 26, team: "WARRIORS", name: "Jackson Ford", price: 588200, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 20, avg2025: 60.2, nonInjuryAvg: 61.8, avgMin: 54, basePower: 58.7, ppm: 1.11, cv: 0.30, pctGames80: 10, tries: 3, triesPerGame: 0.2, finalsBye: null, posSOS: 3, teamSOS: 3, predictedAvg: 55 },
+  { rank: 27, pos: "FRF", posRank: 27, team: "STORM", name: "Josh King", price: 483900, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 23, avg2025: 49.5, nonInjuryAvg: null, avgMin: 54, basePower: 44.1, ppm: 0.92, cv: 0.36, pctGames80: 9, tries: 5, triesPerGame: 0.3, finalsBye: "R24", posSOS: 15, teamSOS: 14, predictedAvg: 52 },
+  { rank: 28, pos: "FRF", posRank: 28, team: "COWBOYS", name: "Griffin Neame", price: 427800, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 20, avg2025: 43.8, nonInjuryAvg: null, avgMin: 44, basePower: 41.7, ppm: 0.99, cv: 0.31, pctGames80: 0, tries: 2, triesPerGame: 0.1, finalsBye: "R25", posSOS: 11, teamSOS: 9, predictedAvg: 54 },
+  { rank: 29, pos: "FRF", posRank: 29, team: "KNIGHTS", name: "Jacob Saifiti", price: 426000, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 16, avg2025: 43.6, nonInjuryAvg: 50.0, avgMin: 46, basePower: 43.7, ppm: 0.95, cv: 0.39, pctGames80: 0, tries: 0, triesPerGame: 0, finalsBye: "R27", posSOS: 8, teamSOS: 7, predictedAvg: 54 },
+  { rank: 30, pos: "FRF", posRank: 30, team: "DOLPHINS", name: "Thomas Flegler", price: 346200, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 0, avg2025: 0, nonInjuryAvg: null, avgMin: 0, basePower: 0, ppm: 0, cv: 0, pctGames80: 0, tries: 0, triesPerGame: 0, finalsBye: null, posSOS: 17, teamSOS: 16, predictedAvg: 52 },
+  { rank: 31, pos: "FRF", posRank: 31, team: "MANLY", name: "Siua Taukeiaho", price: 464800, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 21, avg2025: 47.5, nonInjuryAvg: null, avgMin: 48, basePower: 47.7, ppm: 0.99, cv: 0.25, pctGames80: 0, tries: 0, triesPerGame: 0, finalsBye: "R22", posSOS: 5, teamSOS: 6, predictedAvg: 46 },
+  { rank: 32, pos: "FRF", posRank: 32, team: "TIGERS", name: "Alex Twal", price: 488500, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 50.0, nonInjuryAvg: 51.5, avgMin: 46, basePower: 50.8, ppm: 1.09, cv: 0.23, pctGames80: 0, tries: 0, triesPerGame: 0, finalsBye: "R23", posSOS: 17, teamSOS: 11, predictedAvg: 52 },
+  { rank: 33, pos: "FRF", posRank: 33, team: "SHARKS", name: "Thomas Hazelton", price: 415600, scPos: "FRF", statPos: "FRONT ROW FORWARD", games2025: 12, avg2025: 42.5, nonInjuryAvg: null, avgMin: 36, basePower: 41.1, ppm: 1.18, cv: 0.37, pctGames80: 8, tries: 1, triesPerGame: 0.1, finalsBye: null, posSOS: 9, teamSOS: 5, predictedAvg: 48 },
+  { rank: 34, pos: "FRF", posRank: 34, team: "SHARKS", name: "Jesse Colquhoun", price: 332500, scPos: "2RF | FRF", statPos: "LOCK", games2025: 15, avg2025: 34.0, nonInjuryAvg: null, avgMin: 31, basePower: 34.4, ppm: 1.10, cv: 0.35, pctGames80: 0, tries: 1, triesPerGame: 0.1, finalsBye: null, posSOS: 7, teamSOS: 5, predictedAvg: 52 },
+  { rank: 35, pos: "FRF", posRank: 35, team: "COWBOYS", name: "Coen Hess", price: 412600, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 21, avg2025: 42.2, nonInjuryAvg: null, avgMin: 36, basePower: 42.4, ppm: 1.17, cv: 0.35, pctGames80: 0, tries: 1, triesPerGame: 0.1, finalsBye: "R25", posSOS: 11, teamSOS: 9, predictedAvg: 48 },
+  { rank: 36, pos: "FRF", posRank: 36, team: "KNIGHTS", name: "Matt Croker", price: 440100, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 45.0, nonInjuryAvg: null, avgMin: 43, basePower: 42.6, ppm: 1.05, cv: 0.25, pctGames80: 0, tries: 2, triesPerGame: 0.1, finalsBye: "R27", posSOS: 8, teamSOS: 7, predictedAvg: 48 },
+  { rank: 37, pos: "FRF", posRank: 37, team: "BRONCOS", name: "Xavier Willison", price: 455000, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 19, avg2025: 46.5, nonInjuryAvg: null, avgMin: 45, basePower: 42.8, ppm: 1.03, cv: 0.44, pctGames80: 5, tries: 3, triesPerGame: 0.2, finalsBye: null, posSOS: 13, teamSOS: 12, predictedAvg: 54 },
+  { rank: 38, pos: "FRF", posRank: 38, team: "WARRIORS", name: "Demitric Vaimauga", price: 400500, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 23, avg2025: 41.0, nonInjuryAvg: null, avgMin: 31, basePower: 37.7, ppm: 1.32, cv: 0.40, pctGames80: 0, tries: 2, triesPerGame: 0.1, finalsBye: null, posSOS: 3, teamSOS: 3, predictedAvg: 46 },
+  { rank: 39, pos: "FRF", posRank: 39, team: "PANTHERS", name: "Liam Henry", price: 452300, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 20, avg2025: 46.3, nonInjuryAvg: null, avgMin: 37, basePower: 45.3, ppm: 1.25, cv: 0.31, pctGames80: 5, tries: 2, triesPerGame: 0.1, finalsBye: null, posSOS: 16, teamSOS: 17, predictedAvg: 48 },
+  { rank: 40, pos: "FRF", posRank: 40, team: "BULLDOGS", name: "Joshua Curran", price: 515200, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 19, avg2025: 52.7, nonInjuryAvg: null, avgMin: 55, basePower: 48.2, ppm: 0.96, cv: 0.36, pctGames80: 11, tries: 4, triesPerGame: 0.3, finalsBye: null, posSOS: 2, teamSOS: 4, predictedAvg: 27 },
+
+  // ============================================================
+  // SECOND ROW FORWARD (2RF) - 60 players
+  // ============================================================
+  { rank: 1, pos: "2RF", posRank: 1, team: "TITANS", name: "Tino Faasuamaleaui", price: 687600, scPos: "2RF", statPos: "LOCK", games2025: 19, avg2025: 70.3, nonInjuryAvg: 75.5, basePower: 62.1, avgMin: 58, ppm: 1.21, cv: 0.33, pctGames80: 32, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.6, lbPerGame: 0.5, finalsBye: null, posFastStart: 4, posSOS: 1, teamSOS: 1, predictedAvg: 79 },
+  { rank: 2, pos: "2RF", posRank: 2, team: "KNIGHTS", name: "Dylan Lucas", price: 744700, scPos: "2RF", statPos: "LEFT 2RF", games2025: 13, avg2025: 76.2, nonInjuryAvg: 78.2, basePower: 62.5, avgMin: 78, ppm: 0.98, cv: 0.40, pctGames80: 38, tries: 5, triesPerGame: 0.4, tryInvolvements: 0.6, lbPerGame: 0.7, finalsBye: "R27", posFastStart: 7, posSOS: 1, teamSOS: 7, predictedAvg: 76 },
+  { rank: 3, pos: "2RF", posRank: 3, team: "ROOSTERS", name: "Angus Crichton", price: 610200, scPos: "2RF", statPos: "LEFT 2RF", games2025: 20, avg2025: 62.4, nonInjuryAvg: null, basePower: 58.0, avgMin: 80, ppm: 0.78, cv: 0.21, pctGames80: 5, tries: 4, triesPerGame: 0.2, tryInvolvements: 0.4, lbPerGame: 0.3, finalsBye: null, posFastStart: 14, posSOS: 5, teamSOS: 8, predictedAvg: 69 },
+  { rank: 4, pos: "2RF", posRank: 4, team: "BULLDOGS", name: "Jacob Preston", price: 684600, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 20, avg2025: 70.0, nonInjuryAvg: null, basePower: 56.4, avgMin: 79, ppm: 0.89, cv: 0.36, pctGames80: 20, tries: 11, triesPerGame: 0.6, tryInvolvements: 0.7, lbPerGame: 0.6, finalsBye: null, posFastStart: 5, posSOS: 2, teamSOS: 4, predictedAvg: 73 },
+  { rank: 5, pos: "2RF", posRank: 5, team: "TITANS", name: "Beau Fermor", price: 650700, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 24, avg2025: 66.5, nonInjuryAvg: null, basePower: 56.9, avgMin: 79, ppm: 0.84, cv: 0.31, pctGames80: 17, tries: 10, triesPerGame: 0.5, tryInvolvements: 0.7, lbPerGame: 0.3, finalsBye: null, posFastStart: 6, posSOS: 4, teamSOS: 1, predictedAvg: 68 },
+  { rank: 6, pos: "2RF", posRank: 6, team: "PANTHERS", name: "Isaah Yeo", price: 610100, scPos: "2RF", statPos: "LOCK", games2025: 18, avg2025: 62.4, nonInjuryAvg: 64.5, basePower: 58.1, avgMin: 75, ppm: 0.83, cv: 0.24, pctGames80: 22, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.4, lbPerGame: 0.2, finalsBye: null, posFastStart: 1, posSOS: 16, teamSOS: 17, predictedAvg: 67 },
+  { rank: 7, pos: "2RF", posRank: 7, team: "RAIDERS", name: "Hudson Young", price: 754000, scPos: "2RF", statPos: "LEFT 2RF", games2025: 20, avg2025: 77.1, nonInjuryAvg: null, basePower: 63.0, avgMin: 79, ppm: 0.98, cv: 0.30, pctGames80: 45, tries: 10, triesPerGame: 0.5, tryInvolvements: 0.9, lbPerGame: 0.7, finalsBye: "R26", posFastStart: 4, posSOS: 17, teamSOS: 15, predictedAvg: 69 },
+  { rank: 8, pos: "2RF", posRank: 8, team: "BRONCOS", name: "Patrick Carrigan", price: 636900, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 65.1, nonInjuryAvg: null, basePower: 62.0, avgMin: 65, ppm: 1.00, cv: 0.21, pctGames80: 9, tries: 0, triesPerGame: 0, tryInvolvements: 0.4, lbPerGame: 0.3, finalsBye: null, posFastStart: 10, posSOS: 15, teamSOS: 12, predictedAvg: 68 },
+  { rank: 9, pos: "2RF", posRank: 9, team: "WARRIORS", name: "Erin Clark", price: 671900, scPos: "2RF", statPos: "LOCK", games2025: 24, avg2025: 68.7, nonInjuryAvg: null, basePower: 65.0, avgMin: 58, ppm: 1.18, cv: 0.25, pctGames80: 17, tries: 0, triesPerGame: 0, tryInvolvements: 0.3, lbPerGame: 0.3, finalsBye: null, posFastStart: 2, posSOS: 5, teamSOS: 3, predictedAvg: 70 },
+  { rank: 10, pos: "2RF", posRank: 10, team: "SHARKS", name: "Briton Nikora", price: 570100, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 20, avg2025: 58.3, nonInjuryAvg: 61.2, basePower: 46.8, avgMin: 76, ppm: 0.77, cv: 0.42, pctGames80: 20, tries: 7, triesPerGame: 0.4, tryInvolvements: 0.5, lbPerGame: 0.8, finalsBye: null, posFastStart: 11, posSOS: 5, teamSOS: 5, predictedAvg: 64 },
+  { rank: 11, pos: "2RF", posRank: 11, team: "BUNNIES", name: "David Fifita", price: 485300, scPos: "2RF", statPos: "LEFT 2RF", games2025: 8, avg2025: 49.6, nonInjuryAvg: 60.7, basePower: 39.3, avgMin: 48, ppm: 1.03, cv: 0.68, pctGames80: 13, tries: 1, triesPerGame: 0.2, tryInvolvements: 0.5, lbPerGame: 0.5, finalsBye: null, posFastStart: 9, posSOS: 2, teamSOS: 10, predictedAvg: 66 },
+  { rank: 12, pos: "2RF", posRank: 12, team: "TIGERS", name: "Kai Pearce-Paul", price: 604500, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 22, avg2025: 61.8, nonInjuryAvg: null, basePower: 57.6, avgMin: 79, ppm: 0.78, cv: 0.27, pctGames80: 18, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.3, lbPerGame: 0.4, finalsBye: "R23", posFastStart: 10, posSOS: 13, teamSOS: 11, predictedAvg: 63 },
+  { rank: 13, pos: "2RF", posRank: 13, team: "MANLY", name: "Haumole Olakauatu", price: 650000, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 15, avg2025: 66.5, nonInjuryAvg: 72.3, basePower: 52.8, avgMin: 75, ppm: 0.89, cv: 0.42, pctGames80: 40, tries: 5, triesPerGame: 0.4, tryInvolvements: 0.9, lbPerGame: 0.7, finalsBye: "R22", posFastStart: 13, posSOS: 3, teamSOS: 6, predictedAvg: 68 },
+  { rank: 14, pos: "2RF", posRank: 14, team: "DRAGONS", name: "Jaydn Sua", price: 619900, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 18, avg2025: 63.4, nonInjuryAvg: 65.2, basePower: 56.9, avgMin: 75, ppm: 0.85, cv: 0.33, pctGames80: 17, tries: 4, triesPerGame: 0.3, tryInvolvements: 0.6, lbPerGame: 0.3, finalsBye: null, posFastStart: 16, posSOS: 17, teamSOS: 13, predictedAvg: 67 },
+  { rank: 15, pos: "2RF", posRank: 15, team: "BULLDOGS", name: "Viliame Kikau", price: 650300, scPos: "2RF", statPos: "LEFT 2RF", games2025: 20, avg2025: 66.5, nonInjuryAvg: null, basePower: 52.7, avgMin: 77, ppm: 0.86, cv: 0.33, pctGames80: 30, tries: 6, triesPerGame: 0.3, tryInvolvements: 0.9, lbPerGame: 0.8, finalsBye: null, posFastStart: 16, posSOS: 7, teamSOS: 4, predictedAvg: 68 },
+  { rank: 16, pos: "2RF", posRank: 16, team: "DRAGONS", name: "Toby Couchman", price: 588300, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 13, avg2025: 60.2, nonInjuryAvg: 66.2, basePower: 60.2, avgMin: 60, ppm: 1.00, cv: 0.31, pctGames80: 15, tries: 0, triesPerGame: 0, tryInvolvements: 0.0, lbPerGame: 0.2, finalsBye: null, posFastStart: 8, posSOS: 3, teamSOS: 13, predictedAvg: 68 },
+  { rank: 17, pos: "2RF", posRank: 17, team: "PANTHERS", name: "Isaiah Papalii", price: 579900, scPos: "2RF | FRF", statPos: "LEFT 2RF", games2025: 20, avg2025: 59.3, nonInjuryAvg: 62.7, basePower: 52.1, avgMin: 49, ppm: 1.21, cv: 0.34, pctGames80: 20, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.3, lbPerGame: 0.5, finalsBye: null, posFastStart: 6, posSOS: 9, teamSOS: 17, predictedAvg: 63 },
+  { rank: 18, pos: "2RF", posRank: 18, team: "BUNNIES", name: "Cameron Murray", price: 548900, scPos: "2RF", statPos: "LOCK", games2025: 1, avg2025: 21.0, nonInjuryAvg: null, basePower: 21.0, avgMin: 21, ppm: 1.00, cv: null, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.0, lbPerGame: 0.0, finalsBye: null, posFastStart: 17, posSOS: 4, teamSOS: 10, predictedAvg: 64 },
+  { rank: 19, pos: "2RF", posRank: 19, team: "BUNNIES", name: "Tallis Duncan", price: 595700, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 24, avg2025: 60.9, nonInjuryAvg: 71.5, basePower: 49.0, avgMin: 69, ppm: 0.88, cv: 0.50, pctGames80: 21, tries: 9, triesPerGame: 0.4, tryInvolvements: 0.6, lbPerGame: 0.6, finalsBye: null, posFastStart: 15, posSOS: 7, teamSOS: 10, predictedAvg: 65 },
+  { rank: 20, pos: "2RF", posRank: 20, team: "EELS", name: "Jack Williams", price: 610000, scPos: "2RF | FRF", statPos: "LEFT 2RF", games2025: 21, avg2025: 62.4, nonInjuryAvg: null, basePower: 57.1, avgMin: 70, ppm: 0.89, cv: 0.26, pctGames80: 19, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.2, lbPerGame: 0.4, finalsBye: null, posFastStart: 15, posSOS: 7, teamSOS: 2, predictedAvg: 62 },
+  { rank: 21, pos: "2RF", posRank: 21, team: "EELS", name: "Jmaine Hopgood", price: 517900, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 53.0, nonInjuryAvg: null, basePower: 51.5, avgMin: 53, ppm: 1.00, cv: 0.28, pctGames80: 0, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.2, lbPerGame: 0.3, finalsBye: null, posFastStart: 14, posSOS: 2, teamSOS: 2, predictedAvg: 63 },
+  { rank: 22, pos: "2RF", posRank: 22, team: "ROOSTERS", name: "Connor Watson", price: 574000, scPos: "2RF | HOK", statPos: "LOCK", games2025: 20, avg2025: 58.7, nonInjuryAvg: null, basePower: 47.8, avgMin: 69, ppm: 0.85, cv: 0.33, pctGames80: 15, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.9, lbPerGame: 0.5, finalsBye: null, posFastStart: 12, posSOS: 8, teamSOS: 8, predictedAvg: 58 },
+  { rank: 23, pos: "2RF", posRank: 23, team: "RAIDERS", name: "Corey Horsburgh", price: 595700, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 60.9, nonInjuryAvg: null, basePower: 60.2, avgMin: 52, ppm: 1.17, cv: 0.25, pctGames80: 17, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.2, lbPerGame: 0.1, finalsBye: "R26", posFastStart: 9, posSOS: 10, teamSOS: 15, predictedAvg: 63 },
+  { rank: 24, pos: "2RF", posRank: 24, team: "WARRIORS", name: "Leka Halasima", price: 502400, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 24, avg2025: 51.4, nonInjuryAvg: 59.8, basePower: 42.0, avgMin: 56, ppm: 0.92, cv: 0.40, pctGames80: 13, tries: 12, triesPerGame: 0.5, tryInvolvements: 0.6, lbPerGame: 0.5, finalsBye: null, posFastStart: 1, posSOS: 1, teamSOS: 3, predictedAvg: 67 },
+  { rank: 25, pos: "2RF", posRank: 25, team: "SHARKS", name: "Teig Wilton", price: 523200, scPos: "2RF", statPos: "LEFT 2RF", games2025: 18, avg2025: 53.5, nonInjuryAvg: 53.9, basePower: 48.4, avgMin: 77, ppm: 0.69, cv: 0.26, pctGames80: 6, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.3, lbPerGame: 0.2, finalsBye: null, posFastStart: 2, posSOS: 10, teamSOS: 5, predictedAvg: 57 },
+  { rank: 26, pos: "2RF", posRank: 26, team: "STORM", name: "Trent Loiero", price: 557000, scPos: "2RF", statPos: "LOCK", games2025: 22, avg2025: 57.0, nonInjuryAvg: null, basePower: 53.6, avgMin: 61, ppm: 0.93, cv: 0.32, pctGames80: 9, tries: 4, triesPerGame: 0.2, tryInvolvements: 0.3, lbPerGame: 0.2, finalsBye: "R24", posFastStart: 7, posSOS: 13, teamSOS: 14, predictedAvg: 60 },
+  { rank: 27, pos: "2RF", posRank: 27, team: "STORM", name: "Shawn Blore", price: 519600, scPos: "2RF", statPos: "LEFT 2RF", games2025: 22, avg2025: 53.1, nonInjuryAvg: 55.8, basePower: 48.2, avgMin: 77, ppm: 0.69, cv: 0.32, pctGames80: 9, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.5, lbPerGame: 0.4, finalsBye: "R24", posFastStart: 8, posSOS: 6, teamSOS: 14, predictedAvg: 57 },
+  { rank: 28, pos: "2RF", posRank: 28, team: "ROOSTERS", name: "Siua Wong", price: 524700, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 20, avg2025: 53.7, nonInjuryAvg: 58.2, basePower: 48.4, avgMin: 64, ppm: 0.84, cv: 0.43, pctGames80: 10, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.4, lbPerGame: 0.3, finalsBye: null, posFastStart: 12, posSOS: 11, teamSOS: 8, predictedAvg: 58 },
+  { rank: 29, pos: "2RF", posRank: 29, team: "RAIDERS", name: "Matty Nicholson", price: 611200, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 10, avg2025: 62.5, nonInjuryAvg: null, basePower: 49.9, avgMin: 77, ppm: 0.81, cv: 0.32, pctGames80: 20, tries: 5, triesPerGame: 0.5, tryInvolvements: 0.7, lbPerGame: 0.5, finalsBye: "R26", posFastStart: 2, posSOS: 7, teamSOS: 15, predictedAvg: 59 },
+  { rank: 30, pos: "2RF", posRank: 30, team: "COWBOYS", name: "John Bateman", price: 584200, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 19, avg2025: 59.7, nonInjuryAvg: null, basePower: 55.3, avgMin: 78, ppm: 0.77, cv: 0.25, pctGames80: 11, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.2, lbPerGame: 0.4, finalsBye: "R25", posFastStart: 3, posSOS: 14, teamSOS: 9, predictedAvg: 60 },
+  { rank: 31, pos: "2RF", posRank: 31, team: "PANTHERS", name: "Scott Sorensen", price: 505900, scPos: "2RF", statPos: "LEFT 2RF", games2025: 15, avg2025: 51.7, nonInjuryAvg: 58.2, basePower: 42.5, avgMin: 60, ppm: 0.86, cv: 0.45, pctGames80: 13, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.5, lbPerGame: 0.5, finalsBye: null, posFastStart: 6, posSOS: 9, teamSOS: 17, predictedAvg: 58 },
+  { rank: 32, pos: "2RF", posRank: 32, team: "DRAGONS", name: "Hamish Stewart", price: 402000, scPos: "2RF", statPos: "LOCK", games2025: 19, avg2025: 41.1, nonInjuryAvg: 49.4, basePower: 37.6, avgMin: 38, ppm: 1.08, cv: 0.41, pctGames80: 0, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.3, lbPerGame: 0.2, finalsBye: null, posFastStart: 8, posSOS: 3, teamSOS: 13, predictedAvg: 55 },
+  { rank: 33, pos: "2RF", posRank: 33, team: "BUNNIES", name: "Jai Arrow", price: 538700, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 24, avg2025: 55.1, nonInjuryAvg: null, basePower: 53.8, avgMin: 63, ppm: 0.87, cv: 0.25, pctGames80: 8, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.1, lbPerGame: 0.1, finalsBye: null, posFastStart: 16, posSOS: 12, teamSOS: 10, predictedAvg: 60 },
+  { rank: 34, pos: "2RF", posRank: 34, team: "EELS", name: "Jack DeBelin", price: 514100, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 52.6, nonInjuryAvg: null, basePower: 49.0, avgMin: 50, ppm: 1.05, cv: 0.28, pctGames80: 4, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.3, lbPerGame: 0.3, finalsBye: null, posFastStart: 14, posSOS: 2, teamSOS: 2, predictedAvg: 58 },
+  { rank: 35, pos: "2RF", posRank: 35, team: "KNIGHTS", name: "Trey Mooney", price: 442000, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 4, avg2025: 56.5, nonInjuryAvg: null, basePower: 47.3, avgMin: 39, ppm: 1.45, cv: 0.48, pctGames80: 25, tries: 0, triesPerGame: 0, tryInvolvements: 0.3, lbPerGame: 0.8, finalsBye: "R27", posFastStart: 7, posSOS: 8, teamSOS: 7, predictedAvg: 60 },
+  { rank: 36, pos: "2RF", posRank: 36, team: "TITANS", name: "Chris Randall", price: 456700, scPos: "2RF", statPos: "LEFT 2RF", games2025: 23, avg2025: 46.7, nonInjuryAvg: null, basePower: 43.6, avgMin: 67, ppm: 0.70, cv: 0.44, pctGames80: 13, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.3, lbPerGame: 0.2, finalsBye: null, posFastStart: 12, posSOS: 4, teamSOS: 1, predictedAvg: 58 },
+  { rank: 37, pos: "2RF", posRank: 37, team: "BRONCOS", name: "Jordan Riki", price: 544900, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 21, avg2025: 55.7, nonInjuryAvg: 57.2, basePower: 52.1, avgMin: 78, ppm: 0.71, cv: 0.25, pctGames80: 5, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.1, lbPerGame: 0.3, finalsBye: null, posFastStart: 17, posSOS: 8, teamSOS: 12, predictedAvg: 58 },
+  { rank: 38, pos: "2RF", posRank: 38, team: "DOLPHINS", name: "Max Plath", price: 517100, scPos: "2RF", statPos: "LOCK", games2025: 8, avg2025: 52.9, nonInjuryAvg: 64.0, basePower: 44.5, avgMin: 57, ppm: 0.93, cv: 0.43, pctGames80: 13, tries: 3, triesPerGame: 0.4, tryInvolvements: 0.4, lbPerGame: 0.3, finalsBye: null, posFastStart: 5, posSOS: 12, teamSOS: 16, predictedAvg: 51 },
+  { rank: 39, pos: "2RF", posRank: 39, team: "SHARKS", name: "Cameron McInnes", price: 561400, scPos: "2RF", statPos: "LOCK", games2025: 22, avg2025: 57.4, nonInjuryAvg: 59.6, basePower: 54.9, avgMin: 57, ppm: 1.01, cv: 0.27, pctGames80: 9, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.2, lbPerGame: 0.2, finalsBye: null, posFastStart: 6, posSOS: 7, teamSOS: 5, predictedAvg: 56 },
+  { rank: 40, pos: "2RF", posRank: 40, team: "COWBOYS", name: "Reuben Cotter", price: 507400, scPos: "2RF", statPos: "LOCK", games2025: 18, avg2025: 51.9, nonInjuryAvg: 53.4, basePower: 51.6, avgMin: 66, ppm: 0.79, cv: 0.20, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.1, lbPerGame: 0.1, finalsBye: "R25", posFastStart: 16, posSOS: 14, teamSOS: 9, predictedAvg: 57 },
+  { rank: 41, pos: "2RF", posRank: 41, team: "KNIGHTS", name: "Jermaine McEwen", price: 407700, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 16, avg2025: 41.7, nonInjuryAvg: 52.9, basePower: 38.2, avgMin: 50, ppm: 0.83, cv: 0.40, pctGames80: 0, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.3, lbPerGame: 0.1, finalsBye: "R27", posFastStart: 7, posSOS: 12, teamSOS: 7, predictedAvg: 55 },
+  { rank: 42, pos: "2RF", posRank: 42, team: "MANLY", name: "Kobe Hetherington", price: 428300, scPos: "2RF", statPos: "LOCK", games2025: 24, avg2025: 43.8, nonInjuryAvg: null, basePower: 39.6, avgMin: 42, ppm: 1.04, cv: 0.26, pctGames80: 0, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.1, lbPerGame: 0.3, finalsBye: "R22", posFastStart: 11, posSOS: 9, teamSOS: 6, predictedAvg: 55 },
+  { rank: 43, pos: "2RF", posRank: 43, team: "STORM", name: "Ativalu Lisati", price: 269400, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 11, avg2025: 27.5, nonInjuryAvg: null, basePower: 27.6, avgMin: 31, ppm: 0.89, cv: 0.33, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.0, lbPerGame: 0.0, finalsBye: "R24", posFastStart: 8, posSOS: 6, teamSOS: 14, predictedAvg: 45 },
+  { rank: 44, pos: "2RF", posRank: 44, team: "COWBOYS", name: "Jeremiah Nanai", price: 510900, scPos: "2RF", statPos: "LEFT 2RF", games2025: 21, avg2025: 52.2, nonInjuryAvg: 56.7, basePower: 41.1, avgMin: 1097, ppm: 0.05, cv: 0.47, pctGames80: 14, tries: 9, triesPerGame: 0.5, tryInvolvements: 0.7, lbPerGame: 0.5, finalsBye: "R25", posFastStart: 17, posSOS: 14, teamSOS: 9, predictedAvg: 55 },
+  { rank: 45, pos: "2RF", posRank: 45, team: "RAIDERS", name: "Zac Hosking", price: 615100, scPos: "2RF", statPos: "RIGHT 2RF", games2025: 19, avg2025: 62.9, nonInjuryAvg: 67.3, basePower: 54.8, avgMin: 68, ppm: 0.92, cv: 0.30, pctGames80: 16, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.5, lbPerGame: 0.3, finalsBye: "R26", posFastStart: 2, posSOS: 7, teamSOS: 15, predictedAvg: 62 },
+  { rank: 46, pos: "2RF", posRank: 46, team: "TIGERS", name: "Samuela Fainu", price: 508500, scPos: "2RF", statPos: "LEFT 2RF", games2025: 21, avg2025: 52.0, nonInjuryAvg: 54.2, basePower: 43.2, avgMin: 76, ppm: 0.68, cv: 0.37, pctGames80: 10, tries: 4, triesPerGame: 0.2, tryInvolvements: 0.6, lbPerGame: 0.4, finalsBye: "R23", posFastStart: 11, posSOS: 13, teamSOS: 11, predictedAvg: 54 },
+  { rank: 47, pos: "2RF", posRank: 47, team: "TIGERS", name: "Alex Twal", price: 488500, scPos: "2RF | FRF", statPos: "LOCK", games2025: 23, avg2025: 50.0, nonInjuryAvg: 51.5, basePower: 50.8, avgMin: 46, ppm: 1.09, cv: 0.23, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.0, lbPerGame: 0.0, finalsBye: "R23", posFastStart: 3, posSOS: 17, teamSOS: 11, predictedAvg: 52 },
+  { rank: 48, pos: "2RF", posRank: 48, team: "BRONCOS", name: "Xavier Willison", price: 455000, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 19, avg2025: 46.5, nonInjuryAvg: null, basePower: 42.8, avgMin: 45, ppm: 1.03, cv: 0.44, pctGames80: 5, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.2, lbPerGame: 0.2, finalsBye: null, posFastStart: 4, posSOS: 13, teamSOS: 12, predictedAvg: 54 },
+  { rank: 49, pos: "2RF", posRank: 49, team: "DOLPHINS", name: "Connelly Lemuelu", price: 529100, scPos: "2RF", statPos: "LEFT 2RF", games2025: 20, avg2025: 54.1, nonInjuryAvg: null, basePower: 35.1, avgMin: 49, ppm: 1.10, cv: 0.50, pctGames80: 15, tries: 9, triesPerGame: 0.5, tryInvolvements: 0.8, lbPerGame: 0.9, finalsBye: null, posFastStart: 3, posSOS: 15, teamSOS: 16, predictedAvg: 48 },
+  { rank: 50, pos: "2RF", posRank: 50, team: "PANTHERS", name: "Luke Garner", price: 544200, scPos: "2RF", statPos: "LEFT 2RF", games2025: 20, avg2025: 55.7, nonInjuryAvg: null, basePower: 43.4, avgMin: 65, ppm: 0.86, cv: 0.44, pctGames80: 15, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.7, lbPerGame: 0.7, finalsBye: null, posFastStart: 6, posSOS: 9, teamSOS: 17, predictedAvg: 55 },
+  { rank: 51, pos: "2RF", posRank: 51, team: "BRONCOS", name: "Brendan Piakura", price: 305300, scPos: "2RF", statPos: "LEFT 2RF", games2025: 18, avg2025: 31.2, nonInjuryAvg: 45.4, basePower: 29.7, avgMin: 52, ppm: 0.60, cv: 0.76, pctGames80: 6, tries: 2, triesPerGame: 0.2, tryInvolvements: 0.2, lbPerGame: 0.2, finalsBye: null, posFastStart: 1, posSOS: 6, teamSOS: 12, predictedAvg: 50 },
+  { rank: 52, pos: "2RF", posRank: 52, team: "DOLPHINS", name: "Tom Gilbert", price: 460600, scPos: "2RF", statPos: "LEFT 2RF", games2025: 10, avg2025: 47.1, nonInjuryAvg: null, basePower: 46.9, avgMin: 60, ppm: 0.79, cv: 0.28, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.1, lbPerGame: 0.1, finalsBye: null, posFastStart: 3, posSOS: 15, teamSOS: 16, predictedAvg: 50 },
+  { rank: 53, pos: "2RF", posRank: 53, team: "MANLY", name: "Ben Trbojevic", price: 494300, scPos: "2RF", statPos: "LEFT 2RF", games2025: 22, avg2025: 50.5, nonInjuryAvg: 51.6, basePower: 44.8, avgMin: 77, ppm: 0.66, cv: 0.35, pctGames80: 9, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.4, lbPerGame: 0.3, finalsBye: "R22", posFastStart: 15, posSOS: 12, teamSOS: 6, predictedAvg: 50 },
+  { rank: 54, pos: "2RF", posRank: 54, team: "ROOSTERS", name: "Victor Radley", price: 480700, scPos: "2RF", statPos: "LOCK", games2025: 19, avg2025: 49.2, nonInjuryAvg: 53.6, basePower: 41.3, avgMin: 59, ppm: 0.83, cv: 0.42, pctGames80: 11, tries: 4, triesPerGame: 0.3, tryInvolvements: 0.6, lbPerGame: 0.5, finalsBye: null, posFastStart: 12, posSOS: 8, teamSOS: 8, predictedAvg: 50 },
+  { rank: 55, pos: "2RF", posRank: 55, team: "WARRIORS", name: "Demitric Vaimauga", price: 400500, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 23, avg2025: 41.0, nonInjuryAvg: null, basePower: 37.7, avgMin: 31, ppm: 1.32, cv: 0.40, pctGames80: 0, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.3, lbPerGame: 0.2, finalsBye: null, posFastStart: 1, posSOS: 3, teamSOS: 3, predictedAvg: 46 },
+  { rank: 56, pos: "2RF", posRank: 56, team: "COWBOYS", name: "Heilum Luki", price: 404100, scPos: "2RF", statPos: "LEFT 2RF", games2025: 0, avg2025: null, nonInjuryAvg: null, basePower: null, avgMin: null, ppm: null, cv: null, pctGames80: null, tries: null, triesPerGame: null, tryInvolvements: null, lbPerGame: null, finalsBye: "R25", posFastStart: 17, posSOS: 14, teamSOS: 9, predictedAvg: 38 },
+  { rank: 57, pos: "2RF", posRank: 57, team: "DOLPHINS", name: "Kurt Donoghoe", price: 497000, scPos: "2RF", statPos: "LOCK", games2025: 22, avg2025: 50.8, nonInjuryAvg: 60.2, basePower: 44.6, avgMin: 61, ppm: 0.83, cv: 0.40, pctGames80: 9, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.6, lbPerGame: 0.4, finalsBye: null, posFastStart: 5, posSOS: 12, teamSOS: 16, predictedAvg: 51 },
+  { rank: 58, pos: "2RF", posRank: 58, team: "DRAGONS", name: "Dylan Egan", price: 563500, scPos: "2RF", statPos: "LEFT 2RF", games2025: 8, avg2025: 57.6, nonInjuryAvg: 65.3, basePower: 47.8, avgMin: 53, ppm: 1.09, cv: 0.54, pctGames80: 38, tries: 3, triesPerGame: 0.4, tryInvolvements: 0.4, lbPerGame: 0.4, finalsBye: null, posFastStart: 8, posSOS: 11, teamSOS: 13, predictedAvg: 54 },
+  { rank: 59, pos: "2RF", posRank: 59, team: "TITANS", name: "Josh Patston", price: 275000, scPos: "2RF", statPos: "LEFT 2RF", games2025: 8, avg2025: 28.1, nonInjuryAvg: null, basePower: 26.0, avgMin: 27, ppm: 1.04, cv: 0.52, pctGames80: 0, tries: 1, triesPerGame: 0.2, tryInvolvements: 0.1, lbPerGame: 0.1, finalsBye: null, posFastStart: 12, posSOS: 4, teamSOS: 1, predictedAvg: 29 },
+  { rank: 60, pos: "2RF", posRank: 60, team: "BULLDOGS", name: "Joshua Curran", price: 515200, scPos: "2RF | FRF", statPos: "FRONT ROW FORWARD", games2025: 19, avg2025: 52.7, nonInjuryAvg: null, basePower: 48.2, avgMin: 55, ppm: 0.96, cv: 0.36, pctGames80: 11, tries: 4, triesPerGame: 0.3, tryInvolvements: 0.3, lbPerGame: 0.2, finalsBye: null, posFastStart: 17, posSOS: 2, teamSOS: 4, predictedAvg: 27 },
+
+  // ============================================================
+  // HALFBACK (HFB) - 20 players
+  // ============================================================
+  { rank: 1, pos: "HFB", posRank: 1, team: "PANTHERS", name: "Nathan Cleary", price: 826100, scPos: "HFB", statPos: "RIGHT HALF", games2025: 19, avg2025: 84.5, nonInjuryAvg: 89.1, basePower: 33.8, gkPPG: 13.1, cv: 0.39, pctGames80: 58, tries: 5, triesPerGame: 0.3, tryInvolvements: 2.4, lbPerGame: 1.4, finalsBye: null, posFastStart: 13, posSOS: 16, teamSOS: 17, predictedAvg: 85 },
+  { rank: 2, pos: "HFB", posRank: 2, team: "SHARKS", name: "Nicholas Hynes", price: 749300, scPos: "HFB", statPos: "RIGHT HALF", games2025: 24, avg2025: 76.6, nonInjuryAvg: null, basePower: 34.4, gkPPG: 12.6, cv: 0.35, pctGames80: 29, tries: 7, triesPerGame: 0.3, tryInvolvements: 2.0, lbPerGame: 1.6, finalsBye: null, posFastStart: 12, posSOS: 6, teamSOS: 5, predictedAvg: 80 },
+  { rank: 3, pos: "HFB", posRank: 3, team: "TITANS", name: "Jayden Campbell", price: 711400, scPos: "HFB", statPos: "LEFT HALF", games2025: 20, avg2025: 72.8, nonInjuryAvg: 76.2, basePower: 38.6, gkPPG: 11.5, cv: 0.40, pctGames80: 45, tries: 7, triesPerGame: 0.4, tryInvolvements: 1.3, lbPerGame: 1.0, finalsBye: null, posFastStart: 3, posSOS: 4, teamSOS: 1, predictedAvg: 70 },
+  { rank: 4, pos: "HFB", posRank: 4, team: "ROOSTERS", name: "Sam Walker", price: 683300, scPos: "HFB", statPos: "LEFT HALF", games2025: 8, avg2025: 69.9, nonInjuryAvg: 79.3, basePower: 20.5, gkPPG: 18.5, cv: 0.45, pctGames80: 38, tries: 0, triesPerGame: 0, tryInvolvements: 2.4, lbPerGame: 0.6, finalsBye: null, posFastStart: 14, posSOS: 12, teamSOS: 8, predictedAvg: 72 },
+  { rank: 5, pos: "HFB", posRank: 5, team: "STORM", name: "Jahrome Hughes", price: 631900, scPos: "HFB", statPos: "RIGHT HALF", games2025: 18, avg2025: 64.6, nonInjuryAvg: 74.0, basePower: 26.6, gkPPG: null, cv: 0.52, pctGames80: 28, tries: 6, triesPerGame: 0.4, tryInvolvements: 2.1, lbPerGame: 1.5, finalsBye: "R24", posFastStart: 11, posSOS: 17, teamSOS: 14, predictedAvg: 72 },
+  { rank: 6, pos: "HFB", posRank: 6, team: "EELS", name: "Mitchell Moses", price: 543100, scPos: "HFB", statPos: "RIGHT HALF", games2025: 13, avg2025: 55.5, nonInjuryAvg: null, basePower: 21.3, gkPPG: 0.3, cv: 0.45, pctGames80: 23, tries: 6, triesPerGame: 0.5, tryInvolvements: 2.3, lbPerGame: 1.3, finalsBye: null, posFastStart: 10, posSOS: 2, teamSOS: 2, predictedAvg: 64 },
+  { rank: 7, pos: "HFB", posRank: 7, team: "MANLY", name: "Jamal Fogarty", price: 667200, scPos: "HFB", statPos: "RIGHT HALF", games2025: 22, avg2025: 68.2, nonInjuryAvg: null, basePower: 25.1, gkPPG: 13.7, cv: 0.32, pctGames80: 23, tries: 2, triesPerGame: 0.1, tryInvolvements: 2.1, lbPerGame: 0.9, finalsBye: "R22", posFastStart: 3, posSOS: 3, teamSOS: 6, predictedAvg: 64 },
+  { rank: 8, pos: "HFB", posRank: 8, team: "KNIGHTS", name: "Dylan Brown", price: 535300, scPos: "HFB", statPos: "LEFT HALF", games2025: 19, avg2025: 54.7, nonInjuryAvg: 56.8, basePower: 35.0, gkPPG: 0.1, cv: 0.39, pctGames80: 11, tries: 5, triesPerGame: 0.3, tryInvolvements: 1.5, lbPerGame: 0.8, finalsBye: "R27", posFastStart: 8, posSOS: 6, teamSOS: 7, predictedAvg: 64 },
+  { rank: 9, pos: "HFB", posRank: 9, team: "COWBOYS", name: "Thomas Dearden", price: 637900, scPos: "HFB", statPos: "LEFT HALF", games2025: 22, avg2025: 65.2, nonInjuryAvg: null, basePower: 35.1, gkPPG: null, cv: 0.58, pctGames80: 23, tries: 9, triesPerGame: 0.5, tryInvolvements: 2.0, lbPerGame: 0.6, finalsBye: "R25", posFastStart: 16, posSOS: 9, teamSOS: 9, predictedAvg: 63 },
+  { rank: 10, pos: "HFB", posRank: 10, team: "BULLDOGS", name: "Lachlan Galvin", price: 555200, scPos: "HFB", statPos: "RIGHT HALF", games2025: 22, avg2025: 56.8, nonInjuryAvg: 59.8, basePower: 33.6, gkPPG: null, cv: 0.40, pctGames80: 18, tries: 4, triesPerGame: 0.2, tryInvolvements: 1.5, lbPerGame: 1.0, finalsBye: null, posFastStart: 6, posSOS: 5, teamSOS: 4, predictedAvg: 62 },
+  { rank: 11, pos: "HFB", posRank: 11, team: "TIGERS", name: "Adam Doueihi", price: 556000, scPos: "HFB", statPos: "RIGHT HALF", games2025: 21, avg2025: 56.9, nonInjuryAvg: 59.4, basePower: 33.2, gkPPG: 8.7, cv: 0.47, pctGames80: 14, tries: 6, triesPerGame: 0.3, tryInvolvements: 0.9, lbPerGame: 0.7, finalsBye: "R23", posFastStart: 7, posSOS: 7, teamSOS: 11, predictedAvg: 59 },
+  { rank: 12, pos: "HFB", posRank: 12, team: "DOLPHINS", name: "Isaiya Katoa", price: 639300, scPos: "HFB", statPos: "RIGHT HALF", games2025: 24, avg2025: 65.4, nonInjuryAvg: null, basePower: 32.3, gkPPG: null, cv: 0.30, pctGames80: 21, tries: 2, triesPerGame: 0.1, tryInvolvements: 2.5, lbPerGame: 1.4, finalsBye: null, posFastStart: 8, posSOS: 13, teamSOS: 16, predictedAvg: 61 },
+  { rank: 13, pos: "HFB", posRank: 13, team: "BRONCOS", name: "Adam Reynolds", price: 633200, scPos: "HFB", statPos: "RIGHT HALF", games2025: 20, avg2025: 64.8, nonInjuryAvg: 68.3, basePower: 22.7, gkPPG: 14.2, cv: 0.47, pctGames80: 30, tries: 4, triesPerGame: 0.2, tryInvolvements: 2.1, lbPerGame: 0.9, finalsBye: null, posFastStart: 16, posSOS: 14, teamSOS: 12, predictedAvg: 62 },
+  { rank: 14, pos: "HFB", posRank: 14, team: "WARRIORS", name: "Luke Metcalf", price: 613500, scPos: "HFB", statPos: "LEFT HALF", games2025: 15, avg2025: 62.7, nonInjuryAvg: 64.7, basePower: 22.9, gkPPG: 8.4, cv: 0.51, pctGames80: 20, tries: 8, triesPerGame: 0.6, tryInvolvements: 1.9, lbPerGame: 1.1, finalsBye: null, posFastStart: 6, posSOS: 8, teamSOS: 3, predictedAvg: 61 },
+  { rank: 15, pos: "HFB", posRank: 15, team: "DRAGONS", name: "Daniel Atkinson", price: 235600, scPos: "HFB", statPos: "RIGHT HALF", games2025: 16, avg2025: 20.8, nonInjuryAvg: 61.0, basePower: 15.6, gkPPG: null, cv: 0.82, pctGames80: 0, tries: 3, triesPerGame: 0.2, tryInvolvements: 0.3, lbPerGame: 0.3, finalsBye: null, posFastStart: 17, posSOS: 9, teamSOS: 13, predictedAvg: 51 },
+  { rank: 16, pos: "HFB", posRank: 16, team: "RAIDERS", name: "Ethan Sanders", price: 246400, scPos: "HFB", statPos: "RIGHT HALF", games2025: 2, avg2025: 36.0, nonInjuryAvg: null, basePower: 17.0, gkPPG: 5.0, cv: 0.14, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 1.5, lbPerGame: 0.5, finalsBye: "R26", posFastStart: 4, posSOS: 15, teamSOS: 15, predictedAvg: 55 },
+  { rank: 17, pos: "HFB", posRank: 17, team: "WARRIORS", name: "Tanah Boyd", price: 574500, scPos: "HFB", statPos: "RIGHT HALF", games2025: 8, avg2025: 58.8, nonInjuryAvg: null, basePower: 22.0, gkPPG: 11.5, cv: 0.31, pctGames80: 13, tries: 0, triesPerGame: 0, tryInvolvements: 2.3, lbPerGame: 0.9, finalsBye: null, posFastStart: 1, posSOS: 8, teamSOS: 3, predictedAvg: 52 },
+  { rank: 18, pos: "HFB", posRank: 18, team: "BUNNIES", name: "Jamie Humphreys", price: 370500, scPos: "HFB", statPos: "RIGHT HALF", games2025: 18, avg2025: 37.9, nonInjuryAvg: 40.9, basePower: 28.5, gkPPG: 2.2, cv: 0.49, pctGames80: 0, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.6, lbPerGame: 0.4, finalsBye: null, posFastStart: 17, posSOS: 13, teamSOS: 10, predictedAvg: 45 },
+  { rank: 19, pos: "HFB", posRank: 19, team: "STORM", name: "Tyran Wishart", price: 402600, scPos: "5-8 | HFB", statPos: "LEFT HALF", games2025: 24, avg2025: 41.2, nonInjuryAvg: null, basePower: 31.4, gkPPG: 0.5, cv: 0.45, pctGames80: 4, tries: 6, triesPerGame: 0.3, tryInvolvements: 0.7, lbPerGame: 0.3, finalsBye: "R24", posFastStart: 15, posSOS: 14, teamSOS: 14, predictedAvg: 44 },
+  { rank: 20, pos: "HFB", posRank: 20, team: "TIGERS", name: "Latu Fainu", price: 384200, scPos: "HFB", statPos: "RIGHT HALF", games2025: 14, avg2025: 39.3, nonInjuryAvg: 47.7, basePower: 29.0, gkPPG: null, cv: 0.50, pctGames80: 0, tries: 3, triesPerGame: 0.3, tryInvolvements: 0.9, lbPerGame: 0.4, finalsBye: "R23", posFastStart: 7, posSOS: 7, teamSOS: 11, predictedAvg: 48 },
+
+  // ============================================================
+  // FIVE-EIGHTH (5-8) - 20 players
+  // ============================================================
+  { rank: 1, pos: "5-8", posRank: 1, team: "STORM", name: "Cameron Munster", price: 682200, scPos: "5-8", statPos: "LEFT HALF", games2025: 21, avg2025: 69.8, nonInjuryAvg: null, basePower: 45.1, gkPPG: null, cv: 0.33, pctGames80: 24, tries: 2, triesPerGame: 0.1, tryInvolvements: 1.6, lbPerGame: 1.0, finalsBye: "R24", posFastStart: 15, posSOS: 14, teamSOS: 14, predictedAvg: 68 },
+  { rank: 2, pos: "5-8", posRank: 2, team: "KNIGHTS", name: "Fletcher Sharpe", price: 730700, scPos: "5-8", statPos: "LEFT WING", games2025: 14, avg2025: 74.7, nonInjuryAvg: 76.5, basePower: 28.4, gkPPG: null, cv: 0.42, pctGames80: 50, tries: 11, triesPerGame: 0.8, tryInvolvements: 1.1, lbPerGame: 1.1, finalsBye: "R27", posFastStart: 4, posSOS: 4, teamSOS: 7, predictedAvg: 68 },
+  { rank: 3, pos: "5-8", posRank: 3, team: "TITANS", name: "Alexander Brimson", price: 649300, scPos: "5-8", statPos: "RIGHT HALF", games2025: 23, avg2025: 66.4, nonInjuryAvg: null, basePower: 39.3, gkPPG: null, cv: 0.37, pctGames80: 26, tries: 12, triesPerGame: 0.6, tryInvolvements: 1.4, lbPerGame: 1.1, finalsBye: null, posFastStart: 2, posSOS: 1, teamSOS: 1, predictedAvg: 63 },
+  { rank: 4, pos: "5-8", posRank: 4, team: "ROOSTERS", name: "Daly Cherry-Evans", price: 618700, scPos: "5-8", statPos: "RIGHT HALF", games2025: 23, avg2025: 63.3, nonInjuryAvg: null, basePower: 27.7, gkPPG: 3.0, cv: 0.55, pctGames80: 22, tries: 5, triesPerGame: 0.3, tryInvolvements: 2.2, lbPerGame: 1.0, finalsBye: null, posFastStart: 14, posSOS: 12, teamSOS: 8, predictedAvg: 65 },
+  { rank: 5, pos: "5-8", posRank: 5, team: "BULLDOGS", name: "Matt Burton", price: 557400, scPos: "5-8", statPos: "LEFT HALF", games2025: 19, avg2025: 57.0, nonInjuryAvg: 57.6, basePower: 33.7, gkPPG: 4.2, cv: 0.42, pctGames80: 16, tries: 5, triesPerGame: 0.3, tryInvolvements: 1.3, lbPerGame: 0.7, finalsBye: null, posFastStart: 11, posSOS: 1, teamSOS: 4, predictedAvg: 58 },
+  { rank: 6, pos: "5-8", posRank: 6, team: "DOLPHINS", name: "Kodi Nikorima", price: 597000, scPos: "5-8", statPos: "LEFT HALF", games2025: 20, avg2025: 61.1, nonInjuryAvg: 61.8, basePower: 27.6, gkPPG: null, cv: 0.57, pctGames80: 25, tries: 8, triesPerGame: 0.4, tryInvolvements: 2.2, lbPerGame: 1.5, finalsBye: null, posFastStart: 5, posSOS: 11, teamSOS: 16, predictedAvg: 60 },
+  { rank: 7, pos: "5-8", posRank: 7, team: "PANTHERS", name: "Blaize Talagi", price: 581100, scPos: "5-8", statPos: "LEFT HALF", games2025: 19, avg2025: 59.4, nonInjuryAvg: null, basePower: 34.2, gkPPG: null, cv: 0.33, pctGames80: 16, tries: 6, triesPerGame: 0.4, tryInvolvements: 1.5, lbPerGame: 1.3, finalsBye: null, posFastStart: 2, posSOS: 17, teamSOS: 17, predictedAvg: 61 },
+  { rank: 8, pos: "5-8", posRank: 8, team: "COWBOYS", name: "Jaxon Purdue", price: 557400, scPos: "CTW | 5-8", statPos: "LEFT CENTRE", games2025: 24, avg2025: 57.0, nonInjuryAvg: null, basePower: 35.2, gkPPG: null, cv: 0.45, pctGames80: 21, tries: 14, triesPerGame: 0.6, tryInvolvements: 1.2, lbPerGame: 1.0, finalsBye: "R25", posFastStart: 9, posSOS: 4, teamSOS: 9, predictedAvg: 60 },
+  { rank: 9, pos: "5-8", posRank: 9, team: "RAIDERS", name: "Ethan Strange", price: 610600, scPos: "5-8", statPos: "LEFT HALF", games2025: 23, avg2025: 62.4, nonInjuryAvg: null, basePower: 34.0, gkPPG: 0.9, cv: 0.56, pctGames80: 30, tries: 13, triesPerGame: 0.6, tryInvolvements: 1.3, lbPerGame: 1.3, finalsBye: "R26", posFastStart: 4, posSOS: 16, teamSOS: 15, predictedAvg: 55 },
+  { rank: 10, pos: "5-8", posRank: 10, team: "BRONCOS", name: "Ezra Mam", price: 585800, scPos: "5-8", statPos: "LEFT HALF", games2025: 10, avg2025: 59.9, nonInjuryAvg: 66.4, basePower: 28.6, gkPPG: null, cv: 0.61, pctGames80: 30, tries: 5, triesPerGame: 0.5, tryInvolvements: 1.7, lbPerGame: 1.5, finalsBye: null, posFastStart: 7, posSOS: 15, teamSOS: 12, predictedAvg: 59 },
+  { rank: 11, pos: "5-8", posRank: 11, team: "WARRIORS", name: "Chanel Harris-Tavita", price: 539100, scPos: "5-8", statPos: "LEFT HALF", games2025: 23, avg2025: 55.1, nonInjuryAvg: null, basePower: 29.3, gkPPG: null, cv: 0.38, pctGames80: 13, tries: 8, triesPerGame: 0.4, tryInvolvements: 1.6, lbPerGame: 1.0, finalsBye: null, posFastStart: 6, posSOS: 8, teamSOS: 3, predictedAvg: 55 },
+  { rank: 12, pos: "5-8", posRank: 12, team: "BUNNIES", name: "Cody Walker", price: 399200, scPos: "5-8", statPos: "LEFT HALF", games2025: 11, avg2025: 40.8, nonInjuryAvg: 46.2, basePower: 19.1, gkPPG: null, cv: 0.53, pctGames80: 9, tries: 1, triesPerGame: 0.1, tryInvolvements: 1.2, lbPerGame: 1.2, finalsBye: null, posFastStart: 17, posSOS: 7, teamSOS: 10, predictedAvg: 54 },
+  { rank: 13, pos: "5-8", posRank: 13, team: "EELS", name: "Jonah Pezet", price: 235600, scPos: "5-8", statPos: "LEFT HALF", games2025: 7, avg2025: 18.9, nonInjuryAvg: null, basePower: 9.1, gkPPG: 0.6, cv: 0.70, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.6, lbPerGame: 0.3, finalsBye: null, posFastStart: 12, posSOS: 3, teamSOS: 2, predictedAvg: 48 },
+  { rank: 14, pos: "5-8", posRank: 14, team: "DRAGONS", name: "Kyle Flanagan", price: 489000, scPos: "5-8", statPos: "LEFT HALF", games2025: 24, avg2025: 50.0, nonInjuryAvg: null, basePower: 26.4, gkPPG: 4.5, cv: 0.32, pctGames80: 4, tries: 7, triesPerGame: 0.3, tryInvolvements: 1.5, lbPerGame: 0.8, finalsBye: null, posFastStart: 13, posSOS: 10, teamSOS: 13, predictedAvg: 52 },
+  { rank: 15, pos: "5-8", posRank: 15, team: "TIGERS", name: "Jarome Luai", price: 465700, scPos: "5-8", statPos: "LEFT HALF", games2025: 21, avg2025: 47.6, nonInjuryAvg: null, basePower: 26.4, gkPPG: null, cv: 0.47, pctGames80: 10, tries: 1, triesPerGame: 0.1, tryInvolvements: 1.6, lbPerGame: 0.9, finalsBye: "R23", posFastStart: 9, posSOS: 7, teamSOS: 11, predictedAvg: 53 },
+  { rank: 16, pos: "5-8", posRank: 16, team: "SHARKS", name: "Braydon Trindall", price: 417100, scPos: "5-8", statPos: "LEFT HALF", games2025: 23, avg2025: 42.7, nonInjuryAvg: null, basePower: 15.3, gkPPG: 0.4, cv: 0.47, pctGames80: 4, tries: 7, triesPerGame: 0.4, tryInvolvements: 1.7, lbPerGame: 0.9, finalsBye: null, posFastStart: 10, posSOS: 2, teamSOS: 5, predictedAvg: 44 },
+  { rank: 17, pos: "5-8", posRank: 17, team: "MANLY", name: "Luke Brooks", price: 451900, scPos: "5-8", statPos: "LEFT HALF", games2025: 24, avg2025: 46.2, nonInjuryAvg: null, basePower: 26.0, gkPPG: null, cv: 0.52, pctGames80: 8, tries: 4, triesPerGame: 0.2, tryInvolvements: 1.6, lbPerGame: 1.1, finalsBye: "R22", posFastStart: 1, posSOS: 5, teamSOS: 6, predictedAvg: 46 },
+  { rank: 18, pos: "5-8", posRank: 18, team: "STORM", name: "Tyran Wishart", price: 402600, scPos: "5-8 | HFB", statPos: "LEFT HALF", games2025: 24, avg2025: 41.2, nonInjuryAvg: null, basePower: 31.4, gkPPG: 0.5, cv: 0.45, pctGames80: 4, tries: 6, triesPerGame: 0.3, tryInvolvements: 0.7, lbPerGame: 0.3, finalsBye: "R24", posFastStart: 15, posSOS: 14, teamSOS: 14, predictedAvg: 44 },
+  { rank: 19, pos: "5-8", posRank: 19, team: "KNIGHTS", name: "Sandon Smith", price: 506200, scPos: "5-8 | HOK", statPos: "HOOKER", games2025: 17, avg2025: 51.8, nonInjuryAvg: 57.5, basePower: 22.2, gkPPG: 11.9, cv: 0.55, pctGames80: 6, tries: 5, triesPerGame: 0.3, tryInvolvements: 1.1, lbPerGame: 0.8, finalsBye: "R27", posFastStart: 5, posSOS: 4, teamSOS: 7, predictedAvg: 51 },
+  { rank: 20, pos: "5-8", posRank: 20, team: "COWBOYS", name: "Jake Clifford", price: 508500, scPos: "5-8", statPos: "RIGHT HALF", games2025: 14, avg2025: 52.0, nonInjuryAvg: null, basePower: 30.1, gkPPG: 1.1, cv: 0.41, pctGames80: 7, tries: 5, triesPerGame: 0.4, tryInvolvements: 1.4, lbPerGame: 0.9, finalsBye: "R25", posFastStart: 16, posSOS: 9, teamSOS: 9, predictedAvg: 55 },
+
+  // ============================================================
+  // CENTRE/WING (CTW) - 60 players
+  // ============================================================
+  { rank: 1, pos: "CTW", posRank: 1, team: "DOLPHINS", name: "Herbie Farnworth", price: 825600, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 19, avg2025: 84.4, nonInjuryAvg: 85.3, basePower: 59.3, gkPPG: null, cv: 0.26, pctGames80: 47, tries: 12, triesPerGame: 0.6, tryInvolvements: 1.3, lbPerGame: 1.3, finalsBye: null, posFastStart: 6, posSOS: 5, teamSOS: 16, predictedAvg: 81 },
+  { rank: 2, pos: "CTW", posRank: 2, team: "BULLDOGS", name: "Jacob Kiraz", price: 746700, scPos: "CTW", statPos: "RIGHT WING", games2025: 17, avg2025: 76.4, nonInjuryAvg: null, basePower: 56.9, gkPPG: null, cv: 0.39, pctGames80: 35, tries: 9, triesPerGame: 0.5, tryInvolvements: 1.0, lbPerGame: 0.9, finalsBye: null, posFastStart: 2, posSOS: 8, teamSOS: 4, predictedAvg: 75 },
+  { rank: 3, pos: "CTW", posRank: 3, team: "BUNNIES", name: "Latrell Mitchell", price: 626800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 11, avg2025: 64.1, nonInjuryAvg: null, basePower: 28.4, gkPPG: 8.7, cv: 0.45, pctGames80: 36, tries: 2, triesPerGame: 0.2, tryInvolvements: 1.3, lbPerGame: 1.7, finalsBye: null, posFastStart: 17, posSOS: 7, teamSOS: 10, predictedAvg: 72 },
+  { rank: 4, pos: "CTW", posRank: 4, team: "DRAGONS", name: "Valentine Holmes", price: 734200, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 14, avg2025: 75.1, nonInjuryAvg: null, basePower: 44.1, gkPPG: 10.7, cv: 0.24, pctGames80: 29, tries: 6, triesPerGame: 0.4, tryInvolvements: 1.4, lbPerGame: 1.1, finalsBye: null, posFastStart: 12, posSOS: 3, teamSOS: 13, predictedAvg: 76 },
+  { rank: 5, pos: "CTW", posRank: 5, team: "ROOSTERS", name: "Mark Nawaqanitawase", price: 735200, scPos: "CTW", statPos: "RIGHT WING", games2025: 22, avg2025: 75.2, nonInjuryAvg: null, basePower: 43.0, gkPPG: null, cv: 0.46, pctGames80: 41, tries: 23, triesPerGame: 1.0, tryInvolvements: 1.6, lbPerGame: 1.4, finalsBye: null, posFastStart: 11, posSOS: 16, teamSOS: 8, predictedAvg: 76 },
+  { rank: 6, pos: "CTW", posRank: 6, team: "SHARKS", name: "Kayal Iro", price: 705900, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 11, avg2025: 72.2, nonInjuryAvg: 76.9, basePower: 46.4, gkPPG: null, cv: 0.30, pctGames80: 36, tries: 10, triesPerGame: 0.9, tryInvolvements: 1.3, lbPerGame: 1.6, finalsBye: null, posFastStart: 15, posSOS: 8, teamSOS: 5, predictedAvg: 67 },
+  { rank: 7, pos: "CTW", posRank: 7, team: "PANTHERS", name: "Casey Mclean", price: 653800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 20, avg2025: 66.9, nonInjuryAvg: 73.0, basePower: 36.8, gkPPG: null, cv: 0.36, pctGames80: 30, tries: 15, triesPerGame: 0.8, tryInvolvements: 1.5, lbPerGame: 1.4, finalsBye: null, posFastStart: 8, posSOS: 15, teamSOS: 17, predictedAvg: 69 },
+  { rank: 8, pos: "CTW", posRank: 8, team: "MANLY", name: "Lehi Hopoate", price: 611700, scPos: "CTW", statPos: "LEFT WING", games2025: 22, avg2025: 62.5, nonInjuryAvg: 67.7, basePower: 40.3, gkPPG: null, cv: 0.55, pctGames80: 32, tries: 8, triesPerGame: 0.4, tryInvolvements: 1.0, lbPerGame: 1.3, finalsBye: "R22", posFastStart: 14, posSOS: 10, teamSOS: 6, predictedAvg: 66 },
+  { rank: 9, pos: "CTW", posRank: 9, team: "PANTHERS", name: "Brian Too", price: 598800, scPos: "CTW", statPos: "LEFT WING", games2025: 13, avg2025: 61.2, nonInjuryAvg: 63.2, basePower: 48.2, gkPPG: null, cv: 0.36, pctGames80: 23, tries: 5, triesPerGame: 0.4, tryInvolvements: 0.5, lbPerGame: 0.7, finalsBye: null, posFastStart: 7, posSOS: 13, teamSOS: 17, predictedAvg: 68 },
+  { rank: 10, pos: "CTW", posRank: 10, team: "KNIGHTS", name: "Bradman Best", price: 656800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 18, avg2025: 67.2, nonInjuryAvg: null, basePower: 46.7, gkPPG: null, cv: 0.40, pctGames80: 33, tries: 6, triesPerGame: 0.3, tryInvolvements: 0.8, lbPerGame: 1.3, finalsBye: "R27", posFastStart: 2, posSOS: 6, teamSOS: 7, predictedAvg: 67 },
+  { rank: 11, pos: "CTW", posRank: 11, team: "TIGERS", name: "Taylan May", price: 617400, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 7, avg2025: 70.1, nonInjuryAvg: null, basePower: 46.1, gkPPG: null, cv: 0.45, pctGames80: 43, tries: 4, triesPerGame: 0.6, tryInvolvements: 1.1, lbPerGame: 1.3, finalsBye: "R23", posFastStart: 13, posSOS: 17, teamSOS: 11, predictedAvg: 67 },
+  { rank: 12, pos: "CTW", posRank: 12, team: "BRONCOS", name: "Gehamat Shibasaki", price: 647700, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 22, avg2025: 66.2, nonInjuryAvg: null, basePower: 43.7, gkPPG: null, cv: 0.39, pctGames80: 32, tries: 15, triesPerGame: 0.7, tryInvolvements: 1.1, lbPerGame: 1.1, finalsBye: null, posFastStart: 7, posSOS: 9, teamSOS: 12, predictedAvg: 65 },
+  { rank: 13, pos: "CTW", posRank: 13, team: "BRONCOS", name: "Kotoni Staggs", price: 638000, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 21, avg2025: 65.2, nonInjuryAvg: null, basePower: 44.0, gkPPG: null, cv: 0.41, pctGames80: 24, tries: 10, triesPerGame: 0.5, tryInvolvements: 1.1, lbPerGame: 1.2, finalsBye: null, posFastStart: 13, posSOS: 15, teamSOS: 12, predictedAvg: 68 },
+  { rank: 14, pos: "CTW", posRank: 14, team: "MANLY", name: "Tolutau Koula", price: 643200, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 22, avg2025: 65.8, nonInjuryAvg: 69.3, basePower: 42.2, gkPPG: null, cv: 0.38, pctGames80: 23, tries: 17, triesPerGame: 0.8, tryInvolvements: 1.2, lbPerGame: 1.0, finalsBye: "R22", posFastStart: 2, posSOS: 10, teamSOS: 6, predictedAvg: 64 },
+  { rank: 15, pos: "CTW", posRank: 15, team: "ROOSTERS", name: "Daniel Tupou", price: 636900, scPos: "CTW", statPos: "LEFT WING", games2025: 23, avg2025: 65.1, nonInjuryAvg: null, basePower: 40.0, gkPPG: null, cv: 0.37, pctGames80: 30, tries: 19, triesPerGame: 0.8, tryInvolvements: 1.1, lbPerGame: 1.0, finalsBye: null, posFastStart: 6, posSOS: 9, teamSOS: 8, predictedAvg: 66 },
+  { rank: 16, pos: "CTW", posRank: 16, team: "COWBOYS", name: "Murray Taulagi", price: 648000, scPos: "CTW", statPos: "LEFT WING", games2025: 15, avg2025: 66.3, nonInjuryAvg: null, basePower: 41.3, gkPPG: 0.3, cv: 0.49, pctGames80: 27, tries: 12, triesPerGame: 0.8, tryInvolvements: 0.9, lbPerGame: 1.8, finalsBye: "R25", posFastStart: 2, posSOS: 5, teamSOS: 9, predictedAvg: 62 },
+  { rank: 17, pos: "CTW", posRank: 17, team: "TITANS", name: "Phillip Sami", price: 623600, scPos: "CTW", statPos: "RIGHT WING", games2025: 21, avg2025: 63.8, nonInjuryAvg: null, basePower: 46.0, gkPPG: null, cv: 0.37, pctGames80: 19, tries: 15, triesPerGame: 0.7, tryInvolvements: 0.8, lbPerGame: 0.7, finalsBye: null, posFastStart: 13, posSOS: 4, teamSOS: 1, predictedAvg: 64 },
+  { rank: 18, pos: "CTW", posRank: 18, team: "BUNNIES", name: "Alex Johnston", price: 650900, scPos: "CTW", statPos: "LEFT WING", games2025: 16, avg2025: 66.6, nonInjuryAvg: null, basePower: 30.2, gkPPG: null, cv: 0.47, pctGames80: 38, tries: 15, triesPerGame: 0.9, tryInvolvements: 1.2, lbPerGame: 1.7, finalsBye: null, posFastStart: 16, posSOS: 3, teamSOS: 10, predictedAvg: 67 },
+  { rank: 19, pos: "CTW", posRank: 19, team: "COWBOYS", name: "Jaxon Purdue", price: 557400, scPos: "CTW | 5-8", statPos: "LEFT CENTRE", games2025: 24, avg2025: 57.0, nonInjuryAvg: null, basePower: 35.2, gkPPG: null, cv: 0.45, pctGames80: 21, tries: 14, triesPerGame: 0.6, tryInvolvements: 1.2, lbPerGame: 1.0, finalsBye: "R25", posFastStart: 9, posSOS: 4, teamSOS: 9, predictedAvg: 60 },
+  { rank: 20, pos: "CTW", posRank: 20, team: "MANLY", name: "Reuben Garrick", price: 664500, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 21, avg2025: 68.0, nonInjuryAvg: 70.3, basePower: 39.7, gkPPG: 10.0, cv: 0.45, pctGames80: 33, tries: 12, triesPerGame: 0.6, tryInvolvements: 1.0, lbPerGame: 0.7, finalsBye: "R22", posFastStart: 1, posSOS: 12, teamSOS: 6, predictedAvg: 62 },
+  { rank: 21, pos: "CTW", posRank: 21, team: "KNIGHTS", name: "Dane Gagai", price: 590800, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 24, avg2025: 60.4, nonInjuryAvg: null, basePower: 48.5, gkPPG: 3.0, cv: 0.34, pctGames80: 21, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.5, lbPerGame: 0.9, finalsBye: "R27", posFastStart: 12, posSOS: 5, teamSOS: 7, predictedAvg: 65 },
+  { rank: 22, pos: "CTW", posRank: 22, team: "STORM", name: "Nick Meaney", price: 598100, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 19, avg2025: 61.2, nonInjuryAvg: 62.0, basePower: 38.3, gkPPG: 6.3, cv: 0.48, pctGames80: 16, tries: 9, triesPerGame: 0.5, tryInvolvements: 0.8, lbPerGame: 0.8, finalsBye: "R24", posFastStart: 10, posSOS: 6, teamSOS: 14, predictedAvg: 64 },
+  { rank: 23, pos: "CTW", posRank: 23, team: "KNIGHTS", name: "Greg Marzhew", price: 611200, scPos: "CTW", statPos: "LEFT WING", games2025: 18, avg2025: 62.5, nonInjuryAvg: null, basePower: 50.3, gkPPG: null, cv: 0.39, pctGames80: 22, tries: 6, triesPerGame: 0.3, tryInvolvements: 0.6, lbPerGame: 0.8, finalsBye: "R27", posFastStart: 4, posSOS: 4, teamSOS: 7, predictedAvg: 64 },
+  { rank: 24, pos: "CTW", posRank: 24, team: "WARRIORS", name: "Roger Tuivasa-Sheck", price: 670400, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 18, avg2025: 68.6, nonInjuryAvg: 70.5, basePower: 46.4, gkPPG: null, cv: 0.31, pctGames80: 22, tries: 12, triesPerGame: 0.7, tryInvolvements: 0.8, lbPerGame: 1.2, finalsBye: null, posFastStart: 8, posSOS: 1, teamSOS: 3, predictedAvg: 62 },
+  { rank: 25, pos: "CTW", posRank: 25, team: "STORM", name: "Xavier Coates", price: 636700, scPos: "CTW", statPos: "LEFT WING", games2025: 19, avg2025: 65.1, nonInjuryAvg: null, basePower: 34.0, gkPPG: null, cv: 0.55, pctGames80: 26, tries: 19, triesPerGame: 1.0, tryInvolvements: 1.5, lbPerGame: 1.1, finalsBye: "R24", posFastStart: 9, posSOS: 17, teamSOS: 14, predictedAvg: 62 },
+  { rank: 26, pos: "CTW", posRank: 26, team: "PANTHERS", name: "Paul Alamoti", price: 643000, scPos: "CTW", statPos: "RIGHT WING", games2025: 16, avg2025: 65.8, nonInjuryAvg: null, basePower: 42.3, gkPPG: 2.6, cv: 0.39, pctGames80: 38, tries: 12, triesPerGame: 0.8, tryInvolvements: 0.9, lbPerGame: 1.0, finalsBye: null, posFastStart: 8, posSOS: 15, teamSOS: 17, predictedAvg: 62 },
+  { rank: 27, pos: "CTW", posRank: 27, team: "DRAGONS", name: "Christian Tuipulotu", price: 670400, scPos: "CTW", statPos: "LEFT WING", games2025: 9, avg2025: 68.6, nonInjuryAvg: 77.1, basePower: 39.7, gkPPG: null, cv: 0.55, pctGames80: 44, tries: 8, triesPerGame: 0.9, tryInvolvements: 1.0, lbPerGame: 1.4, finalsBye: null, posFastStart: 8, posSOS: 7, teamSOS: 13, predictedAvg: 68 },
+  { rank: 28, pos: "CTW", posRank: 28, team: "BULLDOGS", name: "Stephen Crichton", price: 600000, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 20, avg2025: 61.4, nonInjuryAvg: null, basePower: 33.3, gkPPG: 9.9, cv: 0.38, pctGames80: 15, tries: 3, triesPerGame: 0.2, tryInvolvements: 1.0, lbPerGame: 1.1, finalsBye: null, posFastStart: 6, posSOS: 4, teamSOS: 4, predictedAvg: 66 },
+  { rank: 29, pos: "CTW", posRank: 29, team: "EELS", name: "Brian Kelly", price: 550400, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 21, avg2025: 56.3, nonInjuryAvg: 57.7, basePower: 42.0, gkPPG: -0.1, cv: 0.38, pctGames80: 10, tries: 7, triesPerGame: 0.3, tryInvolvements: 1.0, lbPerGame: 0.7, finalsBye: null, posFastStart: 11, posSOS: 1, teamSOS: 2, predictedAvg: 62 },
+  { rank: 30, pos: "CTW", posRank: 30, team: "DOLPHINS", name: "Jamayne Isaako", price: 609200, scPos: "CTW", statPos: "RIGHT WING", games2025: 24, avg2025: 62.3, nonInjuryAvg: null, basePower: 30.8, gkPPG: 18.2, cv: 0.45, pctGames80: 25, tries: 11, triesPerGame: 0.5, tryInvolvements: 0.6, lbPerGame: 0.7, finalsBye: null, posFastStart: 7, posSOS: 10, teamSOS: 16, predictedAvg: 61 },
+  { rank: 31, pos: "CTW", posRank: 31, team: "EELS", name: "Josh Addo-Carr", price: 591200, scPos: "CTW", statPos: "LEFT WING", games2025: 22, avg2025: 60.5, nonInjuryAvg: null, basePower: 34.1, gkPPG: null, cv: 0.41, pctGames80: 23, tries: 19, triesPerGame: 0.9, tryInvolvements: 1.0, lbPerGame: 1.1, finalsBye: null, posFastStart: 10, posSOS: 1, teamSOS: 2, predictedAvg: 60 },
+  { rank: 32, pos: "CTW", posRank: 32, team: "BRONCOS", name: "Josiah Karapani", price: 622900, scPos: "CTW", statPos: "LEFT WING", games2025: 10, avg2025: 63.7, nonInjuryAvg: null, basePower: 32.9, gkPPG: null, cv: 0.37, pctGames80: 40, tries: 10, triesPerGame: 1.0, tryInvolvements: 1.0, lbPerGame: 1.5, finalsBye: null, posFastStart: 15, posSOS: 8, teamSOS: 12, predictedAvg: 62 },
+  { rank: 33, pos: "CTW", posRank: 33, team: "RAIDERS", name: "Savelio Tamale", price: 547000, scPos: "CTW", statPos: "LEFT WING", games2025: 16, avg2025: 55.9, nonInjuryAvg: 59.5, basePower: 41.7, gkPPG: null, cv: 0.47, pctGames80: 13, tries: 6, triesPerGame: 0.4, tryInvolvements: 0.5, lbPerGame: 0.8, finalsBye: "R26", posFastStart: 1, posSOS: 14, teamSOS: 15, predictedAvg: 62 },
+  { rank: 34, pos: "CTW", posRank: 34, team: "ROOSTERS", name: "Robert Toia", price: 572300, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 21, avg2025: 58.5, nonInjuryAvg: null, basePower: 44.3, gkPPG: null, cv: 0.42, pctGames80: 10, tries: 7, triesPerGame: 0.3, tryInvolvements: 0.8, lbPerGame: 0.7, finalsBye: null, posFastStart: 14, posSOS: 12, teamSOS: 8, predictedAvg: 62 },
+  { rank: 35, pos: "CTW", posRank: 35, team: "RAIDERS", name: "Matthew Timoko", price: 610600, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 23, avg2025: 62.4, nonInjuryAvg: null, basePower: 56.1, gkPPG: null, cv: 0.43, pctGames80: 26, tries: 10, triesPerGame: 0.4, tryInvolvements: 0.7, lbPerGame: 0.7, finalsBye: "R26", posFastStart: 9, posSOS: 8, teamSOS: 15, predictedAvg: 62 },
+  { rank: 36, pos: "CTW", posRank: 36, team: "SHARKS", name: "Jesse Ramien", price: 502000, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 21, avg2025: 51.3, nonInjuryAvg: 53.6, basePower: 46.1, gkPPG: null, cv: 0.32, pctGames80: 5, tries: 3, triesPerGame: 0.1, tryInvolvements: 0.2, lbPerGame: 0.4, finalsBye: null, posFastStart: 11, posSOS: 2, teamSOS: 5, predictedAvg: 54 },
+  { rank: 37, pos: "CTW", posRank: 37, team: "KNIGHTS", name: "Dominic Young", price: 510600, scPos: "CTW", statPos: "RIGHT WING", games2025: 19, avg2025: 52.2, nonInjuryAvg: null, basePower: 34.3, gkPPG: null, cv: 0.45, pctGames80: 11, tries: 10, triesPerGame: 0.5, tryInvolvements: 0.7, lbPerGame: 0.9, finalsBye: "R27", posFastStart: 8, posSOS: 3, teamSOS: 7, predictedAvg: 58 },
+  { rank: 38, pos: "CTW", posRank: 38, team: "COWBOYS", name: "Braidon Burns", price: 634200, scPos: "CTW", statPos: "RIGHT WING", games2025: 13, avg2025: 64.8, nonInjuryAvg: 69.1, basePower: 47.7, gkPPG: null, cv: 0.33, pctGames80: 23, tries: 7, triesPerGame: 0.5, tryInvolvements: 0.8, lbPerGame: 0.8, finalsBye: "R25", posFastStart: 4, posSOS: 11, teamSOS: 9, predictedAvg: 62 },
+  { rank: 39, pos: "CTW", posRank: 39, team: "BULLDOGS", name: "Bronson Xerri", price: 509800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 23, avg2025: 52.1, nonInjuryAvg: 54.5, basePower: 37.3, gkPPG: null, cv: 0.45, pctGames80: 13, tries: 8, triesPerGame: 0.3, tryInvolvements: 0.6, lbPerGame: 0.9, finalsBye: null, posFastStart: 14, posSOS: 14, teamSOS: 4, predictedAvg: 57 },
+  { rank: 40, pos: "CTW", posRank: 40, team: "SHARKS", name: "Sam Stonestreet", price: 496100, scPos: "CTW", statPos: "LEFT WING", games2025: 11, avg2025: 50.7, nonInjuryAvg: null, basePower: 31.4, gkPPG: null, cv: 0.59, pctGames80: 9, tries: 8, triesPerGame: 0.7, tryInvolvements: 0.7, lbPerGame: 0.8, finalsBye: null, posFastStart: 11, posSOS: 6, teamSOS: 5, predictedAvg: 56 },
+  { rank: 41, pos: "CTW", posRank: 41, team: "BUNNIES", name: "Campbell Graham", price: 431200, scPos: "CTW", statPos: "RIGHT WING", games2025: 11, avg2025: 44.1, nonInjuryAvg: null, basePower: 44.1, gkPPG: null, cv: 0.16, pctGames80: 0, tries: 0, triesPerGame: 0, tryInvolvements: 0.2, lbPerGame: 0.1, finalsBye: null, posFastStart: 17, posSOS: 6, teamSOS: 10, predictedAvg: 52 },
+  { rank: 42, pos: "CTW", posRank: 42, team: "DOLPHINS", name: "Selwyn Cobbo", price: 524800, scPos: "CTW", statPos: "LEFT WING", games2025: 15, avg2025: 53.7, nonInjuryAvg: null, basePower: 38.4, gkPPG: 0.8, cv: 0.39, pctGames80: 13, tries: 6, triesPerGame: 0.4, tryInvolvements: 0.7, lbPerGame: 0.7, finalsBye: null, posFastStart: 3, posSOS: 9, teamSOS: 16, predictedAvg: 57 },
+  { rank: 43, pos: "CTW", posRank: 43, team: "ROOSTERS", name: "Billy Smith", price: 512000, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 17, avg2025: 52.4, nonInjuryAvg: 55.1, basePower: 37.9, gkPPG: null, cv: 0.45, pctGames80: 6, tries: 8, triesPerGame: 0.5, tryInvolvements: 1.0, lbPerGame: 0.6, finalsBye: null, posFastStart: 10, posSOS: 10, teamSOS: 8, predictedAvg: 55 },
+  { rank: 44, pos: "CTW", posRank: 44, team: "EELS", name: "Will Penisini", price: 498700, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 20, avg2025: 51.0, nonInjuryAvg: null, basePower: 40.9, gkPPG: null, cv: 0.38, pctGames80: 5, tries: 6, triesPerGame: 0.3, tryInvolvements: 0.7, lbPerGame: 0.6, finalsBye: null, posFastStart: 16, posSOS: 11, teamSOS: 2, predictedAvg: 53 },
+  { rank: 45, pos: "CTW", posRank: 45, team: "SHARKS", name: "Sione Katoa", price: 547600, scPos: "CTW", statPos: "RIGHT WING", games2025: 12, avg2025: 56.0, nonInjuryAvg: null, basePower: 42.3, gkPPG: null, cv: 0.47, pctGames80: 17, tries: 5, triesPerGame: 0.4, tryInvolvements: 0.5, lbPerGame: 0.8, finalsBye: null, posFastStart: 14, posSOS: 1, teamSOS: 5, predictedAvg: 52 },
+  { rank: 46, pos: "CTW", posRank: 46, team: "STORM", name: "William Warbrick", price: 413700, scPos: "CTW", statPos: "RIGHT WING", games2025: 4, avg2025: 47.0, nonInjuryAvg: null, basePower: 35.3, gkPPG: null, cv: 0.20, pctGames80: 0, tries: 2, triesPerGame: 0.5, tryInvolvements: 1.0, lbPerGame: 0.3, finalsBye: "R24", posFastStart: 6, posSOS: 14, teamSOS: 14, predictedAvg: 53 },
+  { rank: 47, pos: "CTW", posRank: 47, team: "BRONCOS", name: "Deine Mariner", price: 493200, scPos: "CTW", statPos: "RIGHT WING", games2025: 16, avg2025: 50.4, nonInjuryAvg: null, basePower: 35.2, gkPPG: null, cv: 0.56, pctGames80: 19, tries: 8, triesPerGame: 0.5, tryInvolvements: 2.1, lbPerGame: 0.8, finalsBye: null, posFastStart: 16, posSOS: 9, teamSOS: 12, predictedAvg: 55 },
+  { rank: 48, pos: "CTW", posRank: 48, team: "PANTHERS", name: "Izack Tago", price: 503600, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 22, avg2025: 51.5, nonInjuryAvg: 54.1, basePower: 42.6, gkPPG: null, cv: 0.42, pctGames80: 18, tries: 7, triesPerGame: 0.3, tryInvolvements: 0.6, lbPerGame: 0.5, finalsBye: null, posFastStart: 3, posSOS: 17, teamSOS: 17, predictedAvg: 55 },
+  { rank: 49, pos: "CTW", posRank: 49, team: "TITANS", name: "Max Feagai", price: 438800, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 8, avg2025: 44.9, nonInjuryAvg: null, basePower: 38.6, gkPPG: null, cv: 0.34, pctGames80: 0, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.4, lbPerGame: 0.3, finalsBye: null, posFastStart: 4, posSOS: 2, teamSOS: 1, predictedAvg: 55 },
+  { rank: 50, pos: "CTW", posRank: 50, team: "EELS", name: "Bailey Simonsson", price: 454700, scPos: "CTW", statPos: "RIGHT WING", games2025: 6, avg2025: 51.7, nonInjuryAvg: null, basePower: 43.2, gkPPG: null, cv: 0.29, pctGames80: 0, tries: 2, triesPerGame: 0.3, tryInvolvements: 0.5, lbPerGame: 0.5, finalsBye: null, posFastStart: 10, posSOS: 1, teamSOS: 2, predictedAvg: 58 },
+  { rank: 51, pos: "CTW", posRank: 51, team: "DOLPHINS", name: "Jake Averillo", price: 579000, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 24, avg2025: 59.2, nonInjuryAvg: null, basePower: 38.0, gkPPG: null, cv: 0.34, pctGames80: 13, tries: 11, triesPerGame: 0.5, tryInvolvements: 1.1, lbPerGame: 1.0, finalsBye: null, posFastStart: 1, posSOS: 9, teamSOS: 16, predictedAvg: 56 },
+  { rank: 52, pos: "CTW", posRank: 52, team: "DOLPHINS", name: "Jack Bostock", price: 506300, scPos: "CTW", statPos: "LEFT WING", games2025: 13, avg2025: 51.8, nonInjuryAvg: 53.0, basePower: 32.1, gkPPG: null, cv: 0.77, pctGames80: 8, tries: 9, triesPerGame: 0.7, tryInvolvements: 0.9, lbPerGame: 0.7, finalsBye: null, posFastStart: 3, posSOS: 9, teamSOS: 16, predictedAvg: 54 },
+  { rank: 53, pos: "CTW", posRank: 53, team: "TITANS", name: "Jojo Fifita", price: 483800, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 17, avg2025: 49.5, nonInjuryAvg: null, basePower: 35.2, gkPPG: null, cv: 0.42, pctGames80: 12, tries: 11, triesPerGame: 0.6, tryInvolvements: 0.8, lbPerGame: 0.4, finalsBye: null, posFastStart: 4, posSOS: 3, teamSOS: 1, predictedAvg: 50 },
+  { rank: 54, pos: "CTW", posRank: 54, team: "WARRIORS", name: "Dallin Watene-Zelezniak", price: 402900, scPos: "CTW", statPos: "RIGHT WING", games2025: 15, avg2025: 41.2, nonInjuryAvg: null, basePower: 30.2, gkPPG: null, cv: 0.70, pctGames80: 20, tries: 7, triesPerGame: 0.5, tryInvolvements: 0.5, lbPerGame: 0.6, finalsBye: null, posFastStart: 3, posSOS: 5, teamSOS: 3, predictedAvg: 52 },
+  { rank: 55, pos: "CTW", posRank: 55, team: "MANLY", name: "Jason Saab", price: 450800, scPos: "CTW", statPos: "RIGHT WING", games2025: 20, avg2025: 46.1, nonInjuryAvg: null, basePower: 26.8, gkPPG: null, cv: 0.56, pctGames80: 10, tries: 10, triesPerGame: 0.5, tryInvolvements: 0.9, lbPerGame: 1.0, finalsBye: "R22", posFastStart: 9, posSOS: 2, teamSOS: 6, predictedAvg: 51 },
+  { rank: 56, pos: "CTW", posRank: 56, team: "SHARKS", name: "Ronaldo Mulitalo", price: 624200, scPos: "CTW", statPos: "LEFT WING", games2025: 23, avg2025: 63.8, nonInjuryAvg: null, basePower: 42.1, gkPPG: null, cv: 0.47, pctGames80: 30, tries: 14, triesPerGame: 0.6, tryInvolvements: 1.1, lbPerGame: 1.1, finalsBye: null, posFastStart: 11, posSOS: 6, teamSOS: 5, predictedAvg: 52 },
+  { rank: 57, pos: "CTW", posRank: 57, team: "TIGERS", name: "Jeral Skelton", price: 494200, scPos: "CTW", statPos: "RIGHT WING", games2025: 15, avg2025: 50.5, nonInjuryAvg: 53.8, basePower: 33.3, gkPPG: null, cv: 0.44, pctGames80: 7, tries: 10, triesPerGame: 0.7, tryInvolvements: 0.7, lbPerGame: 0.8, finalsBye: "R23", posFastStart: 12, posSOS: 12, teamSOS: 11, predictedAvg: 55 },
+  { rank: 58, pos: "CTW", posRank: 58, team: "DRAGONS", name: "Moses Suli", price: 475800, scPos: "CTW", statPos: "RIGHT CENTRE", games2025: 20, avg2025: 48.7, nonInjuryAvg: null, basePower: 42.2, gkPPG: null, cv: 0.32, pctGames80: 5, tries: 1, triesPerGame: 0.1, tryInvolvements: 0.6, lbPerGame: 0.5, finalsBye: null, posFastStart: 7, posSOS: 14, teamSOS: 13, predictedAvg: 55 },
+  { rank: 59, pos: "CTW", posRank: 59, team: "STORM", name: "Jack Howarth", price: 457400, scPos: "CTW", statPos: "LEFT CENTRE", games2025: 13, avg2025: 46.8, nonInjuryAvg: 48.1, basePower: 39.5, gkPPG: null, cv: 0.41, pctGames80: 8, tries: 2, triesPerGame: 0.2, tryInvolvements: 0.5, lbPerGame: 0.4, finalsBye: "R24", posFastStart: 16, posSOS: 13, teamSOS: 14, predictedAvg: 52 },
+  { rank: 60, pos: "CTW", posRank: 60, team: "DOLPHINS", name: "Tevita Naufahu", price: 655100, scPos: "CTW", statPos: "LEFT WING", games2025: 7, avg2025: 74.4, nonInjuryAvg: null, basePower: 39.7, gkPPG: null, cv: 0.70, pctGames80: 43, tries: 6, triesPerGame: 0.9, tryInvolvements: 1.0, lbPerGame: 2.0, finalsBye: null, posFastStart: 17, posSOS: 16, teamSOS: 16, predictedAvg: 50 },
+
+  // ============================================================
+  // FULLBACK (FLB) - 20 players
+  // ============================================================
+  { rank: 1, pos: "FLB", posRank: 1, team: "ROOSTERS", name: "James Tedesco", price: 869100, scPos: "FLB", statPos: "FULLBACK", games2025: 24, avg2025: 88.9, nonInjuryAvg: null, basePower: 46.4, gkPPG: null, cv: 0.40, pctGames80: 58, tries: 11, triesPerGame: 0.5, tryInvolvements: 2.2, totalLBs: 19, lbsPerGame: 0.8, lbPerGame: 2.2, finalsBye: null, posFastStart: 8, posSOS: 5, teamSOS: 8, predictedAvg: 85 },
+  { rank: 2, pos: "FLB", posRank: 2, team: "BRONCOS", name: "Reece Walsh", price: 835600, scPos: "FLB", statPos: "FULLBACK", games2025: 18, avg2025: 85.4, nonInjuryAvg: null, basePower: 34.3, gkPPG: 5.4, cv: 0.51, pctGames80: 44, tries: 12, triesPerGame: 0.7, tryInvolvements: 2.1, totalLBs: 8, lbsPerGame: 0.4, lbPerGame: 2.3, finalsBye: null, posFastStart: 1, posSOS: 7, teamSOS: 12, predictedAvg: 80 },
+  { rank: 3, pos: "FLB", posRank: 3, team: "MANLY", name: "Tom Trbojevic", price: 692200, scPos: "FLB", statPos: "FULLBACK", games2025: 18, avg2025: 70.8, nonInjuryAvg: 73.5, basePower: 41.4, gkPPG: null, cv: 0.53, pctGames80: 22, tries: 6, triesPerGame: 0.3, tryInvolvements: 1.6, totalLBs: 8, lbsPerGame: 0.4, lbPerGame: 1.8, finalsBye: "R22", posFastStart: 7, posSOS: 1, teamSOS: 6, predictedAvg: 77 },
+  { rank: 4, pos: "FLB", posRank: 4, team: "TITANS", name: "Keano Kini", price: 495000, scPos: "FLB", statPos: "FULLBACK", games2025: 6, avg2025: 45.0, nonInjuryAvg: 71.7, basePower: 30.8, gkPPG: null, cv: 0.64, pctGames80: 17, tries: 0, triesPerGame: 0, tryInvolvements: 0.8, totalLBs: 3, lbsPerGame: 0.5, lbPerGame: 0.8, finalsBye: null, posFastStart: 9, posSOS: 6, teamSOS: 1, predictedAvg: 76 },
+  { rank: 5, pos: "FLB", posRank: 5, team: "COWBOYS", name: "Scott Drinkwater", price: 793400, scPos: "FLB", statPos: "FULLBACK", games2025: 24, avg2025: 81.1, nonInjuryAvg: null, basePower: 32.3, gkPPG: 10.0, cv: 0.43, pctGames80: 42, tries: 11, triesPerGame: 0.5, tryInvolvements: 2.0, totalLBs: 13, lbsPerGame: 0.5, lbPerGame: 1.9, finalsBye: "R25", posFastStart: 12, posSOS: 12, teamSOS: 9, predictedAvg: 76 },
+  { rank: 6, pos: "FLB", posRank: 6, team: "PANTHERS", name: "Dylan Edwards", price: 777700, scPos: "FLB", statPos: "FULLBACK", games2025: 17, avg2025: 79.5, nonInjuryAvg: 85.0, basePower: 51.2, gkPPG: 1.5, cv: 0.44, pctGames80: 41, tries: 6, triesPerGame: 0.4, tryInvolvements: 1.1, totalLBs: 12, lbsPerGame: 0.7, lbPerGame: 1.4, finalsBye: null, posFastStart: 15, posSOS: 11, teamSOS: 17, predictedAvg: 75 },
+  { rank: 7, pos: "FLB", posRank: 7, team: "KNIGHTS", name: "Kalyn Ponga", price: 607800, scPos: "FLB", statPos: "FULLBACK", games2025: 13, avg2025: 62.2, nonInjuryAvg: 62.3, basePower: 33.4, gkPPG: 4.9, cv: 0.44, pctGames80: 23, tries: 1, triesPerGame: 0.1, tryInvolvements: 1.3, totalLBs: 5, lbsPerGame: 0.4, lbPerGame: 1.5, finalsBye: "R27", posFastStart: 17, posSOS: 13, teamSOS: 7, predictedAvg: 68 },
+  { rank: 8, pos: "FLB", posRank: 8, team: "EELS", name: "Isaiah Iongi", price: 640800, scPos: "FLB", statPos: "FULLBACK", games2025: 21, avg2025: 65.5, nonInjuryAvg: null, basePower: 43.4, gkPPG: null, cv: 0.36, pctGames80: 33, tries: 8, triesPerGame: 0.4, tryInvolvements: 1.2, totalLBs: 10, lbsPerGame: 0.5, lbPerGame: 1.1, finalsBye: null, posFastStart: 3, posSOS: 3, teamSOS: 2, predictedAvg: 66 },
+  { rank: 9, pos: "FLB", posRank: 9, team: "DOLPHINS", name: "Hamiso Tabuai-Fidow", price: 702300, scPos: "FLB", statPos: "FULLBACK", games2025: 21, avg2025: 71.8, nonInjuryAvg: null, basePower: 38.7, gkPPG: null, cv: 0.41, pctGames80: 38, tries: 22, triesPerGame: 1.0, tryInvolvements: 1.5, totalLBs: 11, lbsPerGame: 0.5, lbPerGame: 1.3, finalsBye: null, posFastStart: 16, posSOS: 15, teamSOS: 16, predictedAvg: 71 },
+  { rank: 10, pos: "FLB", posRank: 10, team: "DRAGONS", name: "Clint Gutherson", price: 648700, scPos: "FLB", statPos: "FULLBACK", games2025: 24, avg2025: 66.3, nonInjuryAvg: null, basePower: 36.3, gkPPG: null, cv: 0.49, pctGames80: 25, tries: 7, triesPerGame: 0.3, tryInvolvements: 1.4, totalLBs: 17, lbsPerGame: 0.7, lbPerGame: 2.0, finalsBye: null, posFastStart: 5, posSOS: 17, teamSOS: 13, predictedAvg: 62 },
+  { rank: 11, pos: "FLB", posRank: 11, team: "BUNNIES", name: "Jye Gray", price: 560000, scPos: "FLB", statPos: "FULLBACK", games2025: 19, avg2025: 57.3, nonInjuryAvg: 65.3, basePower: 38.9, gkPPG: null, cv: 0.41, pctGames80: 11, tries: 5, triesPerGame: 0.3, tryInvolvements: 0.8, totalLBs: 9, lbsPerGame: 0.5, lbPerGame: 1.1, finalsBye: null, posFastStart: 14, posSOS: 9, teamSOS: 10, predictedAvg: 65 },
+  { rank: 12, pos: "FLB", posRank: 12, team: "TIGERS", name: "Jahream Bula", price: 606900, scPos: "FLB", statPos: "FULLBACK", games2025: 18, avg2025: 62.1, nonInjuryAvg: 62.8, basePower: 40.0, gkPPG: null, cv: 0.32, pctGames80: 22, tries: 8, triesPerGame: 0.4, tryInvolvements: 1.2, totalLBs: 10, lbsPerGame: 0.6, lbPerGame: 1.1, finalsBye: "R23", posFastStart: 11, posSOS: 10, teamSOS: 11, predictedAvg: 63 },
+  { rank: 13, pos: "FLB", posRank: 13, team: "STORM", name: "Sua Faalogo", price: 511700, scPos: "FLB", statPos: "FULLBACK", games2025: 7, avg2025: 58.1, nonInjuryAvg: null, basePower: 31.6, gkPPG: null, cv: 0.50, pctGames80: 14, tries: 4, triesPerGame: 0.6, tryInvolvements: 1.1, totalLBs: 8, lbsPerGame: 1.1, lbPerGame: 1.1, finalsBye: "R24", posFastStart: 2, posSOS: 14, teamSOS: 14, predictedAvg: 60 },
+  { rank: 14, pos: "FLB", posRank: 14, team: "BULLDOGS", name: "Connor Tracey", price: 611200, scPos: "FLB", statPos: "FULLBACK", games2025: 22, avg2025: 62.5, nonInjuryAvg: null, basePower: 42.1, gkPPG: null, cv: 0.44, pctGames80: 27, tries: 4, triesPerGame: 0.2, tryInvolvements: 1.1, totalLBs: 6, lbsPerGame: 0.3, lbPerGame: 1.2, finalsBye: null, posFastStart: 4, posSOS: 2, teamSOS: 4, predictedAvg: 61 },
+  { rank: 15, pos: "FLB", posRank: 15, team: "WARRIORS", name: "Charnze Nicoll-Klokstad", price: 521600, scPos: "FLB", statPos: "FULLBACK", games2025: 21, avg2025: 53.3, nonInjuryAvg: 59.8, basePower: 46.5, gkPPG: null, cv: 0.53, pctGames80: 14, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.3, totalLBs: 6, lbsPerGame: 0.3, lbPerGame: 0.5, finalsBye: null, posFastStart: 10, posSOS: 4, teamSOS: 3, predictedAvg: 60 },
+  { rank: 16, pos: "FLB", posRank: 16, team: "RAIDERS", name: "Kaeo Weekes", price: 535700, scPos: "FLB", statPos: "FULLBACK", games2025: 23, avg2025: 54.8, nonInjuryAvg: null, basePower: 33.1, gkPPG: 0.3, cv: 0.63, pctGames80: 22, tries: 9, triesPerGame: 0.4, tryInvolvements: 1.0, totalLBs: 17, lbsPerGame: 0.7, lbPerGame: 1.2, finalsBye: "R26", posFastStart: 13, posSOS: 16, teamSOS: 15, predictedAvg: 56 },
+  { rank: 17, pos: "FLB", posRank: 17, team: "SHARKS", name: "William Kennedy", price: 533400, scPos: "FLB", statPos: "FULLBACK", games2025: 24, avg2025: 54.5, nonInjuryAvg: null, basePower: 35.2, gkPPG: null, cv: 0.40, pctGames80: 13, tries: 8, triesPerGame: 0.3, tryInvolvements: 1.1, totalLBs: 6, lbsPerGame: 0.3, lbPerGame: 0.8, finalsBye: null, posFastStart: 6, posSOS: 8, teamSOS: 5, predictedAvg: 52 },
+  { rank: 18, pos: "FLB", posRank: 18, team: "DOLPHINS", name: "Trai Fuller", price: 559400, scPos: "FLB", statPos: "FULLBACK", games2025: 4, avg2025: 88.0, nonInjuryAvg: null, basePower: 42.5, gkPPG: null, cv: 0.30, pctGames80: 50, tries: 2, triesPerGame: 0.5, tryInvolvements: 1.8, totalLBs: 6, lbsPerGame: 1.5, lbPerGame: 2.8, finalsBye: null, posFastStart: 16, posSOS: 15, teamSOS: 16, predictedAvg: 61 },
+  { rank: 19, pos: "FLB", posRank: 19, team: "COWBOYS", name: "Tom Chester", price: 216800, scPos: "FLB | CTW", statPos: "RIGHT CENTRE", games2025: 0, avg2025: null, nonInjuryAvg: null, basePower: null, gkPPG: null, cv: null, pctGames80: null, tries: null, triesPerGame: null, tryInvolvements: null, totalLBs: null, lbsPerGame: null, lbPerGame: null, finalsBye: "R25", posFastStart: 17, posSOS: 13, teamSOS: 9, predictedAvg: 35 },
+  { rank: 20, pos: "FLB", posRank: 20, team: "WARRIORS", name: "Taine Tuaupiki", price: 502900, scPos: "FLB | CTW", statPos: "FULLBACK", games2025: 14, avg2025: 51.4, nonInjuryAvg: null, basePower: 36.9, gkPPG: 0.3, cv: 0.49, pctGames80: 21, tries: 2, triesPerGame: 0.1, tryInvolvements: 0.9, totalLBs: 3, lbsPerGame: 0.2, lbPerGame: 0.6, finalsBye: null, posFastStart: 10, posSOS: 4, teamSOS: 3, predictedAvg: 45 },
+];
+
+// === DRAW DIFFICULTY DATA ===
+const DRAW_DIFFICULTY = {
+  "BRONCOS": { rounds: [4,3,2,3,3,2,3,1,3,3,3,0,1,3,3,0,4,2,0,4,2,3,1,3,3,2,1], bye: [12,16] },
+  "BULLDOGS": { rounds: [1,0,4,3,1,4,2,1,2,1,2,2,3,3,2,0,3,3,0,4,3,3,2,5,1,4,1], bye: [2,16] },
+  "COWBOYS": { rounds: [3,3,3,2,1,1,3,2,1,3,4,1,4,1,0,3,4,0,3,1,1,4,5,3,0,3,4], bye: [15,18] },
+  "DRAGONS": { rounds: [1,2,2,3,2,3,1,5,0,3,4,3,1,2,0,3,4,3,0,3,3,1,2,3,1,3,2], bye: [9,15] },
+  "EELS": { rounds: [2,1,1,4,3,3,1,3,0,3,3,2,2,0,3,5,1,4,3,4,0,4,3,1,2,2,1], bye: [9,14] },
+  "BUNNIES": { rounds: [1,4,3,0,1,4,3,1,2,3,2,1,2,0,3,3,0,2,4,3,4,2,2,1,3,3,4], bye: [4,14] },
+  "STORM": { rounds: [2,1,1,2,4,3,4,1,1,3,3,2,1,4,3,0,3,3,0,3,4,1,1,3,0,4,2], bye: [16,19] },
+  "RAIDERS": { rounds: [3,3,1,2,3,1,2,2,3,3,4,0,1,2,4,2,1,0,1,1,3,4,3,2,1,0,2], bye: [12,18] },
+  "MANLY": { rounds: [4,3,0,4,1,1,2,2,4,5,1,3,3,2,0,1,2,2,3,3,2,0,2,1,3,1,3], bye: [3,15] },
+  "KNIGHTS": { rounds: [2,3,3,1,4,3,5,4,4,1,1,3,3,0,2,2,0,3,1,3,2,4,1,4,3,3,0], bye: [14,17] },
+  "ROOSTERS": { rounds: [3,1,4,3,0,2,3,1,1,3,3,0,2,4,3,1,2,0,2,2,3,2,1,4,3,1,1], bye: [5,12] },
+  "TITANS": { rounds: [2,1,2,1,1,2,3,0,4,4,3,3,0,3,1,3,4,1,0,2,3,1,2,3,2,1,1], bye: [8,13] },
+  "TIGERS": { rounds: [0,2,1,3,2,3,1,4,2,2,3,0,1,4,3,3,1,3,1,1,4,2,0,1,4,2,4], bye: [1,12] },
+  "SHARKS": { rounds: [3,4,1,4,3,5,0,2,3,1,1,0,3,1,3,4,0,1,1,3,3,1,1,4,3,2,2], bye: [7,12] },
+  "PANTHERS": { rounds: [1,2,4,2,2,1,1,3,3,4,4,1,0,3,3,0,3,2,0,1,2,4,3,5,2,1,3], bye: [13,16] },
+  "WARRIORS": { rounds: [4,4,3,3,2,2,3,1,2,0,1,1,1,4,0,2,2,0,3,1,1,3,4,1,1,3,3], bye: [10,15] },
+  "DOLPHINS": { rounds: [1,3,2,1,3,0,4,3,2,1,1,4,0,2,4,3,3,3,2,2,0,1,1,3,4,4,3], bye: [6,13] }
+};
+
+// === DRAFT CHART DATA ===
+const DRAFT_CHART = {
+  R25: {
+    byes: { Rd22: "MANLY", Rd23: "TIGERS", Rd24: "STORM", Rd25: "COWBOYS" },
+    rounds: {
+      1: { FLB: ["James Tedesco","Reece Walsh","Tom Trbojevic"], CTW: ["Herbie Farnworth","Keano Kini"], "5-8": ["Nathan Cleary","Nicholas Hynes","Jayden Campbell"], HFB: [], "2RF": [], FRF: ["Payne Haas"], HOK: [] },
+      2: { FLB: ["Dylan Edwards","Scott Drinkwater"], CTW: ["Jacob Kiraz","Latrell Mitchell","Valentine Holmes","Mark Nawaqanitawase"], "5-8": ["Sam Walker"], HFB: ["Kalyn Ponga"], "2RF": ["Tino Faasuamaleaui","Dylan Lucas","Angus Crichton","Jacob Preston"], FRF: ["Terrell May"], HOK: ["Harry Grant"] },
+      3: { FLB: ["Hamiso Tabuai-Fidow","Isaiah Iongi"], CTW: ["Kayal Iro","Casey Mclean","Lehi Hopoate","Bradman Best"], "5-8": ["Cameron Munster","Jahrome Hughes","Taylan May","Fletcher Sharpe"], HFB: [], "2RF": ["Hudson Young","Beau Fermor"], FRF: ["Keaon Koloamatangi","Joseph Tapine","Addin Fonua-Blake","Toby Couchman","Patrick Carrigan"], HOK: ["Blayke Brailey"] },
+      4: { FLB: ["Clint Gutherson","Jye Gray"], CTW: ["Brian Too","Daniel Tupou","Kotoni Staggs","Alex Johnston","Gehamat Shibasaki"], "5-8": ["Alexander Brimson","Daly Cherry-Evans","Dylan Brown","Thomas Dearden"], HFB: [], "2RF": ["David Fifita","Isaah Yeo","Viliame Kikau","Erin Clark","Haumole Olakauatu"], FRF: ["Lindsay Smith","Naufahu Whyte"], HOK: [] },
+      5: { FLB: [], CTW: ["Phillip Sami","Tolutau Koula"], "5-8": ["Mitchell Moses","Jamal Fogarty","Lachlan Galvin"], HFB: [], "2RF": ["Isaiya Katoa","Kai Pearce-Paul","Briton Nikora","Jaydn Sua","Cameron Murray","Tallis Duncan"], FRF: ["Corey Horsburgh","Jack Williams","Jmaine Hopgood","Isaiah Papalii","Max King","Leo Thompson"], HOK: [] },
+      6: { FLB: ["Reuben Garrick","Dane Gagai","Murray Taulagi","Xavier Coates","Paul Alamoti"], CTW: ["Brian Kelly","Nick Meaney","Blaize Talagi","Roger Tuivasa-Sheck"], "5-8": ["Matt Burton","Kodi Nikorima"], HFB: [], "2RF": ["Leka Halasima"], FRF: ["Taniela Paseka","Jack DeBelin","Junior Paulo"], HOK: ["Connor Watson","Reece Robson","Jeremy Marshall-King","Jake Simpkin","Apisai Koroisau"] },
+      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jaxon Purdue","Jamayne Isaako"], CTW: ["Adam Doueihi","Ethan Strange"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi"], FRF: ["Trey Mooney","John Bateman"], HOK: ["Reed Mahoney"] },
+      8: { FLB: ["Greg Marzhew","Josh Addo-Carr","Savelio Tamale"], CTW: ["Josiah Karapani","Robert Toia","Braidon Burns"], "5-8": ["Ezra Mam","Chanel Harris-Tavita"], HFB: [], "2RF": ["Scott Sorensen","Matty Nicholson"], FRF: ["Moeaki Fotuaika","Stefano Utoikamanu","Daniel Saifiti","James Fisher-Harris"], HOK: ["Wayde Egan","Sam Verrills"] },
+      9: { FLB: ["Jahream Bula","Connor Tracey"], CTW: ["Sam Stonestreet","Bronson Xerri"], "5-8": ["Dominic Young","Cody Walker","Ben Hunt","Luke Metcalf"], HFB: [], "2RF": ["Jai Arrow","Trent Loiero","Jordan Riki"], FRF: [], HOK: ["Tom Starling"] },
+      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Selwyn Cobbo","Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
+      11: { FLB: ["Campbell Graham","Will Penisini","Izack Tago","Kaeo Weekes"], CTW: ["Moses Suli","William Warbrick","Sione Katoa"], "5-8": ["Tanah Boyd","Ethan Sanders"], HFB: [], "2RF": ["Cameron McInnes","Reuben Cotter","Jermaine McEwen","Kobe Hetherington","Hamish Stewart"], FRF: ["Jacob Saifiti","Samuela Fainu","Thomas Flegler","Alex Twal","Max Plath"], HOK: ["Bailey Hayward"] },
+      12: { FLB: ["Alofiana Khan-Pereira","William Kennedy","Tyrone Munro","Dallin Watene-Zelezniak","Jason Saab"], CTW: ["Grant Anderson"], "5-8": [], HFB: [], "2RF": ["Connelly Lemuelu","Brendan Piakura","Tom Gilbert"], FRF: ["Chris Randall","Griffin Neame","Siua Taukeiaho"], HOK: [] },
+      13: { FLB: ["Trai Fuller","Taine Tuaupiki"], CTW: ["Jojo Fifita","Sebastian Kris","Jake Averillo"], "5-8": ["Jack Bostock","Braydon Trindall","Luke Brooks","Jake Clifford","Jamie Humphreys"], HFB: [], "2RF": ["Siua Wong","Ben Trbojevic","Kurt Donoghoe","Luke Garner","Dylan Egan"], FRF: ["Xavier Willison","Victor Radley","Thomas Hazelton","Matt Croker","Coen Hess"], HOK: ["Ryley Smith"] }
+    }
+  },
+  R26: {
+    byes: { Rd23: "TIGERS", Rd24: "STORM", Rd25: "COWBOYS", Rd26: "RAIDERS" },
+    rounds: {
+      1: { FLB: ["James Tedesco","Tom Trbojevic","Reece Walsh"], CTW: ["Herbie Farnworth","Keano Kini"], "5-8": ["Nathan Cleary","Nicholas Hynes","Jayden Campbell"], HFB: [], "2RF": [], FRF: ["Payne Haas"], HOK: [] },
+      2: { FLB: ["Scott Drinkwater","Dylan Edwards"], CTW: ["Jacob Kiraz","Latrell Mitchell","Valentine Holmes","Mark Nawaqanitawase"], "5-8": ["Sam Walker"], HFB: ["Kalyn Ponga"], "2RF": ["Tino Faasuamaleaui","Dylan Lucas","Angus Crichton","Jacob Preston"], FRF: ["Terrell May"], HOK: ["Harry Grant"] },
+      3: { FLB: ["Hamiso Tabuai-Fidow","Isaiah Iongi"], CTW: ["Kayal Iro","Casey Mclean","Lehi Hopoate","Bradman Best"], "5-8": ["Cameron Munster","Jahrome Hughes","Taylan May","Fletcher Sharpe"], HFB: [], "2RF": ["Hudson Young","Joseph Tapine","Beau Fermor"], FRF: ["Keaon Koloamatangi","Addin Fonua-Blake","Toby Couchman","Patrick Carrigan"], HOK: ["Blayke Brailey"] },
+      4: { FLB: ["Clint Gutherson","Jye Gray"], CTW: ["Brian Too","Daniel Tupou","Kotoni Staggs","Alex Johnston","Gehamat Shibasaki"], "5-8": ["Alexander Brimson","Daly Cherry-Evans","Dylan Brown","Thomas Dearden"], HFB: [], "2RF": ["David Fifita","Isaah Yeo","Viliame Kikau","Erin Clark","Haumole Olakauatu"], FRF: ["Lindsay Smith","Naufahu Whyte"], HOK: [] },
+      5: { FLB: [], CTW: ["Phillip Sami","Tolutau Koula","Murray Taulagi"], "5-8": ["Mitchell Moses","Jamal Fogarty","Lachlan Galvin"], HFB: [], "2RF": ["Isaiya Katoa","Kai Pearce-Paul","Briton Nikora","Jaydn Sua","Cameron Murray","Tallis Duncan"], FRF: ["Corey Horsburgh","Jack Williams","Jmaine Hopgood","Isaiah Papalii","Max King","Leo Thompson"], HOK: [] },
+      6: { FLB: ["Reuben Garrick","Dane Gagai","Xavier Coates","Paul Alamoti"], CTW: ["Brian Kelly","Nick Meaney","Jaxon Purdue","Blaize Talagi","Roger Tuivasa-Sheck"], "5-8": ["Matt Burton","Kodi Nikorima"], HFB: [], "2RF": ["Leka Halasima"], FRF: ["Taniela Paseka","Jack DeBelin","Junior Paulo"], HOK: ["Connor Watson","Reece Robson","Jake Simpkin","Reed Mahoney","Apisai Koroisau"] },
+      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Adam Doueihi","Braidon Burns","Ethan Strange"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi"], FRF: ["Trey Mooney","John Bateman"], HOK: ["Jeremy Marshall-King"] },
+      8: { FLB: ["Greg Marzhew","Josh Addo-Carr","Savelio Tamale"], CTW: ["Josiah Karapani","Robert Toia"], "5-8": ["Ezra Mam","Chanel Harris-Tavita"], HFB: [], "2RF": ["Scott Sorensen","Matty Nicholson"], FRF: ["Moeaki Fotuaika","Stefano Utoikamanu","Daniel Saifiti","James Fisher-Harris"], HOK: ["Wayde Egan","Sam Verrills"] },
+      9: { FLB: ["Jahream Bula","Connor Tracey"], CTW: ["Sam Stonestreet","Bronson Xerri"], "5-8": ["Dominic Young","Cody Walker","Ben Hunt","Luke Metcalf"], HFB: [], "2RF": ["Jai Arrow","Trent Loiero","Jordan Riki"], FRF: [], HOK: ["Tom Starling"] },
+      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Selwyn Cobbo","Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
+      11: { FLB: ["Campbell Graham","Will Penisini","Izack Tago","Kaeo Weekes"], CTW: ["Moses Suli","William Warbrick","Sione Katoa"], "5-8": ["Tanah Boyd","Ethan Sanders"], HFB: [], "2RF": ["Cameron McInnes","Reuben Cotter","Jermaine McEwen","Kobe Hetherington","Hamish Stewart"], FRF: ["Jacob Saifiti","Samuela Fainu","Thomas Flegler","Alex Twal","Max Plath"], HOK: ["Bailey Hayward"] },
+      12: { FLB: ["Alofiana Khan-Pereira","William Kennedy","Tyrone Munro","Dallin Watene-Zelezniak","Jason Saab"], CTW: ["Grant Anderson"], "5-8": [], HFB: [], "2RF": ["Connelly Lemuelu","Brendan Piakura","Tom Gilbert"], FRF: ["Griffin Neame","Chris Randall","Siua Taukeiaho"], HOK: [] },
+      13: { FLB: ["Trai Fuller","Taine Tuaupiki"], CTW: ["Jojo Fifita","Sebastian Kris","Jake Averillo"], "5-8": ["Jack Bostock","Braydon Trindall","Luke Brooks","Jake Clifford","Jamie Humphreys"], HFB: [], "2RF": ["Siua Wong","Ben Trbojevic","Kurt Donoghoe","Luke Garner","Dylan Egan"], FRF: ["Xavier Willison","Victor Radley","Thomas Hazelton","Matt Croker","Coen Hess"], HOK: ["Ryley Smith"] }
+    }
+  },
+  R27: {
+    byes: { Rd24: "STORM", Rd25: "COWBOYS", Rd26: "RAIDERS", Rd27: "KNIGHTS" },
+    rounds: {
+      1: { FLB: ["James Tedesco","Tom Trbojevic","Reece Walsh"], CTW: ["Herbie Farnworth","Keano Kini"], "5-8": ["Nathan Cleary","Nicholas Hynes","Jayden Campbell"], HFB: [], "2RF": [], FRF: ["Payne Haas"], HOK: [] },
+      2: { FLB: ["Scott Drinkwater","Dylan Edwards"], CTW: ["Jacob Kiraz","Latrell Mitchell","Valentine Holmes","Mark Nawaqanitawase"], "5-8": ["Sam Walker"], HFB: [], "2RF": ["Tino Faasuamaleaui","Terrell May","Angus Crichton","Jacob Preston"], FRF: [], HOK: ["Harry Grant"] },
+      3: { FLB: ["Hamiso Tabuai-Fidow","Isaiah Iongi"], CTW: ["Kayal Iro","Casey Mclean","Lehi Hopoate","Kalyn Ponga"], "5-8": ["Cameron Munster","Jahrome Hughes","Taylan May"], HFB: [], "2RF": ["Hudson Young","Dylan Lucas","Joseph Tapine","Beau Fermor"], FRF: ["Keaon Koloamatangi","Addin Fonua-Blake"], HOK: ["Blayke Brailey"] },
+      4: { FLB: ["Clint Gutherson","Jye Gray"], CTW: ["Brian Too","Bradman Best","Daniel Tupou","Kotoni Staggs","Alex Johnston","Gehamat Shibasaki"], "5-8": ["Fletcher Sharpe","Alexander Brimson","Daly Cherry-Evans","Dylan Brown","Thomas Dearden"], HFB: [], "2RF": ["David Fifita","Isaah Yeo","Viliame Kikau","Erin Clark","Haumole Olakauatu"], FRF: ["Toby Couchman","Patrick Carrigan","Lindsay Smith","Naufahu Whyte"], HOK: [] },
+      5: { FLB: [], CTW: ["Phillip Sami","Tolutau Koula"], "5-8": ["Mitchell Moses","Jamal Fogarty","Lachlan Galvin"], HFB: [], "2RF": ["Isaiya Katoa","Kai Pearce-Paul","Briton Nikora","Jaydn Sua","Cameron Murray","Tallis Duncan"], FRF: ["Corey Horsburgh","Jack Williams","Jmaine Hopgood","Isaiah Papalii","Max King","Leo Thompson"], HOK: [] },
+      6: { FLB: ["Reuben Garrick","Dane Gagai","Murray Taulagi","Xavier Coates","Paul Alamoti"], CTW: ["Brian Kelly","Nick Meaney","Jaxon Purdue","Blaize Talagi","Roger Tuivasa-Sheck"], "5-8": ["Matt Burton","Kodi Nikorima"], HFB: [], "2RF": ["Leka Halasima"], FRF: ["Taniela Paseka","Jack DeBelin","Junior Paulo"], HOK: ["Connor Watson","Reece Robson","Jake Simpkin","Reed Mahoney"] },
+      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Adam Doueihi","Braidon Burns","Ethan Strange"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi"], FRF: ["John Bateman"], HOK: ["Apisai Koroisau","Jeremy Marshall-King"] },
+      8: { FLB: ["Greg Marzhew","Josh Addo-Carr","Savelio Tamale"], CTW: ["Josiah Karapani","Robert Toia"], "5-8": ["Ezra Mam","Chanel Harris-Tavita"], HFB: [], "2RF": ["Scott Sorensen","Matty Nicholson"], FRF: ["Moeaki Fotuaika","Stefano Utoikamanu","Daniel Saifiti","James Fisher-Harris"], HOK: ["Wayde Egan","Sam Verrills"] },
+      9: { FLB: ["Jahream Bula","Connor Tracey"], CTW: ["Sam Stonestreet","Bronson Xerri"], "5-8": ["Dominic Young","Cody Walker","Ben Hunt","Luke Metcalf"], HFB: [], "2RF": ["Jai Arrow","Trent Loiero","Jordan Riki"], FRF: ["Trey Mooney"], HOK: ["Tom Starling"] },
+      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Selwyn Cobbo","Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
+      11: { FLB: ["Campbell Graham","Will Penisini","Izack Tago","Kaeo Weekes"], CTW: ["Moses Suli","William Warbrick","Sione Katoa"], "5-8": ["Tanah Boyd","Ethan Sanders"], HFB: [], "2RF": ["Cameron McInnes","Reuben Cotter","Jermaine McEwen","Kobe Hetherington","Hamish Stewart"], FRF: ["Samuela Fainu","Thomas Flegler","Jacob Saifiti","Alex Twal","Max Plath"], HOK: ["Bailey Hayward"] },
+      12: { FLB: ["Alofiana Khan-Pereira","William Kennedy","Tyrone Munro","Dallin Watene-Zelezniak","Jason Saab"], CTW: ["Grant Anderson"], "5-8": [], HFB: [], "2RF": ["Connelly Lemuelu","Trey Mooney","Brendan Piakura","Tom Gilbert"], FRF: ["Griffin Neame","Chris Randall","Siua Taukeiaho"], HOK: [] },
+      13: { FLB: ["Trai Fuller","Taine Tuaupiki"], CTW: ["Jojo Fifita","Sebastian Kris","Jake Averillo"], "5-8": ["Jack Bostock","Braydon Trindall","Luke Brooks","Jake Clifford","Jamie Humphreys"], HFB: [], "2RF": ["Siua Wong","Ben Trbojevic","Kurt Donoghoe","Luke Garner","Dylan Egan"], FRF: ["Xavier Willison","Victor Radley","Thomas Hazelton","Matt Croker","Coen Hess"], HOK: ["Ryley Smith"] }
+    }
+  }
+};
+
+// === APPLICATION CODE ===
+(function() {
+'use strict';
+
+const POSITIONS = ['FLB','CTW','5-8','HFB','2RF','FRF','HOK'];
+const POS_COLORS = {FLB:'#e3b341',CTW:'#3fb950','5-8':'#8b949e',HFB:'#a371f7','2RF':'#f778ba',FRF:'#f85149',HOK:'#d29922'};
+const ROSTER_SLOTS = {FLB:1,CTW:2,'5-8':1,HFB:1,'2RF':4,FRF:2,HOK:1,BENCH:4};
+const TOTAL_ROSTER = 16;
+const PLAYER_FLAGS = {
+  "Brandon Smith": { risk: "HIGH", icon: "\u26a0", note: "Drug supply + betting charges (ongoing court case). Could be stood down mid-season." },
+  "Victor Radley": { risk: "HIGH", icon: "\u26a0", note: "Cocaine scandal. 10-game club ban — out Rounds 1-5 of 2026." },
+  "Taylan May": { risk: "MED", icon: "\u26a0", note: "DV charges dropped (witness no-show). AVO in place. One incident from career end." },
+  "Isaiah Iongi": { risk: "MED", icon: "\u26a0", note: "Active NRL integrity investigation (smoking photos, Feb 2026). Could be suspended." },
+  "Ezra Mam": { risk: "MED", icon: "\u26a0", note: "Drug-driving crash 2024 (injured child). 9-game ban served. Pattern of poor judgment." },
+  "Latrell Mitchell": { risk: "LOW", icon: "\u24d8", note: "White powder photo 2024 (ban served). Minor incident, resolved." },
+  "Josh Addo-Carr": { risk: "LOW", icon: "\u24d8", note: "Failed drug test 2024, sacked by Bulldogs (ban served). Out R1-3 with broken thumb." },
+  "Dylan Brown": { risk: "LOW", icon: "\u24d8", note: "Sexual touching conviction 2023 (ban served). No new issues." },
+  "Reece Walsh": { risk: "LOW", icon: "\u24d8", note: "Pattern of impulsive behaviour. High on-field judiciary risk (headbutts, gestures)." },
+  "Selwyn Cobbo": { risk: "LOW", icon: "\u24d8", note: "DV allegation cleared 2024. Gaming rage hand injury. Minor maturity concerns." },
+  "Bronson Xerri": { risk: "LOW", icon: "\u24d8", note: "4-year doping ban served (2019-2023). Clean since return." },
+  "Tyrone Munro": { risk: "HIGH", icon: "\u26a0", note: "DV charges — currently stood down by NRL. Cannot play until court case resolves." },
+  "David Fifita": { risk: "LOW", icon: "\u24d8", note: "Contract backflip drama, demoted to reserves 2025." },
+  "Cody Walker": { risk: "LOW", icon: "\u24d8", note: "Historical 2-match ban (2020). No recent off-field issues." }
+};
+const INJURY_FLAGS = {
+  "Latrell Mitchell": { note: "11 games in 2 seasons. Chronic hamstring/knee." },
+  "Cameron Murray": { note: "1 game in 2025. Neck/spine — serious durability concern." },
+  "David Fifita": { note: "3 ankle surgeries in 12 months. 8 games in 2025." },
+  "Sam Walker": { note: "8 games in 2025 (knee). Missed bulk of 2024 too." },
+  "Tom Trbojevic": { note: "Missed 40+ games 2021-2024. Shoulder/hamstring/knee history." },
+  "Taniela Paseka": { note: "3 games in 2025. ACL recovery." },
+  "Keano Kini": { note: "6 games in 2025 (knee). Unproven durability." }
+};
+const STORAGE_KEY = 'nrl-sc-draft-2026';
+
+let config = { leagueSize:10, myPosition:1, gfSystem:'R25', totalRounds:13 };
+let draftLog = []; // {pickNum, playerName, team (draft team#), type:'mine'|'taken', pos}
+let undoStack = [];
+let currentPick = 1;
+let selectedPlayerIdx = -1;
+let activeTab = 'board';
+let leftCollapsed = false, rightCollapsed = false;
+let searchHighlight = -1;
+let saveTimeout = null;
+
+// Dedup players: some appear in multiple positions. We use their primary (first) entry.
+// Build a unique player list keyed by name, keeping the first occurrence per position group.
+const uniquePlayers = [];
+const seenNames = new Set();
+PLAYERS.forEach(p => {
+  const key = p.name + '|' + p.pos;
+  if (!seenNames.has(key)) {
+    seenNames.add(key);
+    uniquePlayers.push({...p, id: uniquePlayers.length});
+  }
+});
+
+// For "best available" and board, use primary position entries only
+const primaryPlayers = [];
+const seenPrimary = new Set();
+PLAYERS.forEach(p => {
+  if (!seenPrimary.has(p.name)) {
+    seenPrimary.add(p.name);
+    primaryPlayers.push({...p, id: primaryPlayers.length});
+  }
+});
+
+function isDrafted(name) { return draftLog.some(d => d.playerName === name); }
+function isMyPick(name) { return draftLog.some(d => d.playerName === name && d.type === 'mine'); }
+function isTaken(name) { return draftLog.some(d => d.playerName === name && d.type === 'taken'); }
+function getMyTeam() { return draftLog.filter(d => d.type === 'mine'); }
+
+function getTeamForPick(pickNum, leagueSize) { return ((pickNum - 1) % leagueSize) + 1; }
+function getRoundForPick(pickNum, leagueSize) { return Math.floor((pickNum - 1) / leagueSize) + 1; }
+function getMyPicks(myPos, leagueSize, totalRounds) {
+  return Array.from({length: totalRounds}, (_, r) => r * leagueSize + myPos);
+}
+
+function getNextMyPick() {
+  const myPicks = getMyPicks(config.myPosition, config.leagueSize, config.totalRounds);
+  return myPicks.find(p => p >= currentPick) || null;
+}
+
+function isMyTurn() { return getTeamForPick(currentPick, config.leagueSize) === config.myPosition; }
+
+// VORP - use 1 slot per position for replacement level so deep pools (2RF/CTW) don't get inflated
+function getReplacementLevel(pos) {
+  const threshold = Math.floor(1 * config.leagueSize * 1.5);
+  const available = primaryPlayers
+    .filter(p => p.pos === pos && !isDrafted(p.name))
+    .sort((a,b) => (b.predictedAvg||0) - (a.predictedAvg||0));
+  return available[threshold] ? available[threshold].predictedAvg : (available.length > 0 ? available[available.length-1].predictedAvg : 0);
+}
+
+function getVORP(player) {
+  const rl = getReplacementLevel(player.pos);
+  return (player.predictedAvg || 0) - (rl || 0);
+}
+
+// Tier detection
+function getTiers(players) {
+  if (!players.length) return [];
+  const sorted = [...players].sort((a,b) => (b.predictedAvg||0) - (a.predictedAvg||0));
+  const tiers = []; let tier = 1;
+  sorted.forEach((p, i) => {
+    if (i > 0) {
+      const gap = (sorted[i-1].predictedAvg||0) - (p.predictedAvg||0);
+      if (gap >= 5 || (i > 5 && gap >= 3)) tier++;
+    }
+    tiers.push({...p, tier});
+  });
+  return tiers;
+}
+
+// Positional need - binary: do I still need this position? (not weighted by slot count)
+function getPositionalNeed(pos) {
+  const myTeam = getMyTeam();
+  const filled = myTeam.filter(d => {
+    const p = primaryPlayers.find(pp => pp.name === d.playerName);
+    return p && p.pos === pos;
+  }).length;
+  const needed = ROSTER_SLOTS[pos] || 0;
+  if (filled >= needed) return 0;
+  return 1; // binary: either I need it or I don't
+}
+
+// Recommendation score
+function getCompositeScore(player) {
+  const maxAvg = Math.max(...primaryPlayers.map(p => p.predictedAvg || 0));
+  const avgScore = ((player.predictedAvg || 0) / maxAvg) * 100;
+  const vorp = getVORP(player);
+  const maxVorp = Math.max(...primaryPlayers.filter(p => !isDrafted(p.name)).map(p => getVORP(p)), 1);
+  const vorpScore = (vorp / maxVorp) * 100;
+  const needScore = getPositionalNeed(player.pos) * 100;
+
+  // Tier urgency: gentle decay by tier number only (not scarcity-based)
+  // Tier 1=100, Tier 2=90, Tier 3=75, Tier 4=60, Tier 5+=40
+  const posAvail = primaryPlayers.filter(p => p.pos === player.pos && !isDrafted(p.name));
+  const posTiers = getTiers(posAvail);
+  const pt = posTiers.find(t => t.name === player.name);
+  const tierMap = {1:100, 2:90, 3:75, 4:60};
+  const tierScore = pt ? (tierMap[pt.tier] || 40) : 50;
+
+  // Finals SOS — compressed to 50-100 range so it can't dominate
+  const maxSOS = 17;
+  const sosScore = player.teamSOS ? 50 + ((maxSOS - player.teamSOS) / maxSOS) * 50 : 75;
+
+  return (avgScore * 0.30) + (vorpScore * 0.15) + (needScore * 0.25) + (tierScore * 0.20) + (sosScore * 0.10);
+}
+
+// Save / Load
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ config, draftLog, currentPick }));
+  } catch(e) {}
+}
+function debounceSave() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(saveState, 300);
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+// Draft actions
+function draftToMyTeam(playerName) {
+  const player = primaryPlayers.find(p => p.name === playerName);
+  if (!player || isDrafted(playerName)) return;
+  const myTeam = getMyTeam();
+  if (myTeam.length >= TOTAL_ROSTER) { alert('Team is full (16 players)'); return; }
+  undoStack.push({ action:'draft', pickNum: currentPick, playerName, prevLog: [...draftLog], prevPick: currentPick });
+  draftLog.push({ pickNum: currentPick, playerName, team: config.myPosition, type:'mine', pos: player.pos });
+  currentPick++;
+  debounceSave();
+  renderAll();
+}
+
+function markAsTaken(playerName) {
+  const player = primaryPlayers.find(p => p.name === playerName);
+  if (!player || isDrafted(playerName)) return;
+  undoStack.push({ action:'taken', pickNum: currentPick, playerName, prevLog: [...draftLog], prevPick: currentPick });
+  draftLog.push({ pickNum: currentPick, playerName, team: getTeamForPick(currentPick, config.leagueSize), type:'taken', pos: player.pos });
+  currentPick++;
+  debounceSave();
+  renderAll();
+}
+
+function undoLast() {
+  if (undoStack.length === 0) return;
+  const last = undoStack.pop();
+  draftLog = last.prevLog;
+  currentPick = last.prevPick;
+  debounceSave();
+  renderAll();
+}
+
+function removeFromMyTeam(playerName) {
+  if (!confirm('Remove ' + playerName + ' from your team?')) return;
+  const idx = draftLog.findIndex(d => d.playerName === playerName && d.type === 'mine');
+  if (idx >= 0) {
+    undoStack.push({ action:'remove', prevLog: [...draftLog], prevPick: currentPick });
+    draftLog.splice(idx, 1);
+    debounceSave();
+    renderAll();
+  }
+}
+
+// === RENDER FUNCTIONS ===
+
+function renderCommandBar() {
+  document.getElementById('pick-num').textContent = '#' + currentPick;
+  document.getElementById('round-num').textContent = getRoundForPick(currentPick, config.leagueSize);
+  const nextPick = getNextMyPick();
+  document.getElementById('next-pick').textContent = nextPick ? '#' + nextPick : 'Done';
+  const nextPill = document.getElementById('next-pill');
+  nextPill.classList.toggle('active', isMyTurn());
+}
+
+function renderStatusBar() {
+  document.getElementById('sb-league').textContent = config.leagueSize + '-team league';
+  document.getElementById('sb-gf').textContent = 'GF: ' + config.gfSystem;
+  const totalPicks = config.leagueSize * config.totalRounds;
+  document.getElementById('sb-remaining').textContent = (totalPicks - currentPick + 1) + ' picks remaining';
+}
+
+function renderMyTeam() {
+  const container = document.getElementById('team-slots');
+  container.innerHTML = '';
+  const myTeam = getMyTeam();
+  const posOrder = ['FLB','CTW','CTW','5-8','HFB','2RF','2RF','2RF','2RF','FRF','FRF','HOK','BENCH','BENCH','BENCH','BENCH'];
+  const filled = {};
+  POSITIONS.forEach(p => filled[p] = []);
+  filled['BENCH'] = [];
+
+  myTeam.forEach(d => {
+    const pl = primaryPlayers.find(pp => pp.name === d.playerName);
+    if (!pl) return;
+    const pos = pl.pos;
+    if (filled[pos] && filled[pos].length < (ROSTER_SLOTS[pos]||0)) {
+      filled[pos].push(d);
+    } else {
+      filled['BENCH'].push(d);
+    }
+  });
+
+  posOrder.forEach((pos, i) => {
+    const slot = document.createElement('div');
+    slot.className = 'team-slot';
+    const posLabel = document.createElement('span');
+    posLabel.className = 'slot-pos';
+    posLabel.style.color = POS_COLORS[pos] || 'var(--muted)';
+    posLabel.textContent = pos;
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'slot-name';
+    const avgEl = document.createElement('span');
+    avgEl.className = 'slot-avg';
+
+    const arr = filled[pos];
+    const idx = posOrder.slice(0, i).filter(p => p === pos).length;
+    if (arr && arr[idx]) {
+      const d = arr[idx];
+      const pl = primaryPlayers.find(pp => pp.name === d.playerName);
+      nameEl.textContent = d.playerName;
+      const teamFlag = PLAYER_FLAGS[d.playerName];
+      if (teamFlag) {
+        const flagColors = { HIGH: '#f85149', MED: '#d29922', LOW: '#484f58' };
+        const badge = document.createElement('span');
+        badge.textContent = teamFlag.risk;
+        badge.title = teamFlag.note;
+        badge.style.cssText = 'font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + flagColors[teamFlag.risk] + ';color:#fff';
+        nameEl.appendChild(badge);
+      }
+      const teamInj = INJURY_FLAGS[d.playerName];
+      if (teamInj) {
+        const injBadge = document.createElement('span');
+        injBadge.textContent = '\u2795';
+        injBadge.style.cssText = 'font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff;cursor:help;';
+        injBadge.title = teamInj.note;
+        nameEl.appendChild(injBadge);
+      }
+      avgEl.textContent = pl ? pl.predictedAvg : '';
+      slot.classList.add('filled');
+      slot.onclick = () => removeFromMyTeam(d.playerName);
+    } else {
+      nameEl.textContent = 'Empty';
+      slot.classList.add('empty');
+    }
+
+    slot.appendChild(posLabel);
+    slot.appendChild(nameEl);
+    slot.appendChild(avgEl);
+    container.appendChild(slot);
+  });
+
+  document.getElementById('team-count').textContent = myTeam.length + '/' + TOTAL_ROSTER;
+
+  // Composition bar
+  const compBar = document.getElementById('comp-bar');
+  compBar.innerHTML = '';
+  POSITIONS.forEach(pos => {
+    const seg = document.createElement('div');
+    seg.className = 'seg';
+    const need = ROSTER_SLOTS[pos] || 0;
+    const have = filled[pos] ? filled[pos].length : 0;
+    seg.style.width = ((have / TOTAL_ROSTER) * 100) + '%';
+    seg.style.background = POS_COLORS[pos] || '#8b949e';
+    seg.title = pos + ': ' + have + '/' + need;
+    compBar.appendChild(seg);
+  });
+  const benchSeg = document.createElement('div');
+  benchSeg.className = 'seg';
+  benchSeg.style.width = ((filled['BENCH'].length / TOTAL_ROSTER) * 100) + '%';
+  benchSeg.style.background = '#30363d';
+  benchSeg.title = 'BENCH: ' + filled['BENCH'].length + '/4';
+  compBar.appendChild(benchSeg);
+
+  // Team avg
+  const totalAvg = myTeam.reduce((s,d) => {
+    const pl = primaryPlayers.find(pp => pp.name === d.playerName);
+    return s + (pl ? pl.predictedAvg||0 : 0);
+  }, 0);
+  document.getElementById('team-avg').textContent = myTeam.length ? 'Team Avg: ' + (totalAvg / myTeam.length).toFixed(1) : 'Avg: -';
+}
+
+function renderBestAvailable() {
+  const container = document.getElementById('best-available');
+  container.innerHTML = '';
+  const available = primaryPlayers
+    .filter(p => !isDrafted(p.name))
+    .map(p => ({...p, composite: getCompositeScore(p)}))
+    .sort((a,b) => b.composite - a.composite)
+    .slice(0, 50);
+
+  available.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = 'ba-row';
+    if (i === selectedPlayerIdx) row.classList.add('selected');
+    row.dataset.name = p.name;
+    const flag = PLAYER_FLAGS[p.name];
+    const riskBadge = flag ? (function() {
+      const colors = { HIGH: '#f85149', MED: '#d29922', LOW: '#484f58' };
+      return '<span title="' + flag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + colors[flag.risk] + ';color:#fff">' + flag.risk + '</span>';
+    })() : '';
+    const injFlag = INJURY_FLAGS[p.name];
+    const injBadge = injFlag ? '<span title="' + injFlag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff">\u2795</span>' : '';
+    row.innerHTML = '<span class="ba-rank">' + (i+1) + '</span>' +
+      '<span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '">' + p.pos + '</span>' +
+      '<span class="ba-name">' + p.name + riskBadge + injBadge + '</span>' +
+      '<span class="ba-avg">' + (p.predictedAvg||'-') + '</span>';
+    row.onclick = (e) => showContextMenu(e, p.name);
+    container.appendChild(row);
+  });
+}
+
+function renderScarcityAlerts() {
+  const container = document.getElementById('scarcity-alerts');
+  container.innerHTML = '';
+  POSITIONS.forEach(pos => {
+    const avail = primaryPlayers.filter(p => p.pos === pos && !isDrafted(p.name));
+    const tiers = getTiers(avail);
+    const tier1 = tiers.filter(t => t.tier === 1);
+    const needed = ROSTER_SLOTS[pos] || 0;
+    const myFilled = getMyTeam().filter(d => {
+      const pl = primaryPlayers.find(pp => pp.name === d.playerName);
+      return pl && pl.pos === pos;
+    }).length;
+
+    if (tier1.length <= 2 && tier1.length > 0 && myFilled < needed) {
+      const alert = document.createElement('div');
+      alert.className = 'scarcity-alert' + (tier1.length === 1 ? '' : ' warning');
+      alert.textContent = (tier1.length === 1 ? 'Last' : tier1.length) + ' Tier-1 ' + pos + ' remaining' + (tier1.length <= 2 ? ': ' + tier1.map(t=>t.name).join(', ') : '');
+      container.appendChild(alert);
+    }
+    if (avail.length <= needed * config.leagueSize * 0.3) {
+      const alert = document.createElement('div');
+      alert.className = 'scarcity-alert';
+      alert.textContent = pos + ' pool running thin (' + avail.length + ' left)';
+      container.appendChild(alert);
+    }
+  });
+}
+
+function posClass(pos) {
+  if (pos === '5-8') return 'five-eight';
+  if (pos === '2RF') return 'two-rf';
+  return pos;
+}
+
+function renderBoard() {
+  const content = document.getElementById('tab-content');
+  let html = '<div class="board-grid">';
+  POSITIONS.forEach(pos => {
+    const players = uniquePlayers.filter(p => p.pos === pos).sort((a,b) => (b.predictedAvg||0) - (a.predictedAvg||0));
+    const tiers = getTiers(players);
+    html += '<div class="board-col"><div class="board-col-header" style="color:' + (POS_COLORS[pos]||'#fff') + '">' + pos + ' (' + players.filter(p=>!isDrafted(p.name)).length + ')</div>';
+    let lastTier = 0;
+    tiers.forEach(p => {
+      const drafted = isDrafted(p.name);
+      const mine = isMyPick(p.name);
+      let cls = 'board-player';
+      if (drafted && mine) cls += ' mine';
+      else if (drafted) cls += ' drafted';
+      if (p.tier !== lastTier && lastTier !== 0) cls += ' tier-break';
+      lastTier = p.tier;
+      html += '<div class="' + cls + '" data-name="' + p.name + '" onclick="window._boardClick(event,\'' + p.name.replace(/'/g,"\\'") + '\')">';
+      const boardFlag = PLAYER_FLAGS[p.name];
+      const boardRiskBadge = boardFlag ? (function() {
+        const colors = { HIGH: '#f85149', MED: '#d29922', LOW: '#484f58' };
+        return '<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + colors[boardFlag.risk] + ';color:#fff" title="' + boardFlag.note.replace(/"/g,'&quot;') + '">' + boardFlag.risk + '</span>';
+      })() : '';
+      const boardInjuryFlag = INJURY_FLAGS[p.name];
+      const boardInjuryBadge = boardInjuryFlag ? '<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff" title="' + boardInjuryFlag.note.replace(/"/g,'&quot;') + '">\u2795</span>' : '';
+      html += '<span>' + (p.posRank||'') + '. ' + p.name + boardRiskBadge + boardInjuryBadge + '</span>';
+      html += '<span>' + (p.predictedAvg||'-') + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+window._boardClick = function(e, name) {
+  if (!isDrafted(name)) showContextMenu(e, name);
+};
+
+function renderTracker() {
+  const content = document.getElementById('tab-content');
+  let html = '<h3 style="margin-bottom:8px;font-size:14px">Draft Log</h3>';
+  html += '<table class="tracker-table"><thead><tr><th>Pick</th><th>Round</th><th>Team</th><th>Player</th><th>Pos</th><th>Avg</th></tr></thead><tbody>';
+  draftLog.forEach(d => {
+    const pl = primaryPlayers.find(pp => pp.name === d.playerName);
+    const cls = d.type === 'mine' ? ' class="my-pick"' : '';
+    html += '<tr' + cls + '><td>#' + d.pickNum + '</td><td>' + getRoundForPick(d.pickNum, config.leagueSize) + '</td><td>' + (d.type === 'mine' ? 'You' : 'Team ' + d.team) + '</td><td>' + d.playerName + '</td><td><span class="pos-badge ' + posClass(d.pos) + '" data-pos="' + d.pos + '">' + d.pos + '</span></td><td>' + (pl ? pl.predictedAvg : '-') + '</td></tr>';
+  });
+  if (draftLog.length === 0) html += '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No picks yet</td></tr>';
+  html += '</tbody></table>';
+
+  // Grid view
+  html += '<h3 style="margin:16px 0 8px;font-size:14px">Grid View</h3>';
+  const cols = config.leagueSize;
+  const rows = config.totalRounds;
+  html += '<div class="grid-view" style="grid-template-columns:60px repeat(' + cols + ',1fr)">';
+  // Header
+  html += '<div class="grid-cell header"></div>';
+  for (let c = 1; c <= cols; c++) {
+    html += '<div class="grid-cell header">' + (c === config.myPosition ? 'You' : 'T' + c) + '</div>';
+  }
+  for (let r = 1; r <= rows; r++) {
+    html += '<div class="grid-cell header">R' + r + '</div>';
+    for (let c = 1; c <= cols; c++) {
+      const pickNum = (r-1)*cols + c;
+      const entry = draftLog.find(d => d.pickNum === pickNum);
+      let cls = 'grid-cell';
+      if (c === config.myPosition) cls += ' my-pick';
+      if (entry) cls += ' filled';
+      const label = entry ? entry.playerName.split(' ').pop() : '';
+      html += '<div class="' + cls + '" title="Pick #' + pickNum + (entry ? ': ' + entry.playerName : '') + '">' + label + '</div>';
+    }
+  }
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+function renderSOS() {
+  const content = document.getElementById('tab-content');
+  const teams = Object.keys(DRAW_DIFFICULTY).sort();
+  const totalRounds = 27;
+  let html = '<h3 style="margin-bottom:8px;font-size:14px">Strength of Schedule Heatmap</h3>';
+  html += '<div style="margin-bottom:8px;font-size:11px;color:var(--muted)">Difficulty: 1=easy (green), 5=hard (red), 0=bye (black)</div>';
+  html += '<div class="sos-grid" style="grid-template-columns:90px repeat(' + totalRounds + ',1fr)">';
+  html += '<div class="sos-cell header">Team</div>';
+  for (let r = 1; r <= totalRounds; r++) {
+    html += '<div class="sos-cell header">R' + r + '</div>';
+  }
+  teams.forEach(team => {
+    html += '<div class="sos-cell header" style="text-align:left;font-size:10px">' + team + '</div>';
+    const data = DRAW_DIFFICULTY[team];
+    data.rounds.forEach((d, i) => {
+      const roundNum = i + 1;
+      const isBye = data.bye.includes(roundNum);
+      const val = isBye ? 0 : d;
+      html += '<div class="sos-cell diff-' + val + '">' + (isBye ? 'B' : val) + '</div>';
+    });
+  });
+  html += '</div>';
+  content.innerHTML = html;
+}
+
+function renderScarcity() {
+  const content = document.getElementById('tab-content');
+  let html = '<h3 style="margin-bottom:8px;font-size:14px">Position Depth</h3>';
+
+  POSITIONS.forEach(pos => {
+    const total = primaryPlayers.filter(p => p.pos === pos).length;
+    const avail = primaryPlayers.filter(p => p.pos === pos && !isDrafted(p.name)).length;
+    const pct = (avail / total) * 100;
+    html += '<div class="depth-bar-wrap"><div class="depth-bar-label"><span style="color:' + (POS_COLORS[pos]||'#fff') + '">' + pos + '</span><span>' + avail + '/' + total + ' available</span></div>';
+    html += '<div class="depth-bar"><div class="depth-bar-fill" style="width:' + pct + '%;background:' + (POS_COLORS[pos]||'#fff') + '"></div></div></div>';
+  });
+
+  // VORP table
+  html += '<h3 style="margin:16px 0 8px;font-size:14px">Top VORP</h3>';
+  html += '<table class="vorp-table"><thead><tr><th>Player</th><th>Pos</th><th>Pred Avg</th><th>VORP</th></tr></thead><tbody>';
+  const vorpList = primaryPlayers
+    .filter(p => !isDrafted(p.name))
+    .map(p => ({...p, vorp: getVORP(p)}))
+    .sort((a,b) => b.vorp - a.vorp)
+    .slice(0, 15);
+  vorpList.forEach(p => {
+    html += '<tr><td>' + p.name + '</td><td><span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '">' + p.pos + '</span></td><td>' + (p.predictedAvg||'-') + '</td><td style="color:' + (p.vorp > 0 ? 'var(--CTW)' : 'var(--FRF)') + '">+' + p.vorp.toFixed(1) + '</td></tr>';
+  });
+  html += '</tbody></table>';
+
+  // Recommendation
+  html += '<h3 style="margin:16px 0 8px;font-size:14px">Recommended Pick</h3>';
+  const rec = primaryPlayers
+    .filter(p => !isDrafted(p.name))
+    .map(p => ({...p, composite: getCompositeScore(p), vorp: getVORP(p)}))
+    .sort((a,b) => b.composite - a.composite)[0];
+  if (rec) {
+    html += '<div class="rec-card"><div class="rec-name">' + rec.name + '</div>';
+    html += '<div class="rec-details">' + rec.pos + ' | ' + rec.team + ' | Predicted: ' + (rec.predictedAvg||'-') + '</div>';
+    html += '<div class="rec-scores">';
+    html += '<div class="sc-item"><div class="sc-val">' + (rec.predictedAvg||'-') + '</div>Pred Avg</div>';
+    html += '<div class="sc-item"><div class="sc-val">+' + rec.vorp.toFixed(1) + '</div>VORP</div>';
+    html += '<div class="sc-item"><div class="sc-val">' + rec.composite.toFixed(0) + '</div>Score</div>';
+    html += '</div></div>';
+  }
+
+  content.innerHTML = html;
+}
+
+function renderTab() {
+  switch(activeTab) {
+    case 'board': renderBoard(); break;
+    case 'tracker': renderTracker(); break;
+    case 'sos': renderSOS(); break;
+    case 'scarcity': renderScarcity(); break;
+  }
+}
+
+function renderPrompt() {
+  const myTeam = getMyTeam();
+  const drafted = myTeam.map(d => {
+    const pl = primaryPlayers.find(pp => pp.name === d.playerName);
+    return pl ? pl.name + ' (' + pl.pos + ', ' + (pl.predictedAvg||'?') + ')' : d.playerName;
+  }).join(', ');
+
+  const needs = [];
+  POSITIONS.forEach(pos => {
+    const filled = myTeam.filter(d => {
+      const pl = primaryPlayers.find(pp => pp.name === d.playerName);
+      return pl && pl.pos === pos;
+    }).length;
+    const need = (ROSTER_SLOTS[pos]||0) - filled;
+    if (need > 0) needs.push(pos + (need > 1 ? ' (x' + need + ')' : ''));
+  });
+  const benchFilled = myTeam.length - POSITIONS.reduce((s,pos) => {
+    return s + Math.min(myTeam.filter(d => { const pl=primaryPlayers.find(pp=>pp.name===d.playerName); return pl&&pl.pos===pos; }).length, ROSTER_SLOTS[pos]||0);
+  },0);
+  const benchNeed = 4 - benchFilled;
+  if (benchNeed > 0) needs.push('bench (x' + benchNeed + ')');
+
+  const bestVorp = primaryPlayers.filter(p=>!isDrafted(p.name)).map(p=>({...p,vorp:getVORP(p)})).sort((a,b)=>b.vorp-a.vorp)[0];
+  const alerts = [];
+  POSITIONS.forEach(pos => {
+    const avail = primaryPlayers.filter(p => p.pos === pos && !isDrafted(p.name));
+    const tiers = getTiers(avail);
+    const t1 = tiers.filter(t=>t.tier===1);
+    if (t1.length <= 2 && t1.length > 0) alerts.push(pos + ' Tier 1 has ' + t1.length + ' player' + (t1.length>1?'s':'') + ' left');
+  });
+
+  let text = 'My NRL SC 2026 draft (' + config.leagueSize + '-team linear, pick ' + config.myPosition + ', ' + config.gfSystem + ' GF):\n';
+  text += 'Drafted: ' + (drafted || 'None') + '.\n';
+  text += 'Need: ' + (needs.join(', ') || 'Team complete!') + '.\n';
+  if (bestVorp) text += 'Best VORP: ' + bestVorp.name + ' (' + bestVorp.pos + ', +' + bestVorp.vorp.toFixed(0) + ').\n';
+  if (alerts.length) text += 'Alert: ' + alerts.join('. ') + '.';
+
+  // Risk alerts for drafted players with PLAYER_FLAGS entries
+  const riskAlerts = myTeam
+    .map(d => { const flag = PLAYER_FLAGS[d.playerName]; return flag ? d.playerName + ' (' + flag.risk + ' — ' + flag.note + ')' : null; })
+    .filter(Boolean);
+  if (riskAlerts.length) text += '\nRisk alerts: ' + riskAlerts.join(', ') + '.';
+
+  const injuryAlerts = myTeam
+    .map(d => { const inj = INJURY_FLAGS[d.playerName]; return inj ? d.playerName + ' (INJ — ' + inj.note + ')' : null; })
+    .filter(Boolean);
+  if (injuryAlerts.length) text += '\nInjury alerts: ' + injuryAlerts.join(', ') + '.';
+
+  document.getElementById('prompt-text').textContent = text;
+}
+
+function renderAll() {
+  renderCommandBar();
+  renderStatusBar();
+  renderMyTeam();
+  renderBestAvailable();
+  renderScarcityAlerts();
+  renderTab();
+  renderPrompt();
+}
+
+// Context menu
+function showContextMenu(e, playerName) {
+  e.preventDefault();
+  e.stopPropagation();
+  const menu = document.getElementById('ctx-menu');
+  menu.classList.remove('hidden');
+  menu.style.left = Math.min(e.clientX, window.innerWidth - 200) + 'px';
+  menu.style.top = Math.min(e.clientY, window.innerHeight - 80) + 'px';
+  menu.dataset.player = playerName;
+}
+function hideContextMenu() {
+  document.getElementById('ctx-menu').classList.add('hidden');
+}
+document.getElementById('ctx-draft').onclick = () => {
+  const name = document.getElementById('ctx-menu').dataset.player;
+  if (name) draftToMyTeam(name);
+  hideContextMenu();
+};
+document.getElementById('ctx-taken').onclick = () => {
+  const name = document.getElementById('ctx-menu').dataset.player;
+  if (name) markAsTaken(name);
+  hideContextMenu();
+};
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.ctx-menu') && !e.target.closest('.ba-row') && !e.target.closest('.board-player')) hideContextMenu();
+});
+
+// Search
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) { searchResults.style.display = 'none'; return; }
+  const matches = primaryPlayers.filter(p => !isDrafted(p.name) && (p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q) || p.pos.toLowerCase().includes(q))).slice(0, 12);
+  searchResults.style.display = matches.length ? 'block' : 'none';
+  searchHighlight = -1;
+  searchResults.innerHTML = matches.map((p,i) =>
+    '<div class="sr-item" data-name="' + p.name + '" data-idx="' + i + '">' +
+    '<span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '">' + p.pos + '</span>' +
+    '<span style="flex:1">' + p.name + '</span>' +
+    '<span style="color:var(--muted)">' + p.team + '</span>' +
+    '<span style="margin-left:8px;font-weight:600">' + (p.predictedAvg||'-') + '</span>' +
+    '</div>'
+  ).join('');
+  searchResults.querySelectorAll('.sr-item').forEach(el => {
+    el.onclick = (e) => { showContextMenu(e, el.dataset.name); searchResults.style.display='none'; searchInput.value=''; };
+  });
+});
+searchInput.addEventListener('keydown', (e) => {
+  const items = searchResults.querySelectorAll('.sr-item');
+  if (e.key === 'ArrowDown') { e.preventDefault(); searchHighlight = Math.min(searchHighlight+1, items.length-1); }
+  if (e.key === 'ArrowUp') { e.preventDefault(); searchHighlight = Math.max(searchHighlight-1, 0); }
+  items.forEach((el,i) => el.classList.toggle('highlighted', i===searchHighlight));
+  if (e.key === 'Enter' && searchHighlight >= 0 && items[searchHighlight]) {
+    showContextMenu(e, items[searchHighlight].dataset.name);
+    searchResults.style.display = 'none';
+    searchInput.value = '';
+  }
+  if (e.key === 'Escape') { searchInput.value = ''; searchResults.style.display = 'none'; searchInput.blur(); }
+});
+
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = btn.dataset.tab;
+    renderTab();
+  };
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.key === '/') { e.preventDefault(); searchInput.focus(); return; }
+  if (e.key === '1') { switchTab('board'); return; }
+  if (e.key === '2') { switchTab('tracker'); return; }
+  if (e.key === '3') { switchTab('sos'); return; }
+  if (e.key === '4') { switchTab('scarcity'); return; }
+  if (e.key === 'u' || (e.ctrlKey && e.key === 'z')) { e.preventDefault(); undoLast(); return; }
+  if (e.key === 'Escape') { hideContextMenu(); searchInput.value=''; searchResults.style.display='none'; return; }
+  if (e.key === '[') { leftCollapsed = !leftCollapsed; document.getElementById('left-rail').classList.toggle('collapsed', leftCollapsed); return; }
+  if (e.key === ']') { rightCollapsed = !rightCollapsed; document.getElementById('right-rail').classList.toggle('collapsed', rightCollapsed); return; }
+
+  // j/k navigate best available
+  const baRows = document.querySelectorAll('#best-available .ba-row');
+  if (e.key === 'j') { selectedPlayerIdx = Math.min(selectedPlayerIdx+1, baRows.length-1); renderBestAvailable(); return; }
+  if (e.key === 'k') { selectedPlayerIdx = Math.max(selectedPlayerIdx-1, 0); renderBestAvailable(); return; }
+
+  // d/m on selected
+  if (selectedPlayerIdx >= 0 && baRows[selectedPlayerIdx]) {
+    const name = baRows[selectedPlayerIdx].dataset.name;
+    if (e.key === 'd' && name) { markAsTaken(name); selectedPlayerIdx = Math.min(selectedPlayerIdx, document.querySelectorAll('#best-available .ba-row').length-1); return; }
+    if (e.key === 'm' && name) { draftToMyTeam(name); selectedPlayerIdx = Math.min(selectedPlayerIdx, document.querySelectorAll('#best-available .ba-row').length-1); return; }
+  }
+});
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tab);
+  });
+  activeTab = tab;
+  renderTab();
+}
+
+// Prompt panel toggle
+document.getElementById('prompt-toggle').onclick = () => {
+  const c = document.getElementById('prompt-content');
+  c.classList.toggle('open');
+  document.getElementById('prompt-toggle').innerHTML = (c.classList.contains('open') ? '&#9650;' : '&#9660;') + ' Draft Summary';
+};
+document.getElementById('copy-prompt').onclick = () => {
+  const text = document.getElementById('prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-prompt');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+};
+
+// Undo pill
+document.getElementById('undo-pill').onclick = undoLast;
+
+// Setup wizard
+function initSetupWizard() {
+  const saved = loadState();
+  const resumeBtn = document.getElementById('resume-btn');
+  if (saved) {
+    resumeBtn.classList.remove('hidden');
+    resumeBtn.onclick = () => {
+      config = saved.config;
+      draftLog = saved.draftLog;
+      currentPick = saved.currentPick;
+      document.getElementById('setup-modal').classList.add('hidden');
+      renderAll();
+    };
+  }
+
+  // Populate draft position
+  function updateDraftPos() {
+    const size = parseInt(document.querySelector('input[name="league-size"]:checked').value);
+    const sel = document.getElementById('draft-pos');
+    sel.innerHTML = '';
+    for (let i = 1; i <= size; i++) {
+      sel.innerHTML += '<option value="' + i + '">' + i + '</option>';
+    }
+  }
+  document.querySelectorAll('input[name="league-size"]').forEach(r => r.addEventListener('change', updateDraftPos));
+  updateDraftPos();
+
+  document.getElementById('start-fresh-btn').onclick = () => {
+    config.leagueSize = parseInt(document.querySelector('input[name="league-size"]:checked').value);
+    config.myPosition = parseInt(document.getElementById('draft-pos').value);
+    config.gfSystem = document.querySelector('input[name="gf-system"]:checked').value;
+    config.totalRounds = parseInt(document.getElementById('total-rounds').value) || 13;
+    draftLog = [];
+    undoStack = [];
+    currentPick = 1;
+    selectedPlayerIdx = -1;
+    saveState();
+    document.getElementById('setup-modal').classList.add('hidden');
+    renderAll();
+  };
+}
+
+// Settings button re-opens wizard
+document.getElementById('settings-btn').onclick = () => {
+  document.getElementById('setup-modal').classList.remove('hidden');
+};
+
+// Init
+initSetupWizard();
+
+})();
+</script>
+</body>
+</html>
