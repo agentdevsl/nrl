@@ -268,14 +268,14 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
     <div class="field">
       <label>GF System</label>
       <div class="radio-group">
-        <label><input type="radio" name="gf-system" value="R25" checked>R25</label>
+        <label><input type="radio" name="gf-system" value="R25">R25</label>
         <label><input type="radio" name="gf-system" value="R26">R26</label>
-        <label><input type="radio" name="gf-system" value="R27">R27</label>
+        <label><input type="radio" name="gf-system" value="R27" checked>R27</label>
       </div>
     </div>
     <div class="field">
       <label>Total Rounds</label>
-      <input type="number" id="total-rounds" value="13" min="1" max="20" style="width:60px">
+      <input type="number" id="total-rounds" value="27" min="1" max="30" style="width:60px">
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="start-fresh-btn">Start Fresh</button>
@@ -681,7 +681,7 @@ const INJURY_FLAGS = {
 };
 const STORAGE_KEY = 'nrl-sc-draft-2026';
 
-let config = { leagueSize:10, myPosition:1, gfSystem:'R25', totalRounds:13 };
+let config = { leagueSize:10, myPosition:10, gfSystem:'R27', totalRounds:27 };
 let draftLog = []; // {pickNum, playerName, team (draft team#), type:'mine'|'taken', pos}
 let undoStack = [];
 let currentPick = 1;
@@ -1415,7 +1415,7 @@ function initSetupWizard() {
     const sel = document.getElementById('draft-pos');
     sel.innerHTML = '';
     for (let i = 1; i <= size; i++) {
-      sel.innerHTML += '<option value="' + i + '">' + i + '</option>';
+      sel.innerHTML += '<option value="' + i + '"' + (i === 10 ? ' selected' : '') + '>' + i + '</option>';
     }
   }
   document.querySelectorAll('input[name="league-size"]').forEach(r => r.addEventListener('change', updateDraftPos));
