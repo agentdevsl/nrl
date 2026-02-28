@@ -38,22 +38,22 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 
 /* LAYOUT */
 #app{display:flex;position:fixed;top:44px;bottom:32px;left:0;right:0}
-#left-rail{width:260px;min-width:0;background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;transition:width .2s;flex-shrink:0}
+#left-rail{width:220px;min-width:0;background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;transition:width .2s;flex-shrink:0}
 #left-rail.collapsed{width:0;overflow:hidden;border:none}
 #main-stage{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-#right-rail{width:300px;min-width:0;background:var(--panel);border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;flex-shrink:0}
+#right-rail{width:260px;min-width:0;background:var(--panel);border-left:1px solid var(--border);overflow-y:auto;transition:width .2s;flex-shrink:0}
 #right-rail.collapsed{width:0;overflow:hidden;border:none}
 
 /* TAB BAR */
 #tab-bar{display:flex;border-bottom:1px solid var(--border);background:var(--panel);flex-shrink:0}
-.tab-btn{padding:8px 16px;font-size:12px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;text-transform:uppercase;letter-spacing:.5px}
+.tab-btn{padding:6px 12px;font-size:11px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;text-transform:uppercase;letter-spacing:.5px}
 .tab-btn:hover{color:var(--text)}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 .tab-btn .key-hint{font-size:10px;background:var(--border);border-radius:3px;padding:0 4px;margin-left:4px}
-#tab-content{flex:1;overflow:auto;padding:12px}
+#tab-content{flex:1;overflow:auto;padding:8px}
 
 /* POSITION BADGE */
-.pos-badge{display:inline-block;padding:1px 6px;border-radius:3px;font-size:11px;font-weight:600;line-height:1.4}
+.pos-badge{display:inline-block;padding:1px 4px;border-radius:3px;font-size:10px;font-weight:600;line-height:1.4}
 .pos-badge.FLB{background:rgba(227,179,65,.15);color:var(--FLB)}
 .pos-badge.CTW{background:rgba(63,185,80,.15);color:var(--CTW)}
 .pos-badge.five-eight,.pos-badge[data-pos="5-8"]{background:rgba(139,148,158,.15);color:var(--five-eight)}
@@ -63,8 +63,8 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .pos-badge.HOK{background:rgba(210,153,34,.15);color:var(--HOK)}
 
 /* LEFT RAIL - MY TEAM */
-.rail-header{padding:10px 12px;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.team-slot{display:flex;align-items:center;padding:6px 12px;border-bottom:1px solid var(--border);gap:8px;min-height:32px}
+.rail-header{padding:6px 8px;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.team-slot{display:flex;align-items:center;padding:4px 8px;border-bottom:1px solid var(--border);gap:6px;min-height:28px}
 .team-slot:hover{background:var(--hover)}
 .team-slot .slot-pos{width:36px;font-size:11px;font-weight:600;flex-shrink:0}
 .team-slot .slot-name{flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -75,20 +75,20 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .comp-bar .seg{height:100%;transition:width .3s}
 
 /* RIGHT RAIL */
-.ba-row{display:flex;align-items:center;padding:5px 12px;gap:6px;cursor:pointer;border-bottom:1px solid rgba(33,38,45,.5)}
+.ba-row{display:flex;align-items:center;padding:3px 8px;gap:4px;cursor:pointer;border-bottom:1px solid rgba(33,38,45,.5)}
 .ba-row:hover{background:var(--hover)}
-.ba-row .ba-rank{width:22px;font-size:11px;color:var(--muted);text-align:right;flex-shrink:0}
-.ba-row .ba-name{flex:1;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ba-row .ba-avg{font-size:12px;font-weight:600;flex-shrink:0}
+.ba-row .ba-rank{width:18px;font-size:10px;color:var(--muted);text-align:right;flex-shrink:0}
+.ba-row .ba-name{flex:1;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ba-row .ba-avg{font-size:11px;font-weight:600;flex-shrink:0}
 .ba-row.selected{background:var(--hover);outline:1px solid var(--accent)}
 .scarcity-alert{padding:6px 12px;font-size:11px;border-left:3px solid var(--FRF);margin:4px 8px;background:rgba(248,81,73,.08);border-radius:0 4px 4px 0}
 .scarcity-alert.warning{border-color:var(--FLB);background:rgba(227,179,65,.08)}
 
 /* BOARD TAB */
-.board-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-.board-col{background:var(--panel);border-radius:8px;border:1px solid var(--border);overflow:hidden}
-.board-col-header{padding:8px;text-align:center;font-weight:700;font-size:12px;border-bottom:1px solid var(--border)}
-.board-player{padding:4px 8px;font-size:11px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(33,38,45,.3)}
+.board-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.board-col{background:var(--panel);border-radius:6px;border:1px solid var(--border);overflow:hidden}
+.board-col-header{padding:4px 6px;text-align:center;font-weight:700;font-size:11px;border-bottom:1px solid var(--border)}
+.board-player{padding:2px 5px;font-size:10px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(33,38,45,.3);gap:2px}
 .board-player:hover{background:var(--hover)}
 .board-player.drafted{opacity:.35;text-decoration:line-through}
 .board-player.mine{opacity:.6;background:rgba(88,166,255,.1)}
@@ -105,6 +105,23 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .grid-cell.header{font-weight:700;background:var(--bg);color:var(--muted)}
 .grid-cell.my-pick{background:rgba(88,166,255,.15)}
 .grid-cell.filled{background:rgba(63,185,80,.08)}
+
+/* TRACKER TEAM NAMES */
+.team-name-cell{cursor:pointer;border-bottom:1px dashed var(--border);padding-bottom:1px}
+.team-name-cell:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* TRACKER EDIT ACTIONS */
+.tracker-table .edit-actions{white-space:nowrap;opacity:0;transition:opacity .15s}
+.tracker-table tr:hover .edit-actions{opacity:1}
+.tracker-table .edit-btn{background:none;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:11px;padding:1px 5px;margin-right:2px;cursor:pointer;line-height:1.3}
+.tracker-table .edit-btn:hover{background:var(--hover);color:var(--text);border-color:var(--accent)}
+.tracker-table .edit-btn.danger:hover{border-color:var(--FRF);color:var(--FRF)}
+.replace-search-wrap{position:relative;display:inline-block}
+.replace-search-wrap input{width:180px;font-size:12px;padding:2px 6px;height:24px}
+.replace-search-wrap .replace-dropdown{position:absolute;top:100%;left:0;width:260px;background:var(--panel);border:1px solid var(--border);border-radius:0 0 6px 6px;max-height:200px;overflow-y:auto;z-index:120;display:none}
+.replace-search-wrap .replace-dropdown.open{display:block}
+.replace-search-wrap .replace-option{padding:4px 8px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.replace-search-wrap .replace-option:hover,.replace-search-wrap .replace-option.highlighted{background:var(--hover)}
 
 /* SOS TAB */
 .sos-grid{display:grid;gap:1px;background:var(--border);border-radius:6px;overflow:hidden;font-size:11px}
@@ -135,7 +152,7 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:flex;align-items:center;justify-content:center}
 .modal-overlay.hidden{display:none}
-.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:420px;max-width:90vw}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;width:420px;max-width:90vw;max-height:90vh;overflow-y:auto}
 .modal h2{margin-bottom:16px;font-size:18px}
 .modal .field{margin-bottom:12px}
 .modal .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
@@ -149,6 +166,11 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .modal .btn-primary:hover{opacity:.9}
 .modal .btn-secondary{background:var(--hover);color:var(--text);border:1px solid var(--border)}
 .modal .btn-secondary:hover{background:var(--border)}
+.team-names-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.team-names-grid .tn-row{display:flex;align-items:center;gap:6px}
+.team-names-grid .tn-label{font-size:11px;color:var(--muted);width:18px;text-align:right;flex-shrink:0}
+.team-names-grid .tn-row input{flex:1;height:26px;font-size:12px;padding:2px 6px}
+.team-names-grid .tn-row.my-pos .tn-label{color:var(--accent);font-weight:700}
 
 /* CONTEXT MENU */
 .ctx-menu{position:fixed;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:4px;z-index:150;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
@@ -175,15 +197,10 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 /* Animations */
 @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .fade-in{animation:fadeIn .15s ease}
-.risk-badge { font-size:9px; padding:1px 4px; border-radius:3px; margin-left:4px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; }
-.risk-HIGH { background:#f85149; }
-.risk-MED { background:#d29922; }
-.risk-LOW { background:#484f58; }
-.risk-INJ { background:#da3633; color:#fff; }
 .inj-badge { font-size:9px; padding:1px 4px; border-radius:3px; margin-left:3px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; background:#da3633; }
 
 /* CASUALTY WARD BADGES */
-.cw-badge { font-size:9px; padding:1px 5px; border-radius:3px; margin-left:3px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; white-space:nowrap; }
+.cw-badge { font-size:8px; padding:0 3px; border-radius:2px; margin-left:2px; color:#fff; font-weight:600; vertical-align:middle; cursor:help; white-space:nowrap; line-height:1.5; }
 .cw-badge.cw-long { background:#f85149; }
 .cw-badge.cw-suspended { background:#d29922; }
 .cw-badge.cw-short { background:#da6d30; }
@@ -225,10 +242,10 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
 .comp-delta.same { color:var(--muted); }
 
 /* DRAFT CHART OVERLAY */
-.chart-toggle { position:absolute; top:8px; right:12px; z-index:10; }
+.chart-toggle { display:flex; justify-content:flex-end; margin-bottom:4px; }
 .chart-toggle label { font-size:11px; color:var(--muted); cursor:pointer; display:flex; align-items:center; gap:4px; }
 .chart-toggle input { accent-color:var(--accent); }
-.board-chart-tag { font-size:9px; padding:0 4px; border-radius:2px; background:rgba(88,166,255,.15); color:var(--accent); margin-left:auto; flex-shrink:0; }
+.board-chart-tag { font-size:8px; padding:0 3px; border-radius:2px; background:rgba(88,166,255,.15); color:var(--accent); flex-shrink:0; line-height:1.4; }
 </style>
 </head>
 <body>
@@ -327,6 +344,10 @@ input:focus,select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 
     <div class="field">
       <label>Total Rounds</label>
       <input type="number" id="total-rounds" value="27" min="1" max="30" style="width:60px">
+    </div>
+    <div class="field">
+      <label>Team Names <span style="font-weight:400;color:var(--muted)">(optional — leave blank for defaults)</span></label>
+      <div class="team-names-grid" id="team-names-grid"></div>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" id="start-fresh-btn">Start Fresh</button>
@@ -650,10 +671,10 @@ const DRAFT_CHART = {
       4: { FLB: ["Clint Gutherson","Jye Gray"], CTW: ["Brian Too","Daniel Tupou","Kotoni Staggs","Alex Johnston","Gehamat Shibasaki"], "5-8": ["Alexander Brimson","Daly Cherry-Evans","Dylan Brown","Thomas Dearden"], HFB: [], "2RF": ["David Fifita","Isaah Yeo","Viliame Kikau","Erin Clark","Haumole Olakauatu"], FRF: ["Lindsay Smith","Naufahu Whyte"], HOK: [] },
       5: { FLB: [], CTW: ["Phillip Sami","Tolutau Koula"], "5-8": ["Mitchell Moses","Jamal Fogarty","Lachlan Galvin","Isaiya Katoa"], HFB: [], "2RF": ["Kai Pearce-Paul","Briton Nikora","Jaydn Sua","Cameron Murray","Tallis Duncan"], FRF: ["Corey Horsburgh","Jack Williams","Jmaine Hopgood","Isaiah Papalii","Max King","Leo Thompson"], HOK: [] },
       6: { FLB: ["Reuben Garrick","Dane Gagai","Murray Taulagi","Xavier Coates","Paul Alamoti"], CTW: ["Brian Kelly","Nick Meaney","Blaize Talagi","Roger Tuivasa-Sheck"], "5-8": ["Matt Burton","Kodi Nikorima"], HFB: [], "2RF": ["Leka Halasima"], FRF: ["Taniela Paseka","Jack DeBelin","Junior Paulo"], HOK: ["Connor Watson","Reece Robson","Jeremy Marshall-King","Jake Simpkin","Apisai Koroisau"] },
-      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Adam Doueihi","Ethan Strange","Jaxon Purdue"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi","John Bateman"], FRF: ["Trey Mooney"], HOK: ["Reed Mahoney"] },
+      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Selwyn Cobbo","Adam Doueihi","Ethan Strange","Jaxon Purdue"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi","John Bateman"], FRF: ["Trey Mooney"], HOK: ["Reed Mahoney"] },
       8: { FLB: ["Greg Marzhew","Josh Addo-Carr","Savelio Tamale"], CTW: ["Josiah Karapani","Robert Toia","Braidon Burns"], "5-8": ["Ezra Mam","Chanel Harris-Tavita"], HFB: [], "2RF": ["Scott Sorensen","Matty Nicholson"], FRF: ["Moeaki Fotuaika","Stefano Utoikamanu","Daniel Saifiti","James Fisher-Harris"], HOK: ["Wayde Egan","Sam Verrills"] },
       9: { FLB: ["Jahream Bula","Connor Tracey"], CTW: ["Sam Stonestreet","Bronson Xerri","Dominic Young"], "5-8": ["Cody Walker","Ben Hunt","Luke Metcalf"], HFB: [], "2RF": ["Jai Arrow","Trent Loiero","Jordan Riki"], FRF: [], HOK: ["Tom Starling"] },
-      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Selwyn Cobbo","Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
+      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
       11: { FLB: ["Campbell Graham","Will Penisini","Izack Tago","Kaeo Weekes"], CTW: ["Moses Suli","William Warbrick","Sione Katoa"], "5-8": ["Tanah Boyd","Ethan Sanders"], HFB: [], "2RF": ["Cameron McInnes","Reuben Cotter","Jermaine McEwen","Kobe Hetherington","Hamish Stewart","Samuela Fainu"], FRF: ["Jacob Saifiti","Thomas Flegler","Alex Twal","Max Plath"], HOK: ["Bailey Hayward"] },
       12: { FLB: ["Alofiana Khan-Pereira","William Kennedy","Tyrone Munro","Dallin Watene-Zelezniak","Jason Saab"], CTW: ["Grant Anderson"], "5-8": [], HFB: [], "2RF": ["Connelly Lemuelu","Brendan Piakura","Tom Gilbert","Chris Randall"], FRF: ["Griffin Neame","Siua Taukeiaho"], HOK: [] },
       13: { FLB: ["Trai Fuller","Taine Tuaupiki"], CTW: ["Jojo Fifita","Sebastian Kris","Jake Averillo"], "5-8": ["Jack Bostock","Braydon Trindall","Luke Brooks","Jake Clifford","Jamie Humphreys"], HFB: [], "2RF": ["Siua Wong","Ben Trbojevic","Kurt Donoghoe","Luke Garner","Dylan Egan"], FRF: ["Xavier Willison","Victor Radley","Thomas Hazelton","Matt Croker","Coen Hess"], HOK: ["Ryley Smith"] }
@@ -668,10 +689,10 @@ const DRAFT_CHART = {
       4: { FLB: ["Clint Gutherson","Jye Gray"], CTW: ["Brian Too","Daniel Tupou","Kotoni Staggs","Alex Johnston","Gehamat Shibasaki"], "5-8": ["Alexander Brimson","Daly Cherry-Evans","Dylan Brown","Thomas Dearden"], HFB: [], "2RF": ["David Fifita","Isaah Yeo","Viliame Kikau","Erin Clark","Haumole Olakauatu"], FRF: ["Lindsay Smith","Naufahu Whyte"], HOK: [] },
       5: { FLB: [], CTW: ["Phillip Sami","Tolutau Koula","Murray Taulagi"], "5-8": ["Mitchell Moses","Jamal Fogarty","Lachlan Galvin","Isaiya Katoa"], HFB: [], "2RF": ["Kai Pearce-Paul","Briton Nikora","Jaydn Sua","Cameron Murray","Tallis Duncan"], FRF: ["Corey Horsburgh","Jack Williams","Jmaine Hopgood","Isaiah Papalii","Max King","Leo Thompson"], HOK: [] },
       6: { FLB: ["Reuben Garrick","Dane Gagai","Xavier Coates","Paul Alamoti"], CTW: ["Brian Kelly","Nick Meaney","Jaxon Purdue","Blaize Talagi","Roger Tuivasa-Sheck"], "5-8": ["Matt Burton","Kodi Nikorima"], HFB: [], "2RF": ["Leka Halasima"], FRF: ["Taniela Paseka","Jack DeBelin","Junior Paulo"], HOK: ["Connor Watson","Reece Robson","Jake Simpkin","Reed Mahoney","Apisai Koroisau"] },
-      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Adam Doueihi","Braidon Burns","Ethan Strange"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi","John Bateman"], FRF: ["Trey Mooney"], HOK: ["Jeremy Marshall-King"] },
+      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Selwyn Cobbo","Adam Doueihi","Braidon Burns","Ethan Strange"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi","John Bateman"], FRF: ["Trey Mooney"], HOK: ["Jeremy Marshall-King"] },
       8: { FLB: ["Greg Marzhew","Josh Addo-Carr","Savelio Tamale"], CTW: ["Josiah Karapani","Robert Toia"], "5-8": ["Ezra Mam","Chanel Harris-Tavita"], HFB: [], "2RF": ["Scott Sorensen","Matty Nicholson"], FRF: ["Moeaki Fotuaika","Stefano Utoikamanu","Daniel Saifiti","James Fisher-Harris"], HOK: ["Wayde Egan","Sam Verrills"] },
       9: { FLB: ["Jahream Bula","Connor Tracey"], CTW: ["Sam Stonestreet","Bronson Xerri","Dominic Young"], "5-8": ["Cody Walker","Ben Hunt","Luke Metcalf"], HFB: [], "2RF": ["Jai Arrow","Trent Loiero","Jordan Riki"], FRF: [], HOK: ["Tom Starling"] },
-      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Selwyn Cobbo","Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
+      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
       11: { FLB: ["Campbell Graham","Will Penisini","Izack Tago","Kaeo Weekes"], CTW: ["Moses Suli","William Warbrick","Sione Katoa"], "5-8": ["Tanah Boyd","Ethan Sanders"], HFB: [], "2RF": ["Cameron McInnes","Reuben Cotter","Jermaine McEwen","Kobe Hetherington","Hamish Stewart","Samuela Fainu"], FRF: ["Jacob Saifiti","Thomas Flegler","Alex Twal","Max Plath"], HOK: ["Bailey Hayward"] },
       12: { FLB: ["Alofiana Khan-Pereira","William Kennedy","Tyrone Munro","Dallin Watene-Zelezniak","Jason Saab"], CTW: ["Grant Anderson"], "5-8": [], HFB: [], "2RF": ["Connelly Lemuelu","Brendan Piakura","Tom Gilbert","Chris Randall"], FRF: ["Griffin Neame","Siua Taukeiaho"], HOK: [] },
       13: { FLB: ["Trai Fuller","Taine Tuaupiki"], CTW: ["Jojo Fifita","Sebastian Kris","Jake Averillo"], "5-8": ["Jack Bostock","Braydon Trindall","Luke Brooks","Jake Clifford","Jamie Humphreys"], HFB: [], "2RF": ["Siua Wong","Ben Trbojevic","Kurt Donoghoe","Luke Garner","Dylan Egan"], FRF: ["Xavier Willison","Victor Radley","Thomas Hazelton","Matt Croker","Coen Hess"], HOK: ["Ryley Smith"] }
@@ -686,10 +707,10 @@ const DRAFT_CHART = {
       4: { FLB: ["Clint Gutherson","Jye Gray"], CTW: ["Brian Too","Bradman Best","Daniel Tupou","Kotoni Staggs","Alex Johnston","Gehamat Shibasaki"], "5-8": ["Fletcher Sharpe","Alexander Brimson","Daly Cherry-Evans","Dylan Brown","Thomas Dearden"], HFB: [], "2RF": ["David Fifita","Isaah Yeo","Viliame Kikau","Erin Clark","Haumole Olakauatu"], FRF: ["Toby Couchman","Patrick Carrigan","Lindsay Smith","Naufahu Whyte"], HOK: [] },
       5: { FLB: [], CTW: ["Phillip Sami","Tolutau Koula"], "5-8": ["Mitchell Moses","Jamal Fogarty","Lachlan Galvin","Isaiya Katoa"], HFB: [], "2RF": ["Kai Pearce-Paul","Briton Nikora","Jaydn Sua","Cameron Murray","Tallis Duncan"], FRF: ["Corey Horsburgh","Jack Williams","Jmaine Hopgood","Isaiah Papalii","Max King","Leo Thompson"], HOK: [] },
       6: { FLB: ["Reuben Garrick","Dane Gagai","Murray Taulagi","Xavier Coates","Paul Alamoti"], CTW: ["Brian Kelly","Nick Meaney","Jaxon Purdue","Blaize Talagi","Roger Tuivasa-Sheck"], "5-8": ["Matt Burton","Kodi Nikorima"], HFB: [], "2RF": ["Leka Halasima"], FRF: ["Taniela Paseka","Jack DeBelin","Junior Paulo"], HOK: ["Connor Watson","Reece Robson","Jake Simpkin","Reed Mahoney"] },
-      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Adam Doueihi","Braidon Burns","Ethan Strange"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi","John Bateman"], FRF: [], HOK: ["Apisai Koroisau","Jeremy Marshall-King"] },
+      7: { FLB: ["Christian Tuipulotu","Stephen Crichton","Jamayne Isaako"], CTW: ["Selwyn Cobbo","Adam Doueihi","Braidon Burns","Ethan Strange"], "5-8": ["Adam Reynolds"], HFB: [], "2RF": ["Teig Wilton","Shawn Blore","Jeremiah Nanai","Kelma Tuilagi","John Bateman"], FRF: [], HOK: ["Apisai Koroisau","Jeremy Marshall-King"] },
       8: { FLB: ["Greg Marzhew","Josh Addo-Carr","Savelio Tamale"], CTW: ["Josiah Karapani","Robert Toia"], "5-8": ["Ezra Mam","Chanel Harris-Tavita"], HFB: [], "2RF": ["Scott Sorensen","Matty Nicholson"], FRF: ["Moeaki Fotuaika","Stefano Utoikamanu","Daniel Saifiti","James Fisher-Harris"], HOK: ["Wayde Egan","Sam Verrills"] },
       9: { FLB: ["Jahream Bula","Connor Tracey"], CTW: ["Sam Stonestreet","Bronson Xerri","Dominic Young"], "5-8": ["Cody Walker","Ben Hunt","Luke Metcalf"], HFB: [], "2RF": ["Jai Arrow","Trent Loiero","Jordan Riki"], FRF: ["Trey Mooney"], HOK: ["Tom Starling"] },
-      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Selwyn Cobbo","Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
+      10: { FLB: ["Matthew Timoko","Bailey Simonsson","Jarome Luai","Charnze Nicoll-Klokstad","Sua Faalogo"], CTW: ["Jonah Pezet","Daniel Atkinson","Billy Smith","Max Feagai","Jesse Ramien"], "5-8": [], HFB: [], "2RF": ["Zac Hosking"], FRF: ["Mitchell Barnett","Jackson Ford","Josh King"], HOK: ["Damien Cook","Jacob Liddle","Mitchell Kenny","Brandon Smith","Peter Mamouzelos"] },
       11: { FLB: ["Campbell Graham","Will Penisini","Izack Tago","Kaeo Weekes"], CTW: ["Moses Suli","William Warbrick","Sione Katoa"], "5-8": ["Tanah Boyd","Ethan Sanders"], HFB: [], "2RF": ["Cameron McInnes","Reuben Cotter","Jermaine McEwen","Kobe Hetherington","Hamish Stewart","Samuela Fainu"], FRF: ["Thomas Flegler","Jacob Saifiti","Alex Twal","Max Plath"], HOK: ["Bailey Hayward"] },
       12: { FLB: ["Alofiana Khan-Pereira","William Kennedy","Tyrone Munro","Dallin Watene-Zelezniak","Jason Saab"], CTW: ["Grant Anderson"], "5-8": [], HFB: [], "2RF": ["Connelly Lemuelu","Brendan Piakura","Tom Gilbert","Chris Randall"], FRF: ["Griffin Neame","Siua Taukeiaho"], HOK: [] },
       13: { FLB: ["Trai Fuller","Taine Tuaupiki"], CTW: ["Jojo Fifita","Sebastian Kris","Jake Averillo"], "5-8": ["Jack Bostock","Braydon Trindall","Luke Brooks","Jake Clifford","Jamie Humphreys"], HFB: [], "2RF": ["Siua Wong","Ben Trbojevic","Kurt Donoghoe","Luke Garner","Dylan Egan"], FRF: ["Xavier Willison","Victor Radley","Thomas Hazelton","Matt Croker","Coen Hess"], HOK: ["Ryley Smith"] }
@@ -703,8 +724,8 @@ const DRAFT_CHART = {
 
 const POSITIONS = ['FLB','CTW','5-8','HFB','2RF','FRF','HOK'];
 const POS_COLORS = {FLB:'#e3b341',CTW:'#3fb950','5-8':'#8b949e',HFB:'#a371f7','2RF':'#f778ba',FRF:'#f85149',HOK:'#d29922'};
-const ROSTER_SLOTS = {FLB:1,CTW:2,'5-8':1,HFB:1,'2RF':4,FRF:2,HOK:1,BENCH:4};
-const TOTAL_ROSTER = 16;
+const ROSTER_SLOTS = {FLB:1,CTW:4,'5-8':1,HFB:1,'2RF':3,FRF:2,HOK:1,BENCH:4};
+const TOTAL_ROSTER = 17;
 const PLAYER_FLAGS = {
   "Brandon Smith": { risk: "HIGH", icon: "\u26a0", note: "Drug supply + betting charges (ongoing court case). Could be stood down mid-season." },
   "Victor Radley": { risk: "HIGH", icon: "\u26a0", note: "Cocaine scandal. 10-game club ban — out Rounds 1-5 of 2026." },
@@ -730,49 +751,70 @@ const INJURY_FLAGS = {
   "Taniela Paseka": { note: "3 games in 2025. ACL recovery." },
   "Keano Kini": { note: "6 games in 2025 (knee). Unproven durability." }
 };
-// Source: NRL Casualty Ward + club reports, Feb 2026 (pre-R1)
+const MOVEMENT_FLAGS = {
+  "David Fifita": { from: "TITANS", to: "BUNNIES", note: "Reunites with Wayne Bennett. Priced at discount after career-low 2025 — bounce-back candidate with huge ceiling." },
+  "Dylan Brown": { from: "EELS", to: "KNIGHTS", note: "Starting halfback alongside Kalyn Ponga. Massive platform upgrade from struggling Eels." },
+  "Daly Cherry-Evans": { from: "MANLY", to: "ROOSTERS", note: "No.6 in an elite roster. Best forward pack he's ever played behind — base stats should rise." },
+  "Reece Robson": { from: "COWBOYS", to: "ROOSTERS", note: "Origin-level hooker locked in for 80 mins in a premiership side. Elite upside once fit (thumb, R6-8)." },
+  "Selwyn Cobbo": { from: "BRONCOS", to: "DOLPHINS", note: "Settled position after years of positional limbo. Pre-season reports outstanding. CTW/FLB flexibility." },
+  "Kai Pearce-Paul": { from: "KNIGHTS", to: "TIGERS", note: "Marquee forward role with heavy minutes. Goes from competing for time to centrepiece — more base stats." },
+  "Reed Mahoney": { from: "BULLDOGS", to: "COWBOYS", note: "Starting 80-min hooker behind a powerful Cowboys pack. Replaces Robson with same opportunity." },
+  "Leo Thompson": { from: "KNIGHTS", to: "BULLDOGS", note: "Joins premiership-contending pack. High completion rate and defensive intensity boosts tackle counts." },
+  "Jamal Fogarty": { from: "RAIDERS", to: "MANLY", note: "Replaces DCE as Manly halfback. Directs Tom Trbojevic's attack — elite organiser in a better backline." },
+  "Jonah Pezet": { from: "STORM", to: "EELS", note: "Guaranteed starting five-eighth after being blocked by Hughes/Munster. Pairs with Mitchell Moses." },
+  "Brian Kelly": { from: "TITANS", to: "EELS", note: "Locked-in starting centre with consistent minutes. Benefits from Moses/Pezet halves service." },
+  "Trey Mooney": { from: "RAIDERS", to: "KNIGHTS", note: "Starting backrow role locked in on 4-year deal. Goes from rotation minutes to 60+ per game." },
+  "Jack DeBelin": { from: "DRAGONS", to: "EELS", note: "Starting lock with heavy minutes as the experienced leader of a young pack." },
+  "Daniel Atkinson": { from: "SHARKS", to: "DRAGONS", note: "From bench/reserve to starting halfback. One of the biggest positional upgrades available." },
+  "Alofiana Khan-Pereira": { from: "TITANS", to: "WARRIORS", note: "53 tries in 54 games strike rate. Starting wing spot — try-scoring machine at discount price." },
+  "Kobe Hetherington": { from: "BRONCOS", to: "MANLY", note: "More available forward minutes after Manly departures. Clearer role than deep Broncos rotation." }
+};
+// Source: nrl.com/casualty-ward — validated 28 Feb 2026
 const CASUALTY_WARD = {
   // Long-term (out 6+ weeks)
-  "Jai Arrow": { type: "injury", detail: "Shoulder — no return timeline", returnRound: null, severity: "long" },
+  "Jai Arrow": { type: "injury", detail: "Shoulder", returnRound: null, severity: "long" },
   "Cameron McInnes": { type: "injury", detail: "ACL", returnRound: 10, severity: "long" },
   "Ronaldo Mulitalo": { type: "injury", detail: "ACL", returnRound: null, severity: "long" },
-  "Xavier Coates": { type: "injury", detail: "Achilles surgery", returnRound: 10, severity: "long" },
-  "Leo Thompson": { type: "injury", detail: "Grade 3 calf tear", returnRound: 10, severity: "long" },
-  "Luke Metcalf": { type: "injury", detail: "ACL", returnRound: 9, severity: "long" },
-  "Dylan Egan": { type: "injury", detail: "ACL", returnRound: 9, severity: "long" },
+  "Xavier Coates": { type: "injury", detail: "Achilles", returnRound: 10, severity: "long" },
+  "Leo Thompson": { type: "injury", detail: "Calf", returnRound: 10, severity: "long" },
+  "Luke Metcalf": { type: "injury", detail: "ACL", returnRound: 7, severity: "long" },
+  "Dylan Egan": { type: "injury", detail: "ACL", returnRound: 8, severity: "long" },
   "Jack Bostock": { type: "injury", detail: "Knee", returnRound: 10, severity: "long" },
   "Jeremy Marshall-King": { type: "injury", detail: "Knee", returnRound: 7, severity: "long" },
-  "Reece Robson": { type: "injury", detail: "Broken thumb", returnRound: 7, severity: "long" },
+  "Reece Robson": { type: "injury", detail: "Thumb", returnRound: 7, severity: "long" },
   "Jeremiah Nanai": { type: "injury", detail: "Shoulder", returnRound: 6, severity: "long" },
-  "Aaron Schoupp": { type: "injury", detail: "ACL", returnRound: 8, severity: "long" },
   "Latu Fainu": { type: "injury", detail: "Shoulder", returnRound: null, severity: "long" },
-  "Rocco Berry": { type: "injury", detail: "Shoulder", returnRound: 13, severity: "long" },
-  "Te Maire Martin": { type: "injury", detail: "Broken fibula", returnRound: 12, severity: "long" },
+  "Rocco Berry": { type: "injury", detail: "Shoulder", returnRound: null, severity: "long" },
+  "Te Maire Martin": { type: "injury", detail: "Leg", returnRound: 10, severity: "long" },
+  "Brandon Smith": { type: "injury", detail: "Calf", returnRound: null, severity: "long" },
   // Suspended
   "Victor Radley": { type: "suspended", detail: "Club ban (cocaine)", returnRound: 7, severity: "suspended" },
-  "Trent Loiero": { type: "suspended", detail: "Suspension", returnRound: 3, severity: "suspended" },
-  "Jamie Humphreys": { type: "suspended", detail: "Suspension", returnRound: 3, severity: "suspended" },
   "Zac Laybutt": { type: "suspended", detail: "Lifting tackle", returnRound: 3, severity: "suspended" },
   // Short-term (R2-R5)
   "Kai Pearce-Paul": { type: "injury", detail: "Calf", returnRound: 2, severity: "short" },
   "Jacob Liddle": { type: "injury", detail: "Hamstring", returnRound: 2, severity: "short" },
-  "Brandon Smith": { type: "injury", detail: "Calf strain", returnRound: 3, severity: "short" },
-  "Brendan Piakura": { type: "injury", detail: "Knee", returnRound: 4, severity: "short" },
-  "Josh Addo-Carr": { type: "injury", detail: "Broken thumb", returnRound: 4, severity: "short" },
-  "Jack Howarth": { type: "injury", detail: "Groin", returnRound: 3, severity: "short" },
+  "Mitchell Barnett": { type: "injury", detail: "ACL", returnRound: 2, severity: "short" },
+  "Brendan Piakura": { type: "injury", detail: "Knee", returnRound: 3, severity: "short" },
+  "Liam Henry": { type: "injury", detail: "Knee", returnRound: 3, severity: "short" },
   "Max Plath": { type: "injury", detail: "Knee", returnRound: 4, severity: "short" },
-  "Liam Henry": { type: "injury", detail: "Knee", returnRound: 4, severity: "short" },
-  // Monitoring / R1 cleared
-  "Kalyn Ponga": { type: "injury", detail: "Foot (cleared)", returnRound: 1, severity: "monitor" },
-  "Fletcher Sharpe": { type: "injury", detail: "Hamstring (cleared)", returnRound: 1, severity: "monitor" },
-  "Dane Gagai": { type: "injury", detail: "Hamstring (cleared)", returnRound: 1, severity: "monitor" },
-  "Valentine Holmes": { type: "injury", detail: "Shoulder (cleared)", returnRound: 1, severity: "monitor" },
-  "Matt Burton": { type: "injury", detail: "Hamstring (cleared)", returnRound: 1, severity: "monitor" },
-  "Haumole Olakauatu": { type: "injury", detail: "Shoulder", returnRound: 1, severity: "monitor" }
+  // Monitoring / R1
+  "Kalyn Ponga": { type: "injury", detail: "Ankle", returnRound: 1, severity: "monitor" },
+  "Fletcher Sharpe": { type: "injury", detail: "Hamstring", returnRound: 1, severity: "monitor" },
+  "Valentine Holmes": { type: "injury", detail: "Hamstring", returnRound: 1, severity: "monitor" },
+  "Matt Burton": { type: "injury", detail: "Hamstring", returnRound: 1, severity: "monitor" },
+  "Haumole Olakauatu": { type: "injury", detail: "Shoulder", returnRound: 1, severity: "monitor" },
+  "John Bateman": { type: "injury", detail: "Wrist", returnRound: 1, severity: "monitor" },
+  "Griffin Neame": { type: "injury", detail: "Shoulder", returnRound: 1, severity: "monitor" },
+  "Daniel Saifiti": { type: "injury", detail: "Shoulder", returnRound: 1, severity: "monitor" },
+  "Alex Johnston": { type: "injury", detail: "Hamstring", returnRound: 1, severity: "monitor" },
+  "Chanel Harris-Tavita": { type: "injury", detail: "Calf", returnRound: 1, severity: "monitor" },
+  "Alofiana Khan-Pereira": { type: "injury", detail: "Concussion", returnRound: 1, severity: "monitor" },
+  "Roger Tuivasa-Sheck": { type: "injury", detail: "Hamstring", returnRound: 1, severity: "monitor" }
 };
 const STORAGE_KEY = 'nrl-sc-draft-2026';
 
-let config = { leagueSize:10, myPosition:10, gfSystem:'R27', totalRounds:27, modelWeights:{avg:0.20,vorp:0.25,need:0.20,tier:0.20,sos:0.10,consistency:0.05}, showChartTiers:false };
+const DEFAULT_TEAM_NAMES = {1:'Flaps',2:'Cims',3:'Badgers',4:'Sards',5:'Grunts',6:'Fobs',7:'Shufflers',8:'Swans',9:'Mogpeats',10:'OracleAI'};
+let config = { leagueSize:10, myPosition:10, gfSystem:'R27', totalRounds:27, modelWeights:{avg:0.30,vorp:0.10,need:0.15,tier:0.30,sos:0.10,consistency:0.05}, showChartTiers:false, teamNames:Object.assign({}, DEFAULT_TEAM_NAMES) };
 let draftLog = []; // {pickNum, playerName, team (draft team#), type:'mine'|'taken', pos}
 let undoStack = [];
 let currentPick = 1;
@@ -821,6 +863,30 @@ function getNextMyPick() {
 }
 
 function isMyTurn() { return getTeamForPick(currentPick, config.leagueSize) === config.myPosition; }
+
+function getTeamName(teamNum) {
+  if (teamNum === config.myPosition) return 'You';
+  return config.teamNames[teamNum] || ('Team ' + teamNum);
+}
+
+function getTeamNameShort(teamNum) {
+  if (teamNum === config.myPosition) return 'You';
+  return config.teamNames[teamNum] || ('T' + teamNum);
+}
+
+function renameTeam(teamNum) {
+  const current = config.teamNames[teamNum] || '';
+  const name = prompt('Name for Team ' + teamNum + ':', current);
+  if (name === null) return;
+  if (name.trim()) {
+    config.teamNames[teamNum] = name.trim();
+  } else {
+    delete config.teamNames[teamNum];
+  }
+  debounceSave();
+  renderAll();
+}
+window._renameTeam = renameTeam;
 
 // VORP - scaled replacement threshold by position demand (cap at 2 slots to prevent deep-pool inflation)
 function getReplacementLevel(pos) {
@@ -905,7 +971,7 @@ function getCompositeScore(player, weights) {
 }
 
 const MODEL_PRESETS = {
-  'rubdown': { label: 'Rub Down R27', weights: {avg:0.20,vorp:0.25,need:0.20,tier:0.20,sos:0.10,consistency:0.05} },
+  'default': { label: 'Rub Down', weights: {avg:0.30,vorp:0.10,need:0.15,tier:0.30,sos:0.10,consistency:0.05} },
   'balanced': { label: 'Balanced', weights: {avg:0.167,vorp:0.167,need:0.167,tier:0.167,sos:0.167,consistency:0.167} },
   'value': { label: 'Value Hunter', weights: {avg:0.30,vorp:0.40,need:0.05,tier:0.10,sos:0.10,consistency:0.05} },
   'upside': { label: 'Upside', weights: {avg:0.35,vorp:0.10,need:0.05,tier:0.30,sos:0.05,consistency:0.15} },
@@ -915,7 +981,7 @@ const MODEL_PRESETS = {
 // Save / Load
 function saveState() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ config, draftLog, currentPick, modelWeights: config.modelWeights, showChartTiers: config.showChartTiers }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ config, draftLog, currentPick, modelWeights: config.modelWeights, showChartTiers: config.showChartTiers, teamNames: config.teamNames }));
   } catch(e) {}
 }
 function debounceSave() {
@@ -935,7 +1001,7 @@ function draftToMyTeam(playerName) {
   const player = primaryPlayers.find(p => p.name === playerName);
   if (!player || isDrafted(playerName)) return;
   const myTeam = getMyTeam();
-  if (myTeam.length >= TOTAL_ROSTER) { alert('Team is full (16 players)'); return; }
+  if (myTeam.length >= TOTAL_ROSTER) { alert('Team is full (' + TOTAL_ROSTER + ' players)'); return; }
   undoStack.push({ action:'draft', pickNum: currentPick, playerName, prevLog: [...draftLog], prevPick: currentPick });
   draftLog.push({ pickNum: currentPick, playerName, team: config.myPosition, type:'mine', pos: player.pos });
   currentPick++;
@@ -973,6 +1039,143 @@ function removeFromMyTeam(playerName) {
   }
 }
 
+// Draft log edit actions
+function swapPickType(pickNum) {
+  const idx = draftLog.findIndex(d => d.pickNum === pickNum);
+  if (idx < 0) return;
+  const d = draftLog[idx];
+  undoStack.push({ action:'swap', prevLog: JSON.parse(JSON.stringify(draftLog)), prevPick: currentPick });
+  if (d.type === 'mine') {
+    d.type = 'taken';
+    d.team = getTeamForPick(d.pickNum, config.leagueSize);
+  } else {
+    const myTeam = getMyTeam();
+    if (myTeam.length >= TOTAL_ROSTER) { undoStack.pop(); alert('Team is full (' + TOTAL_ROSTER + ' players)'); return; }
+    d.type = 'mine';
+    d.team = config.myPosition;
+  }
+  debounceSave();
+  renderAll();
+}
+
+function deletePickFromLog(pickNum) {
+  const idx = draftLog.findIndex(d => d.pickNum === pickNum);
+  if (idx < 0) return;
+  const d = draftLog[idx];
+  if (!confirm('Remove pick #' + d.pickNum + ' (' + d.playerName + ')?')) return;
+  undoStack.push({ action:'deletePick', prevLog: JSON.parse(JSON.stringify(draftLog)), prevPick: currentPick });
+  draftLog.splice(idx, 1);
+  // Renumber subsequent picks
+  for (let i = idx; i < draftLog.length; i++) {
+    draftLog[i].pickNum--;
+    draftLog[i].team = draftLog[i].type === 'mine' ? config.myPosition : getTeamForPick(draftLog[i].pickNum, config.leagueSize);
+  }
+  currentPick--;
+  debounceSave();
+  renderAll();
+}
+
+function reassignPickTeam(pickNum) {
+  const idx = draftLog.findIndex(d => d.pickNum === pickNum);
+  if (idx < 0) return;
+  const d = draftLog[idx];
+  if (d.type === 'mine') return;
+  const currentTeam = getTeamName(d.team);
+  let options = '';
+  for (let i = 1; i <= config.leagueSize; i++) {
+    if (i === config.myPosition) continue;
+    options += i + '=' + getTeamName(i) + '  ';
+  }
+  const input = prompt('Reassign "' + d.playerName + '" (currently ' + currentTeam + ').\nEnter team number:\n' + options, d.team);
+  if (input === null) return;
+  const teamNum = parseInt(input);
+  if (!teamNum || teamNum < 1 || teamNum > config.leagueSize || teamNum === config.myPosition) return;
+  undoStack.push({ action:'reassign', prevLog: JSON.parse(JSON.stringify(draftLog)), prevPick: currentPick });
+  d.team = teamNum;
+  debounceSave();
+  renderAll();
+}
+window._reassignPickTeam = reassignPickTeam;
+
+let replacingPickNum = null;
+let replaceHighlight = -1;
+
+function startReplacePlayer(pickNum) {
+  replacingPickNum = pickNum;
+  replaceHighlight = -1;
+  renderTracker();
+  // Focus the input after render
+  setTimeout(() => {
+    const inp = document.getElementById('replace-input');
+    if (inp) inp.focus();
+  }, 0);
+}
+
+function cancelReplace() {
+  replacingPickNum = null;
+  replaceHighlight = -1;
+  renderTracker();
+}
+
+function confirmReplacePlayer(pickNum, newPlayerName) {
+  const idx = draftLog.findIndex(d => d.pickNum === pickNum);
+  if (idx < 0) return;
+  const player = primaryPlayers.find(p => p.name === newPlayerName);
+  if (!player) return;
+  undoStack.push({ action:'replace', prevLog: JSON.parse(JSON.stringify(draftLog)), prevPick: currentPick });
+  draftLog[idx].playerName = newPlayerName;
+  draftLog[idx].pos = player.pos;
+  replacingPickNum = null;
+  replaceHighlight = -1;
+  debounceSave();
+  renderAll();
+}
+
+function wireReplaceInput(pickNum) {
+  const inp = document.getElementById('replace-input');
+  const dropdown = document.getElementById('replace-dropdown');
+  if (!inp || !dropdown) return;
+  inp.addEventListener('input', () => {
+    const q = inp.value.toLowerCase().trim();
+    if (!q) { dropdown.classList.remove('open'); return; }
+    const currentEntry = draftLog.find(d => d.pickNum === pickNum);
+    const matches = primaryPlayers.filter(p => !isDrafted(p.name) && p.name.toLowerCase().includes(q)).slice(0, 10);
+    // Also allow matching the player being replaced (they're "drafted" but we're replacing them)
+    if (currentEntry) {
+      const selfMatch = primaryPlayers.find(p => p.name === currentEntry.playerName && p.name.toLowerCase().includes(q));
+      if (selfMatch && !matches.find(m => m.name === selfMatch.name)) matches.unshift(selfMatch);
+    }
+    if (matches.length === 0) { dropdown.classList.remove('open'); return; }
+    replaceHighlight = -1;
+    dropdown.classList.add('open');
+    dropdown.innerHTML = matches.map((p, i) =>
+      '<div class="replace-option" data-name="' + p.name + '" data-idx="' + i + '">' +
+      '<span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '">' + p.pos + '</span>' +
+      '<span style="flex:1">' + p.name + '</span>' +
+      '<span style="color:var(--muted)">' + (p.predictedAvg || '-') + '</span></div>'
+    ).join('');
+    dropdown.querySelectorAll('.replace-option').forEach(el => {
+      el.onclick = () => confirmReplacePlayer(pickNum, el.dataset.name);
+    });
+  });
+  inp.addEventListener('keydown', (e) => {
+    const items = dropdown.querySelectorAll('.replace-option');
+    if (e.key === 'ArrowDown') { e.preventDefault(); replaceHighlight = Math.min(replaceHighlight + 1, items.length - 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); replaceHighlight = Math.max(replaceHighlight - 1, 0); }
+    items.forEach((el, i) => el.classList.toggle('highlighted', i === replaceHighlight));
+    if (e.key === 'Enter' && replaceHighlight >= 0 && items[replaceHighlight]) {
+      confirmReplacePlayer(pickNum, items[replaceHighlight].dataset.name);
+    }
+    if (e.key === 'Escape') { cancelReplace(); }
+  });
+}
+
+// Expose edit actions to inline onclick handlers (IIFE scope)
+window._swapPickType = swapPickType;
+window._deletePickFromLog = deletePickFromLog;
+window._startReplacePlayer = startReplacePlayer;
+window._cancelReplace = cancelReplace;
+
 // === RENDER FUNCTIONS ===
 
 function renderCommandBar() {
@@ -995,7 +1198,7 @@ function renderMyTeam() {
   const container = document.getElementById('team-slots');
   container.innerHTML = '';
   const myTeam = getMyTeam();
-  const posOrder = ['FLB','CTW','CTW','5-8','HFB','2RF','2RF','2RF','2RF','FRF','FRF','HOK','BENCH','BENCH','BENCH','BENCH'];
+  const posOrder = ['FLB','CTW','CTW','CTW','CTW','5-8','HFB','2RF','2RF','2RF','FRF','FRF','HOK','BENCH','BENCH','BENCH','BENCH'];
   const filled = {};
   POSITIONS.forEach(p => filled[p] = []);
   filled['BENCH'] = [];
@@ -1030,15 +1233,6 @@ function renderMyTeam() {
       const d = arr[idx];
       const pl = primaryPlayers.find(pp => pp.name === d.playerName);
       nameEl.textContent = d.playerName;
-      const teamFlag = PLAYER_FLAGS[d.playerName];
-      if (teamFlag) {
-        const flagColors = { HIGH: '#f85149', MED: '#d29922', LOW: '#484f58' };
-        const badge = document.createElement('span');
-        badge.textContent = teamFlag.risk;
-        badge.title = teamFlag.note;
-        badge.style.cssText = 'font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + flagColors[teamFlag.risk] + ';color:#fff';
-        nameEl.appendChild(badge);
-      }
       const teamInj = INJURY_FLAGS[d.playerName];
       if (teamInj) {
         const injBadge = document.createElement('span');
@@ -1052,6 +1246,14 @@ function renderMyTeam() {
         const cwSpan = document.createElement('span');
         cwSpan.innerHTML = getCWBadge(d.playerName);
         if (cwSpan.firstChild) nameEl.appendChild(cwSpan.firstChild);
+      }
+      const teamMove = MOVEMENT_FLAGS[d.playerName];
+      if (teamMove) {
+        const moveSpan = document.createElement('span');
+        moveSpan.textContent = '\u2605';
+        moveSpan.style.cssText = 'font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:rgba(63,185,80,.2);color:#3fb950;cursor:help;';
+        moveSpan.title = 'MOVER: ' + teamMove.from + ' \u2192 ' + teamMove.to + ' \u2014 ' + teamMove.note;
+        nameEl.appendChild(moveSpan);
       }
       avgEl.textContent = pl ? pl.predictedAvg : '';
       slot.classList.add('filled');
@@ -1111,17 +1313,14 @@ function renderBestAvailable() {
     row.className = 'ba-row';
     if (i === selectedPlayerIdx) row.classList.add('selected');
     row.dataset.name = p.name;
-    const flag = PLAYER_FLAGS[p.name];
-    const riskBadge = flag ? (function() {
-      const colors = { HIGH: '#f85149', MED: '#d29922', LOW: '#484f58' };
-      return '<span title="' + flag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + colors[flag.risk] + ';color:#fff">' + flag.risk + '</span>';
-    })() : '';
     const injFlag = INJURY_FLAGS[p.name];
     const injBadge = injFlag ? '<span title="INJURY PRONE: ' + injFlag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff">\u2795</span>' : '';
     const baCWBadge = getCWBadge(p.name);
+    const moveFlag = MOVEMENT_FLAGS[p.name];
+    const moveBadge = moveFlag ? '<span title="MOVER: ' + moveFlag.from + ' → ' + moveFlag.to + ' — ' + moveFlag.note.replace(/"/g, '&quot;') + '" style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:rgba(63,185,80,.2);color:#3fb950;cursor:help">★</span>' : '';
     row.innerHTML = '<span class="ba-rank">' + (i+1) + '</span>' +
       '<span class="pos-badge ' + posClass(p.pos) + '" data-pos="' + p.pos + '">' + p.pos + '</span>' +
-      '<span class="ba-name">' + p.name + riskBadge + injBadge + baCWBadge + '</span>' +
+      '<span class="ba-name">' + p.name + injBadge + baCWBadge + moveBadge + '</span>' +
       '<span class="ba-avg">' + (p.predictedAvg||'-') + '</span>';
     row.onclick = (e) => showContextMenu(e, p.name);
     container.appendChild(row);
@@ -1162,9 +1361,21 @@ function posClass(pos) {
   return pos;
 }
 
+function getChartRound(playerName) {
+  const chart = DRAFT_CHART[config.gfSystem];
+  if (!chart) return null;
+  for (const [round, positions] of Object.entries(chart.rounds)) {
+    for (const names of Object.values(positions)) {
+      if (names.includes(playerName)) return parseInt(round);
+    }
+  }
+  return null;
+}
+
 function renderBoard() {
   const content = document.getElementById('tab-content');
-  let html = '<div class="board-grid">';
+  let html = '<div class="chart-toggle"><label><input type="checkbox" id="chart-tiers-toggle"' + (config.showChartTiers ? ' checked' : '') + '> Show Rub Down Tiers (' + config.gfSystem + ')</label></div>';
+  html += '<div class="board-grid">';
   POSITIONS.forEach(pos => {
     const players = uniquePlayers.filter(p => p.pos === pos).sort((a,b) => (b.predictedAvg||0) - (a.predictedAvg||0));
     const tiers = getTiers(players);
@@ -1179,22 +1390,31 @@ function renderBoard() {
       if (p.tier !== lastTier && lastTier !== 0) cls += ' tier-break';
       lastTier = p.tier;
       html += '<div class="' + cls + '" data-name="' + p.name + '" onclick="window._boardClick(event,\'' + p.name.replace(/'/g,"\\'") + '\')">';
-      const boardFlag = PLAYER_FLAGS[p.name];
-      const boardRiskBadge = boardFlag ? (function() {
-        const colors = { HIGH: '#f85149', MED: '#d29922', LOW: '#484f58' };
-        return '<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:4px;background:' + colors[boardFlag.risk] + ';color:#fff" title="' + boardFlag.note.replace(/"/g,'&quot;') + '">' + boardFlag.risk + '</span>';
-      })() : '';
       const boardInjuryFlag = INJURY_FLAGS[p.name];
-      const boardInjuryBadge = boardInjuryFlag ? '<span style="font-size:9px;padding:1px 4px;border-radius:3px;margin-left:3px;background:#da3633;color:#fff" title="INJURY PRONE: ' + boardInjuryFlag.note.replace(/"/g,'&quot;') + '">\u2795</span>' : '';
+      const boardInjuryBadge = boardInjuryFlag ? '<span style="font-size:8px;padding:0 3px;border-radius:2px;margin-left:2px;background:#da3633;color:#fff" title="INJURY PRONE: ' + boardInjuryFlag.note.replace(/"/g,'&quot;') + '">\u2795</span>' : '';
       const boardCWBadge = getCWBadge(p.name);
-      html += '<span>' + (p.posRank||'') + '. ' + p.name + boardRiskBadge + boardInjuryBadge + boardCWBadge + '</span>';
-      html += '<span>' + (p.predictedAvg||'-') + '</span>';
+      const boardMoveFlag = MOVEMENT_FLAGS[p.name];
+      const boardMoveBadge = boardMoveFlag ? '<span style="font-size:8px;padding:0 3px;border-radius:2px;margin-left:2px;background:rgba(63,185,80,.2);color:#3fb950;cursor:help" title="MOVER: ' + boardMoveFlag.from + ' → ' + boardMoveFlag.to + ' — ' + boardMoveFlag.note.replace(/"/g,'&quot;') + '">★</span>' : '';
+      const chartRound = config.showChartTiers ? getChartRound(p.name) : null;
+      const chartTag = chartRound ? '<span class="board-chart-tag">R' + chartRound + '</span>' : '';
+      html += '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">' + (p.posRank||'') + '. ' + p.name + boardInjuryBadge + boardCWBadge + boardMoveBadge + '</span>';
+      html += '<span style="display:flex;align-items:center;gap:3px;flex-shrink:0">' + chartTag + (p.predictedAvg||'-') + '</span>';
       html += '</div>';
     });
     html += '</div>';
   });
   html += '</div>';
   content.innerHTML = html;
+
+  // Wire chart toggle
+  const toggle = document.getElementById('chart-tiers-toggle');
+  if (toggle) {
+    toggle.addEventListener('change', () => {
+      config.showChartTiers = toggle.checked;
+      debounceSave();
+      renderBoard();
+    });
+  }
 }
 
 window._boardClick = function(e, name) {
@@ -1204,13 +1424,30 @@ window._boardClick = function(e, name) {
 function renderTracker() {
   const content = document.getElementById('tab-content');
   let html = '<h3 style="margin-bottom:8px;font-size:14px">Draft Log</h3>';
-  html += '<table class="tracker-table"><thead><tr><th>Pick</th><th>Round</th><th>Team</th><th>Player</th><th>Pos</th><th>Avg</th></tr></thead><tbody>';
+  html += '<table class="tracker-table"><thead><tr><th>Pick</th><th>Round</th><th>Team</th><th>Player</th><th>Pos</th><th>Avg</th><th style="width:80px">Actions</th></tr></thead><tbody>';
   draftLog.forEach(d => {
     const pl = primaryPlayers.find(pp => pp.name === d.playerName);
     const cls = d.type === 'mine' ? ' class="my-pick"' : '';
-    html += '<tr' + cls + '><td>#' + d.pickNum + '</td><td>' + getRoundForPick(d.pickNum, config.leagueSize) + '</td><td>' + (d.type === 'mine' ? 'You' : 'Team ' + d.team) + '</td><td>' + d.playerName + '</td><td><span class="pos-badge ' + posClass(d.pos) + '" data-pos="' + d.pos + '">' + d.pos + '</span></td><td>' + (pl ? pl.predictedAvg : '-') + '</td></tr>';
+    const isReplacing = replacingPickNum === d.pickNum;
+    const swapLabel = d.type === 'mine' ? 'taken' : 'mine';
+    const playerCell = isReplacing
+      ? '<div class="replace-search-wrap"><input id="replace-input" type="text" placeholder="Search player\u2026" autocomplete="off"><div id="replace-dropdown" class="replace-dropdown"></div></div>'
+      : d.playerName;
+    const teamDisplay = getTeamName(d.team);
+    const teamCell = d.type === 'mine' ? 'You' : '<span class="team-name-cell" onclick="window._renameTeam(' + d.team + ')" title="Click to rename">' + teamDisplay + '</span>';
+    html += '<tr' + cls + '><td>#' + d.pickNum + '</td><td>' + getRoundForPick(d.pickNum, config.leagueSize) + '</td><td>' + teamCell + '</td><td>' + playerCell + '</td><td><span class="pos-badge ' + posClass(d.pos) + '" data-pos="' + d.pos + '">' + d.pos + '</span></td><td>' + (pl ? pl.predictedAvg : '-') + '</td>';
+    html += '<td class="edit-actions">';
+    if (isReplacing) {
+      html += '<button class="edit-btn" onclick="window._cancelReplace()" title="Cancel">&times;</button>';
+    } else {
+      html += '<button class="edit-btn" onclick="window._swapPickType(' + d.pickNum + ')" title="Swap to ' + swapLabel + '">&harr;</button>';
+      if (d.type !== 'mine') html += '<button class="edit-btn" onclick="window._reassignPickTeam(' + d.pickNum + ')" title="Reassign team">&#9998;</button>';
+      html += '<button class="edit-btn" onclick="window._startReplacePlayer(' + d.pickNum + ')" title="Replace player">&#8635;</button>';
+      html += '<button class="edit-btn danger" onclick="window._deletePickFromLog(' + d.pickNum + ')" title="Delete pick">&times;</button>';
+    }
+    html += '</td></tr>';
   });
-  if (draftLog.length === 0) html += '<tr><td colspan="6" style="text-align:center;color:var(--muted)">No picks yet</td></tr>';
+  if (draftLog.length === 0) html += '<tr><td colspan="7" style="text-align:center;color:var(--muted)">No picks yet</td></tr>';
   html += '</tbody></table>';
 
   // Grid view
@@ -1221,22 +1458,31 @@ function renderTracker() {
   // Header
   html += '<div class="grid-cell header"></div>';
   for (let c = 1; c <= cols; c++) {
-    html += '<div class="grid-cell header">' + (c === config.myPosition ? 'You' : 'T' + c) + '</div>';
+    html += '<div class="grid-cell header">' + getTeamNameShort(c) + '</div>';
   }
+  // Build per-team pick lists in draft order (respects manual team reassignments)
+  const teamPicks = {};
+  for (let c = 1; c <= cols; c++) teamPicks[c] = [];
+  draftLog.forEach(d => {
+    const col = d.type === 'mine' ? config.myPosition : d.team;
+    if (col >= 1 && col <= cols) teamPicks[col].push(d);
+  });
   for (let r = 1; r <= rows; r++) {
     html += '<div class="grid-cell header">R' + r + '</div>';
     for (let c = 1; c <= cols; c++) {
-      const pickNum = (r-1)*cols + c;
-      const entry = draftLog.find(d => d.pickNum === pickNum);
+      const entry = teamPicks[c][r - 1] || null;
       let cls = 'grid-cell';
       if (c === config.myPosition) cls += ' my-pick';
       if (entry) cls += ' filled';
       const label = entry ? entry.playerName.split(' ').pop() : '';
-      html += '<div class="' + cls + '" title="Pick #' + pickNum + (entry ? ': ' + entry.playerName : '') + '">' + label + '</div>';
+      html += '<div class="' + cls + '" title="' + (entry ? 'Pick #' + entry.pickNum + ': ' + entry.playerName : 'R' + r + ' T' + c) + '">' + label + '</div>';
     }
   }
   html += '</div>';
   content.innerHTML = html;
+
+  // Wire up replace input if active
+  if (replacingPickNum !== null) wireReplaceInput(replacingPickNum);
 }
 
 function renderSOS() {
@@ -1355,12 +1601,6 @@ function renderPrompt() {
   if (bestVorp) text += 'Best VORP: ' + bestVorp.name + ' (' + bestVorp.pos + ', +' + bestVorp.vorp.toFixed(0) + ').\n';
   if (alerts.length) text += 'Alert: ' + alerts.join('. ') + '.';
 
-  // Risk alerts for drafted players with PLAYER_FLAGS entries
-  const riskAlerts = myTeam
-    .map(d => { const flag = PLAYER_FLAGS[d.playerName]; return flag ? d.playerName + ' (' + flag.risk + ' — ' + flag.note + ')' : null; })
-    .filter(Boolean);
-  if (riskAlerts.length) text += '\nRisk alerts: ' + riskAlerts.join(', ') + '.';
-
   const injuryAlerts = myTeam
     .map(d => { const inj = INJURY_FLAGS[d.playerName]; return inj ? d.playerName + ' (INJ — ' + inj.note + ')' : null; })
     .filter(Boolean);
@@ -1370,6 +1610,11 @@ function renderPrompt() {
     .map(d => { const cw = CASUALTY_WARD[d.playerName]; return cw ? d.playerName + ' (' + (cw.type === 'suspended' ? 'SUS' : 'OUT') + ' — ' + cw.detail + (cw.returnRound ? ', return R' + cw.returnRound : ', TBC') + ')' : null; })
     .filter(Boolean);
   if (casualtyAlerts.length) text += '\nCasualty ward: ' + casualtyAlerts.join(', ') + '.';
+
+  const moveNotes = getMyTeam()
+    .map(d => { const m = MOVEMENT_FLAGS[d.playerName]; return m ? d.playerName + ' (MOVED: ' + m.from + ' → ' + m.to + ' — ' + m.note + ')' : null; })
+    .filter(Boolean);
+  if (moveNotes.length) text += '\nMovement upside: ' + moveNotes.join('; ') + '.';
 
   document.getElementById('prompt-text').textContent = text;
 }
@@ -1395,8 +1640,16 @@ function getCWBadge(name) {
     label = 'OUT';
     cls = 'cw-long';
   }
-  const prefix = cw.type === 'suspended' ? 'SUSPENDED' : (cw.severity === 'monitor' ? 'MONITOR' : 'INJURED');
-  const tooltip = prefix + ': ' + cw.detail + (cw.returnRound ? ' (return R' + cw.returnRound + ')' : ' (TBC)');
+  let tooltip;
+  if (cw.severity === 'monitor') {
+    tooltip = 'MONITORING: ' + cw.detail + ' — Expected to play R1, managed workload';
+  } else if (cw.type === 'suspended') {
+    tooltip = 'SUSPENDED: ' + cw.detail + (cw.returnRound ? ' — Available from R' + cw.returnRound : ' — Return TBC');
+  } else if (cw.severity === 'long') {
+    tooltip = 'INJURED (long-term): ' + cw.detail + (cw.returnRound ? ' — Target return R' + cw.returnRound : ' — No timeline');
+  } else {
+    tooltip = 'INJURED (short-term): ' + cw.detail + (cw.returnRound ? ' — Expected back R' + cw.returnRound : ' — Return TBC');
+  }
   return '<span class="cw-badge ' + cls + '" title="' + tooltip.replace(/"/g,'&quot;') + '">' + label + '</span>';
 }
 
@@ -1469,28 +1722,25 @@ function renderModel() {
 
   // Right: Comparison
   html += '<div class="model-comparison">';
-  html += '<h3>Rankings Comparison (Top 30)</h3>';
+  html += '<h3>Rankings (Top 30)</h3>';
 
-  // Get R27 baseline rankings (using default weights)
-  const defaultWeights = MODEL_PRESETS.rubdown.weights;
+  // Baseline rankings (default weights)
+  const defaultWeights = MODEL_PRESETS['default'].weights;
   const baselineRanked = primaryPlayers
     .filter(p => !isDrafted(p.name))
     .map(p => ({ name: p.name, pos: p.pos, score: getCompositeScore(p, defaultWeights) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 30);
 
-  // Get current model rankings
+  // Current model rankings
   const modelRanked = primaryPlayers
     .filter(p => !isDrafted(p.name))
     .map(p => ({ name: p.name, pos: p.pos, score: getCompositeScore(p) }))
     .sort((a, b) => b.score - a.score)
     .slice(0, 30);
 
-  // Build lookup for baseline rank
   const baseRankMap = {};
   baselineRanked.forEach((p, i) => baseRankMap[p.name] = i + 1);
-  const modelRankMap = {};
-  modelRanked.forEach((p, i) => modelRankMap[p.name] = i + 1);
 
   html += '<div class="comp-columns">';
   // Your Model column
@@ -1498,7 +1748,6 @@ function renderModel() {
   modelRanked.forEach((p, i) => {
     const baseR = baseRankMap[p.name] || 31;
     const delta = baseR - (i + 1);
-    const deltaStr = delta > 0 ? '+' + delta : delta < 0 ? '' + delta : '-';
     const deltaCls = delta > 0 ? 'up' : delta < 0 ? 'down' : 'same';
     html += '<div class="comp-row">' +
       '<span class="comp-rank">' + (i + 1) + '</span>' +
@@ -1510,8 +1759,8 @@ function renderModel() {
   });
   html += '</div>';
 
-  // Rub Down R27 column
-  html += '<div class="comp-col"><h4>Rub Down R27</h4>';
+  // Default baseline column
+  html += '<div class="comp-col"><h4>Default</h4>';
   baselineRanked.forEach((p, i) => {
     html += '<div class="comp-row">' +
       '<span class="comp-rank">' + (i + 1) + '</span>' +
@@ -1566,7 +1815,7 @@ function renderModel() {
   const resetBtn = content.querySelector('#model-reset');
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      config.modelWeights = { ...MODEL_PRESETS.rubdown.weights };
+      config.modelWeights = { ...MODEL_PRESETS['default'].weights };
       debounceSave();
       renderAll();
     });
@@ -1574,6 +1823,8 @@ function renderModel() {
 }
 
 function renderAll() {
+  // Keep currentPick in sync with draftLog length
+  currentPick = draftLog.length + 1;
   renderCommandBar();
   renderStatusBar();
   renderMyTeam();
@@ -1718,32 +1969,87 @@ function initSetupWizard() {
     resumeBtn.onclick = () => {
       config = saved.config;
       if (saved.modelWeights) config.modelWeights = saved.modelWeights;
-      if (!config.modelWeights) config.modelWeights = {avg:0.20,vorp:0.25,need:0.20,tier:0.20,sos:0.10,consistency:0.05};
+      if (!config.modelWeights) config.modelWeights = {avg:0.30,vorp:0.10,need:0.15,tier:0.30,sos:0.10,consistency:0.05};
       if (saved.showChartTiers !== undefined) config.showChartTiers = saved.showChartTiers;
+      if (saved.teamNames) config.teamNames = saved.teamNames;
+      if (!config.teamNames) config.teamNames = Object.assign({}, DEFAULT_TEAM_NAMES);
+      // Apply any team name edits from the grid
+      const gridNames = readTeamNamesFromGrid();
+      Object.keys(gridNames).forEach(k => config.teamNames[k] = gridNames[k]);
+      // Remove names cleared in grid
+      document.querySelectorAll('#team-names-grid input[data-team-num]').forEach(inp => {
+        const num = parseInt(inp.dataset.teamNum);
+        if (!inp.disabled && !inp.value.trim()) delete config.teamNames[num];
+      });
       draftLog = saved.draftLog;
       currentPick = saved.currentPick;
+      // One-time data fix: correct team assignments
+      const teamFixes = { 'Selwyn Cobbo': 7, 'Lindsay Smith': 6, 'Jack Williams': 6, 'Bronson Xerri': 7 };
+      draftLog.forEach(d => {
+        if (d.type !== 'mine' && teamFixes[d.playerName] && d.team !== teamFixes[d.playerName]) {
+          d.team = teamFixes[d.playerName];
+        }
+      });
+      saveState();
       document.getElementById('setup-modal').classList.add('hidden');
       renderAll();
     };
   }
 
-  // Populate draft position
+  // Populate draft position and team names grid
   function updateDraftPos() {
     const size = parseInt(document.querySelector('input[name="league-size"]:checked').value);
     const sel = document.getElementById('draft-pos');
+    const myPos = parseInt(sel.value) || config.myPosition || 10;
     sel.innerHTML = '';
     for (let i = 1; i <= size; i++) {
-      sel.innerHTML += '<option value="' + i + '"' + (i === 10 ? ' selected' : '') + '>' + i + '</option>';
+      sel.innerHTML += '<option value="' + i + '"' + (i === Math.min(myPos, size) ? ' selected' : '') + '>' + i + '</option>';
+    }
+    updateTeamNamesGrid();
+  }
+  function updateTeamNamesGrid() {
+    const size = parseInt(document.querySelector('input[name="league-size"]:checked').value);
+    const myPos = parseInt(document.getElementById('draft-pos').value) || 1;
+    const grid = document.getElementById('team-names-grid');
+    grid.innerHTML = '';
+    for (let i = 1; i <= size; i++) {
+      const isMe = i === myPos;
+      const row = document.createElement('div');
+      row.className = 'tn-row' + (isMe ? ' my-pos' : '');
+      const label = document.createElement('span');
+      label.className = 'tn-label';
+      label.textContent = i;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.dataset.teamNum = i;
+      input.placeholder = isMe ? 'You' : 'Team ' + i;
+      input.value = config.teamNames[i] || '';
+      if (isMe) { input.disabled = true; input.value = ''; input.placeholder = 'You'; }
+      row.appendChild(label);
+      row.appendChild(input);
+      grid.appendChild(row);
     }
   }
   document.querySelectorAll('input[name="league-size"]').forEach(r => r.addEventListener('change', updateDraftPos));
+  document.getElementById('draft-pos').addEventListener('change', updateTeamNamesGrid);
   updateDraftPos();
+
+  function readTeamNamesFromGrid() {
+    const names = {};
+    document.querySelectorAll('#team-names-grid input[data-team-num]').forEach(inp => {
+      const num = parseInt(inp.dataset.teamNum);
+      const val = inp.value.trim();
+      if (val) names[num] = val;
+    });
+    return names;
+  }
 
   document.getElementById('start-fresh-btn').onclick = () => {
     config.leagueSize = parseInt(document.querySelector('input[name="league-size"]:checked').value);
     config.myPosition = parseInt(document.getElementById('draft-pos').value);
     config.gfSystem = document.querySelector('input[name="gf-system"]:checked').value;
     config.totalRounds = parseInt(document.getElementById('total-rounds').value) || 13;
+    config.teamNames = readTeamNamesFromGrid();
     draftLog = [];
     undoStack = [];
     currentPick = 1;
@@ -1769,6 +2075,18 @@ document.getElementById('injury-panel-toggle').onclick = () => {
 
 // Settings button re-opens wizard
 document.getElementById('settings-btn').onclick = () => {
+  // Sync wizard fields with current config
+  const sizeRadio = document.querySelector('input[name="league-size"][value="' + config.leagueSize + '"]');
+  if (sizeRadio) sizeRadio.checked = true;
+  const posSel = document.getElementById('draft-pos');
+  posSel.innerHTML = '';
+  for (let i = 1; i <= config.leagueSize; i++) {
+    posSel.innerHTML += '<option value="' + i + '"' + (i === config.myPosition ? ' selected' : '') + '>' + i + '</option>';
+  }
+  const gfRadio = document.querySelector('input[name="gf-system"][value="' + config.gfSystem + '"]');
+  if (gfRadio) gfRadio.checked = true;
+  document.getElementById('total-rounds').value = config.totalRounds;
+  updateTeamNamesGrid();
   document.getElementById('setup-modal').classList.remove('hidden');
 };
 

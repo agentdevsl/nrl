@@ -1,0 +1,24 @@
+{
+  "name": "nuns-cup-100m",
+  "version": "1.0.0",
+  "description": "Nuns Cup 100m World Championship - Dramatic Video Edit",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render NunsCup100m out/nuns-cup-100m.mp4",
+    "build": "remotion render NunsCup100m out/nuns-cup-100m.mp4 --codec h264"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "remotion": "^4.0.250",
+    "@remotion/cli": "^4.0.250",
+    "@remotion/media": "^4.0.250",
+    "@remotion/transitions": "^4.0.250",
+    "@remotion/light-leaks": "^4.0.250",
+    "@remotion/google-fonts": "^4.0.250"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/react": "^19.0.0"
+  }
+}
